@@ -10,6 +10,7 @@ import { useMutation } from "@apollo/client";
 import authOperations from "../../graphql/Auth/operations";
 import Error from "../../components/Error/Error";
 import { useRouter } from "next/router";
+import { SignInResponse } from "../../types/types";
 
 const SignIn: NextPage = () => {
   const [username, setUsername] = useState("");
@@ -25,13 +26,11 @@ const SignIn: NextPage = () => {
   const { push } = useRouter();
 
   const [signIn, { loading: submitting }] = useMutation<
-    any,
+    { signIn: SignInResponse },
     { username: String; password: String }
   >(authOperations.Mutation.SIGN_IN, {
-    onCompleted: (a) => {
-      //todo: check oncompletedargs
-      console.log(a);
-      push("/");
+    onCompleted: ({ signIn }) => {
+      if (signIn.successStatus) push("/");
     },
     onError: ({ cause, name, clientErrors, graphQLErrors, message }) => {
       if (graphQLErrors.length === 0) {
