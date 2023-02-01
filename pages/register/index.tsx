@@ -10,6 +10,8 @@ import userOperations from "../../graphql/User/operations";
 import { CreateUserResponse } from "../../types/types";
 import Error from "../../components/Error/Error";
 import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
+import getServerSessionAndUser from "../../utils/getServerSessionAndUser";
 
 const Register = () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -232,3 +234,12 @@ const Register = () => {
 };
 
 export default Register;
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const sessionAndUser = await getServerSessionAndUser(req, res);
+
+  if (sessionAndUser) {
+    return { redirect: { destination: "/dash", permanent: false } };
+  }
+  return { props: {} };
+};
