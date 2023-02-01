@@ -50,7 +50,7 @@ const AddWorkspace: FC<AddWorkSpaceProps> = () => {
       createWorkspace: {
         id: string;
         name: string;
-        workspaceUser: { role: "ADMIN" | "MANAGER" | "DEVELOPER" }[];
+        workspaceUser: { role: Role }[];
       };
     },
     { workspaceName: string }

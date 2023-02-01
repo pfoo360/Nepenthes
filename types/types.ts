@@ -38,3 +38,10 @@ export interface CreateWorkspaceResponse {
   name: string;
   workspaceUser: WorkspaceUser[];
 }
+
+export interface WorkspaceUserProviderValue {
+  id: string;
+  workspaceId: string;
+  userId: string;
+  role: Role;
+}

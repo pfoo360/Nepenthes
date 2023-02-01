@@ -19,15 +19,19 @@ const MyWorkspace: FC = () => {
     //   pollInterval: 10000
     // }
   );
+  console.log(data?.me.myWorkspace);
 
   if (loading) return <p>Loading...</p>;
 
   if (error) return <Error message="Looks like something went wrong..." />;
 
-  if (data === undefined && loading === false && !error)
+  if (
+    !data ||
+    (data.me.myWorkspace.length === 0 && loading === false && !error)
+  )
     return <p>Seems like there is nothing here...</p>;
 
-  if (data)
+  if (data.me.myWorkspace.length > 0)
     return (
       <>
         {data.me.myWorkspace.map(({ role, workspace }) => (
