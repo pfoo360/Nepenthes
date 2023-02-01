@@ -238,7 +238,7 @@ export default Register;
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const sessionAndUser = await getServerSessionAndUser(req, res);
 
-  if (sessionAndUser) {
+  if (sessionAndUser?.sessionToken && sessionAndUser.user) {
     return { redirect: { destination: "/dash", permanent: false } };
   }
   return { props: {} };

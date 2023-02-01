@@ -5,3 +5,9 @@ const WorkspaceId = () => {
 };
 
 export default WorkspaceId;
+
+export const getServerSideProps = ({ req, res }) => {
+  console.log(req);
+
+  return { props: {} };
+};

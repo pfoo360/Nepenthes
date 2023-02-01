@@ -34,6 +34,7 @@ model Workspace {
   name          String
   createdAt     DateTime        @default(now())
   workspaceUser WorkspaceUser[]
+  Project       Project[]
 }
 
 model WorkspaceUser {
@@ -51,4 +52,12 @@ enum Role {
   ADMIN
   MANAGER
   DEVELOPER
+}
+
+model Project {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
