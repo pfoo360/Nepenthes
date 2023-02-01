@@ -5,12 +5,13 @@ import {
   ChangeEvent,
   MouseEvent,
 } from "react";
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { useMutation } from "@apollo/client";
 import authOperations from "../../graphql/Auth/operations";
 import Error from "../../components/Error/Error";
 import { useRouter } from "next/router";
 import { SignInResponse } from "../../types/types";
+import getServerSessionAndUser from "../../utils/getServerSessionAndUser";
 
 const SignIn: NextPage = () => {
   const [username, setUsername] = useState("");
@@ -143,3 +144,13 @@ const SignIn: NextPage = () => {
 };
 
 export default SignIn;
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const sessionAndUser = await getServerSessionAndUser(req, res);
+
+  if (sessionAndUser) {
+    return { redirect: { destination: "/dash", permanent: false } };
+  }
+
+  return { props: {} };
+};
