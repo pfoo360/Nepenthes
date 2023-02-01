@@ -18,7 +18,7 @@ const Register = () => {
 
   const [createUser, { loading: submitting }] = useMutation<
     { createUser: CreateUserResponse },
-    { username: String; email: String; password: String }
+    { username: string; email: string; password: string }
   >(userOperations.Mutation.CREATE_USER, {
     onCompleted: ({ createUser }) => {
       if (createUser.successStatus)

@@ -9,7 +9,22 @@ const typeDefs = gql`
   }
 
   type Query {
-    test: Boolean
+    me: Me
+  }
+
+  type Me {
+    myAccount: User
+    myWorkspace: [MyWorkspace]
+  }
+
+  type MyWorkspace {
+    workspace: Wrkspc
+    role: Role
+  }
+
+  type Wrkspc {
+    id: ID
+    name: String
   }
 
   type Mutation {

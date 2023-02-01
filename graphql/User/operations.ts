@@ -1,6 +1,21 @@
 import { gql } from "@apollo/client";
 
 const operations = {
+  Query: {
+    GET_CURRENT_USERS_WORKSPACES: gql`
+      query GetCurrentUsersWorkspaces {
+        me {
+          myWorkspace {
+            workspace {
+              id
+              name
+            }
+            role
+          }
+        }
+      }
+    `,
+  },
   Mutation: {
     CREATE_USER: gql`
       mutation CreateUser(

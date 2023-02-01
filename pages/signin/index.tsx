@@ -27,10 +27,10 @@ const SignIn: NextPage = () => {
 
   const [signIn, { loading: submitting }] = useMutation<
     { signIn: SignInResponse },
-    { username: String; password: String }
+    { username: string; password: string }
   >(authOperations.Mutation.SIGN_IN, {
     onCompleted: ({ signIn }) => {
-      if (signIn.successStatus) push("/");
+      if (signIn.successStatus) push("/dash");
     },
     onError: ({ cause, name, clientErrors, graphQLErrors, message }) => {
       if (graphQLErrors.length === 0) {

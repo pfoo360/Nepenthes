@@ -14,7 +14,7 @@ const resolvers = {
     ): Promise<SignInResponse> => {
       //todo: xsf header check, check to make sure no session exists(canot create new act if alrdy logged in)
 
-      console.log(req.cookies);
+      console.log("auth", req.cookies);
       //check if username and password were sent
       if (!username || !password)
         throw new GraphQLError("Username and password are required.", {
@@ -48,6 +48,7 @@ const resolvers = {
 
       const cookie = serialize("nepenthes-session", sessionToken, {
         expires,
+        path: "/",
         httpOnly: true,
         sameSite: true,
         secure: true,

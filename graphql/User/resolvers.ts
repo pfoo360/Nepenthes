@@ -1,10 +1,42 @@
 import { GraphQLError } from "graphql";
-import { GraphQLContext, CreateUserResponse } from "../../types/types";
+import { GraphQLContext, CreateUserResponse, User } from "../../types/types";
 import bcrypt from "bcrypt";
 
 const resolvers = {
   Query: {
-    test: () => true,
+    me: (
+      parent: undefined,
+      args: {},
+      { prisma, session, user }: GraphQLContext
+    ) => {
+      // const s = "sdfsdfsdf";
+      // const u = { id: "sdafsdfsd", username: "test", email: "test@test.com" };
+
+      if (!session || !user)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      console.log(session, user);
+      console.log("me", parent, args);
+      return user;
+    },
+  },
+  Me: {
+    myAccount: (parent: User, args: {}, context: GraphQLContext) => {
+      console.log("parent", parent);
+      return parent;
+    },
+    myWorkspace: async (parent: User, args: {}, { prisma }: GraphQLContext) => {
+      console.log("workspace", parent.id, args);
+      const myWorkspace = await prisma.workspaceUser.findMany({
+        where: { userId: parent.id },
+        select: { workspace: { select: { id: true, name: true } }, role: true },
+      });
+      //console.log(myWorkspace);
+
+      return myWorkspace;
+    },
   },
   Mutation: {
     createUser: async (

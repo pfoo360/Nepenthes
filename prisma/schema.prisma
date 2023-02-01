@@ -11,13 +11,14 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  username      String    @unique
-  email         String    @unique
+  id            String          @id @default(cuid())
+  username      String          @unique
+  email         String          @unique
   password      String
   emailVerified DateTime?
   image         String?
   sessions      Session[]
+  workspaceUser WorkspaceUser[]
 }
 
 model Session {
@@ -26,4 +27,28 @@ model Session {
   expires      DateTime
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Workspace {
+  id            String          @id @default(cuid())
+  name          String
+  createdAt     DateTime        @default(now())
+  workspaceUser WorkspaceUser[]
+}
+
+model WorkspaceUser {
+  id          String    @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        Role
+
+  @@unique(fields: [workspaceId, userId])
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  DEVELOPER
 }
