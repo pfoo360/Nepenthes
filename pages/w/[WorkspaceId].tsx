@@ -6,6 +6,7 @@ import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
 import useUserContext from "../../hooks/useUserContext";
 import useWorkspaceContext from "../../hooks/useWorkspaceContext";
 import { useRouter } from "next/router";
+import NavBar from "../../components/NavBar/NavBar";
 
 const WorkspaceId = () => {
   const a = useWorkspaceUserContext();
@@ -15,9 +16,15 @@ const WorkspaceId = () => {
 
   return (
     <>
-      <div>{JSON.stringify(a)}</div>
-      <div>{JSON.stringify(b)}</div>
-      <div>{JSON.stringify(c)}</div>
+      <NavBar />
+      <div>hello</div>
+      <div>hello</div>
+      <div>hello</div>
+      <div>hello</div>
+
+      <div>{JSON.stringify(a?.role)}</div>
+      <div>{JSON.stringify(b?.username)}</div>
+      <div>{JSON.stringify(c?.name)}</div>
       <button
         onClick={() => {
           push("/dash");
