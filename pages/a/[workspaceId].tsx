@@ -5,14 +5,14 @@ import prisma from "../../lib/prisma";
 import ROLES from "../../utils/role";
 import NavBar from "../../components/NavBar/NavBar";
 import AddUserToWorkspace from "../../components/AddUserToWorkspace/AddUserToWorkspace";
-import WorkspaceUser from "../../components/WorkspaceUser/WorkspaceUser";
+import WorkspacesUsers from "../../components/WorkspacesUsers/WorkspacesUsers";
 
 const Admin: NextPage = () => {
   return (
     <div>
       <NavBar />
       <AddUserToWorkspace />
-      <WorkspaceUser />
+      <WorkspacesUsers />
     </div>
   );
 };

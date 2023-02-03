@@ -7,7 +7,7 @@ import Error from "../Error/Error";
 import { WorkspaceUser } from "../../types/types";
 import User from "../User/User";
 
-const WorkspaceUser: FC = () => {
+const WorkspacesUsers: FC = () => {
   const workspaceUser = useWorkspaceUserContext();
   if (!workspaceUser || !workspaceUser.workspaceId) return null;
 
@@ -41,4 +41,4 @@ const WorkspaceUser: FC = () => {
   );
 };
 
-export default WorkspaceUser;
+export default WorkspacesUsers;
