@@ -2,6 +2,7 @@ import ROLES from "../../utils/role";
 import { Role } from "../../types/types";
 import { FC } from "react";
 import Link from "next/link";
+import returnRoleColor from "../../utils/returnRoleColor";
 
 interface WorkspaceProps {
   role: Role;
@@ -12,15 +13,12 @@ interface WorkspaceProps {
 }
 
 const Workspace: FC<WorkspaceProps> = ({ role, workspace }) => {
-  let color = "";
-  if (role === ROLES.ADMIN) color = "indigo";
-  if (role === ROLES.MANAGER) color = "fuchsia";
-  if (role === ROLES.DEVELOPER) color = "cyan";
+  const color = returnRoleColor(role);
 
   return (
     <Link
       href={`/w/${workspace.id}`}
-      className={`bg-${color}-500 bg- hover:bg-${color}-600 text-slate-50 rounded-sm overflow-x-hidden overflow-y-hidden w-11/12 mb-4 pl-3 py-2`}
+      className={`bg-${color}-500 bg- hover:bg-${color}-600 text-slate-50 rounded-sm break-words w-11/12 mb-4 pl-3 py-2`}
     >
       <h1 className="text-lg mb-1">{workspace.name}</h1>
       <p className="text-xs">{role}</p>

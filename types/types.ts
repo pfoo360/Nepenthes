@@ -8,7 +8,7 @@ export interface User {
 }
 
 export type Role = "ADMIN" | "MANAGER" | "DEVELOPER";
-interface WorkspaceUser {
+export interface WorkspaceUser {
   user: User;
   role: Role;
 }

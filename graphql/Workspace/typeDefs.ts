@@ -18,8 +18,17 @@ const typeDefs = gql`
     DEVELOPER
   }
 
+  type Query {
+    getWorkspacesUsers(workspaceId: String!): [WorkspaceUser]!
+  }
+
   type Mutation {
     createWorkspace(workspaceName: String!): Workspace
+    addUserToWorkspace(
+      username: String!
+      role: Role!
+      workspaceId: String!
+    ): WorkspaceUser!
   }
 `;
 

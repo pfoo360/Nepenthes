@@ -1,6 +1,20 @@
 import { gql } from "@apollo/client";
 
 const operations = {
+  Query: {
+    GET_WORKSPACES_USERS: gql`
+      query GetWorkspacesUsers($workspaceId: String!) {
+        getWorkspacesUsers(workspaceId: $workspaceId) {
+          user {
+            id
+            username
+            email
+          }
+          role
+        }
+      }
+    `,
+  },
   Mutation: {
     CREATE_WORKSPACE: gql`
       mutation CreateWorkspace($workspaceName: String!) {
@@ -10,6 +24,26 @@ const operations = {
           workspaceUser {
             role
           }
+        }
+      }
+    `,
+    ADD_USER_TO_WORKSPACE: gql`
+      mutation AddUserToWorkspace(
+        $username: String!
+        $role: Role!
+        $workspaceId: String!
+      ) {
+        addUserToWorkspace(
+          username: $username
+          role: $role
+          workspaceId: $workspaceId
+        ) {
+          user {
+            id
+            username
+            email
+          }
+          role
         }
       }
     `,

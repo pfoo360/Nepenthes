@@ -1,7 +1,53 @@
 import { GraphQLError } from "graphql";
-import { GraphQLContext, CreateWorkspaceResponse } from "./../../types/types";
+import {
+  GraphQLContext,
+  CreateWorkspaceResponse,
+  WorkspaceUser,
+  Role,
+} from "./../../types/types";
+import ROLES from "../../utils/role";
 
 const resolvers = {
+  Query: {
+    getWorkspacesUsers: async (
+      _parent: any,
+      { workspaceId }: { workspaceId: string },
+      { req, res, prisma, session, user }: GraphQLContext
+    ): Promise<WorkspaceUser[]> => {
+      console.log("GETWORKSPACEUSERS", workspaceId);
+      if (!workspaceId)
+        throw new GraphQLError("Workspace ID is required.", {
+          extensions: { code: "INVALID INPUT(S)" },
+        });
+
+      if (!session || !user)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //check if user making request is an ADMIN in the workspace
+      const workspaceUser = await prisma.workspaceUser.findUnique({
+        where: {
+          workspaceId_userId: { userId: user.id, workspaceId: workspaceId },
+        },
+      });
+      if (!workspaceUser || workspaceUser.role !== ROLES.ADMIN)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //since user making request is an ADMIN, return all users belonging to the workspace
+      const workspaceUsers = await prisma.workspaceUser.findMany({
+        where: { workspaceId },
+        select: {
+          user: { select: { id: true, username: true, email: true } },
+          role: true,
+        },
+      });
+
+      return workspaceUsers;
+    },
+  },
   Mutation: {
     createWorkspace: async (
       _parent: any,
@@ -46,6 +92,71 @@ const resolvers = {
       //check to see if workspace has been created, throw error if not
 
       return workspace;
+    },
+    addUserToWorkspace: async (
+      _parent: any,
+      {
+        username,
+        role,
+        workspaceId,
+      }: { username: string; role: Role; workspaceId: string },
+      { req, res, prisma, session, user }: GraphQLContext
+    ): Promise<WorkspaceUser> => {
+      //check auth
+      if (!session || !user)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //check if user args all exist
+      if (
+        !workspaceId ||
+        !username ||
+        (role !== ROLES.ADMIN &&
+          role !== ROLES.MANAGER &&
+          role !== ROLES.DEVELOPER)
+      )
+        throw new GraphQLError("Missing arguments.", {
+          extensions: { code: "INVALID INPUT(S)" },
+        });
+
+      //check if user making request is an ADMIN in the workspace
+      const workspaceUser = await prisma.workspaceUser.findUnique({
+        where: {
+          workspaceId_userId: { userId: user.id, workspaceId: workspaceId },
+        },
+      });
+      if (!workspaceUser || workspaceUser.role !== ROLES.ADMIN)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //--workspace exists, user is apart of the workspace, user is an ADMIN in the workspace--
+
+      //verify requested user exists
+      const foundUser = await prisma.user.findUnique({
+        where: { username },
+        select: { id: true, username: true },
+      });
+
+      if (!foundUser || !foundUser.id)
+        throw new GraphQLError("User does not exist.", {
+          extensions: { code: "INVALID INPUT(S)" },
+        });
+
+      const newlyCreatedWorkspaceUser = await prisma.workspaceUser.create({
+        data: { workspaceId, userId: foundUser.id, role },
+        select: {
+          user: { select: { id: true, username: true, email: true } },
+          role: true,
+        },
+      });
+
+      return newlyCreatedWorkspaceUser;
+      return {
+        user: { id: "123", username: "test", email: "fdsafd" },
+        role: "ADMIN",
+      };
     },
   },
 };

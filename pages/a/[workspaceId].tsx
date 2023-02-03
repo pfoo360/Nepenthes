@@ -1,42 +1,23 @@
-import { GetServerSideProps } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import React from "react";
-import prisma from "../../lib/prisma";
 import getServerSessionAndUser from "../../utils/getServerSessionAndUser";
-import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
-import useUserContext from "../../hooks/useUserContext";
-import useWorkspaceContext from "../../hooks/useWorkspaceContext";
-import { useRouter } from "next/router";
+import prisma from "../../lib/prisma";
+import ROLES from "../../utils/role";
 import NavBar from "../../components/NavBar/NavBar";
+import AddUserToWorkspace from "../../components/AddUserToWorkspace/AddUserToWorkspace";
+import WorkspaceUser from "../../components/WorkspaceUser/WorkspaceUser";
 
-const Home = () => {
-  const a = useWorkspaceUserContext();
-  const b = useUserContext();
-  const c = useWorkspaceContext();
-  const { push } = useRouter();
-
+const Admin: NextPage = () => {
   return (
-    <>
+    <div>
       <NavBar />
-      <div>hello</div>
-      <div>hello</div>
-      <div>hello</div>
-      <div>hello</div>
-
-      <div>{JSON.stringify(a?.role)}</div>
-      <div>{JSON.stringify(b?.username)}</div>
-      <div>{JSON.stringify(c?.name)}</div>
-      <button
-        onClick={() => {
-          push("/a/cldlsa9ya0007utp80fqpn65j");
-        }}
-      >
-        clk
-      </button>
-    </>
+      <AddUserToWorkspace />
+      <WorkspaceUser />
+    </div>
   );
 };
 
-export default Home;
+export default Admin;
 
 export const getServerSideProps: GetServerSideProps = async ({
   req,
@@ -60,16 +41,16 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
   if (!workspace) return { notFound: true };
 
-  //check if user is apart of the workspace
+  //check if user is apart of the workspace AND that user is an ADMIN in the workspace
   const workspaceUser = await prisma.workspaceUser.findUnique({
     where: {
       workspaceId_userId: { workspaceId: workspace.id, userId: user.id },
     },
   });
-  if (!workspaceUser)
+  if (!workspaceUser || workspaceUser.role !== ROLES.ADMIN)
     return { redirect: { destination: "/dash", permanent: false } };
 
-  //console.log(user, sessionToken, workspace, workspaceUser);
+  console.log("ADMIN GSSP", user, sessionToken, workspace, workspaceUser);
 
   return { props: { user, workspace, workspaceUser } };
 };

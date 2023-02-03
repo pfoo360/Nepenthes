@@ -83,7 +83,7 @@ const NavBar = () => {
             <>
               <div className="w-11/12 h-px rounded-md bg-gray-200 mt-32" />
               <Link
-                href={`/t/${workspace?.id}`}
+                href={`/a/${workspace?.id}`}
                 className="block text-indigo-500 hover:text-indigo-700 mt-4 text-3xl px-4"
               >
                 admin
