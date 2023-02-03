@@ -13,18 +13,13 @@ const typeDefs = gql`
   }
 
   type Me {
-    myAccount: User
-    myWorkspace: [MyWorkspace]
+    myAccount: User!
+    myWorkspaces: [MyWorkspace]!
   }
 
   type MyWorkspace {
-    workspace: Wrkspc
+    workspace: Workspace
     role: Role
-  }
-
-  type Wrkspc {
-    id: ID
-    name: String
   }
 
   type Mutation {

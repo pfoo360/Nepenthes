@@ -5,7 +5,7 @@ const operations = {
     GET_CURRENT_USERS_WORKSPACES: gql`
       query GetCurrentUsersWorkspaces {
         me {
-          myWorkspace {
+          myWorkspaces {
             workspace {
               id
               name

@@ -61,9 +61,9 @@ const AddWorkspace: FC<AddWorkSpaceProps> = () => {
       const oldCache = cache.readQuery<{
         me: {
           __typename: "Me";
-          myWorkspace: {
+          myWorkspaces: {
             role: Role;
-            workspace: { id: string; name: string; __typename: "Wrkspc" };
+            workspace: { id: string; name: string; __typename: "Workspace" };
             __type: "MyWorkspace";
           }[];
         };
@@ -73,17 +73,19 @@ const AddWorkspace: FC<AddWorkSpaceProps> = () => {
 
       if (!oldCache) return;
 
-      //console.log(oldCache);
+      console.log("old", oldCache);
+      console.log("data", data);
 
       const newlyCreatedWorkspace = {
         role: data.createWorkspace.workspaceUser[0].role,
         workspace: {
           id: data.createWorkspace.id,
           name: data.createWorkspace.name,
-          __typename: "Wrkspc",
+          __typename: "Workspace",
         },
         __typename: "MyWorkspace",
       };
+      console.log(newlyCreatedWorkspace);
 
       cache.writeQuery({
         query: userOperations.Query.GET_CURRENT_USERS_WORKSPACES,
@@ -91,23 +93,23 @@ const AddWorkspace: FC<AddWorkSpaceProps> = () => {
           ...oldCache,
           me: {
             ...oldCache.me,
-            myWorkspace: [newlyCreatedWorkspace, ...oldCache.me.myWorkspace],
+            myWorkspaces: [newlyCreatedWorkspace, ...oldCache.me.myWorkspaces],
           },
         },
       });
 
-      // const newCache = cache.readQuery<{
-      //   me: {
-      //     myWorkspace: {
-      //       role: Role;
-      //       workspace: { id: string; name: string };
-      //     }[];
-      //   };
-      // }>({
-      //   query: userOperations.Query.GET_CURRENT_USERS_WORKSPACES,
-      // });
+      const newCache = cache.readQuery<{
+        me: {
+          myWorkspace: {
+            role: Role;
+            workspace: { id: string; name: string };
+          }[];
+        };
+      }>({
+        query: userOperations.Query.GET_CURRENT_USERS_WORKSPACES,
+      });
 
-      // console.log(newCache);
+      console.log("new", newCache);
     },
     onCompleted: () => {
       setWorkspaceName("");

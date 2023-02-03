@@ -27,13 +27,31 @@ const resolvers = {
       console.log("parent", parent);
       return parent;
     },
-    myWorkspace: async (parent: User, args: {}, { prisma }: GraphQLContext) => {
+    myWorkspaces: async (
+      parent: User,
+      args: {},
+      { prisma }: GraphQLContext
+    ) => {
       console.log("workspace", parent.id, args);
       const myWorkspace = await prisma.workspaceUser.findMany({
         where: { userId: parent.id },
-        select: { workspace: { select: { id: true, name: true } }, role: true },
+        select: {
+          workspace: {
+            select: {
+              id: true,
+              name: true,
+              workspaceUser: {
+                select: {
+                  user: { select: { id: true, username: true, email: true } },
+                  role: true,
+                },
+              },
+            },
+          },
+          role: true,
+        },
       });
-      //console.log(myWorkspace);
+      console.log("MYWORKSPACE", myWorkspace);
 
       return myWorkspace;
     },

@@ -8,7 +8,7 @@ import Error from "../Error/Error";
 const MyWorkspace: FC = () => {
   const { loading, data, error } = useQuery<{
     me: {
-      myWorkspace: {
+      myWorkspaces: {
         role: Role;
         workspace: { id: string; name: string };
       }[];
@@ -19,7 +19,8 @@ const MyWorkspace: FC = () => {
     //   pollInterval: 10000
     // }
   );
-  console.log(data?.me.myWorkspace);
+  console.log("DATA", data);
+  console.log("ERROR", error);
 
   if (loading) return <p>Loading...</p>;
 
@@ -27,14 +28,14 @@ const MyWorkspace: FC = () => {
 
   if (
     !data ||
-    (data.me.myWorkspace.length === 0 && loading === false && !error)
+    (data.me.myWorkspaces.length === 0 && loading === false && !error)
   )
     return <p>Seems like there is nothing here...</p>;
 
-  if (data.me.myWorkspace.length > 0)
+  if (data.me.myWorkspaces.length > 0)
     return (
       <>
-        {data.me.myWorkspace.map(({ role, workspace }) => (
+        {data.me.myWorkspaces.map(({ role, workspace }) => (
           <Workspace key={workspace.id} role={role} workspace={workspace} />
         ))}
       </>
