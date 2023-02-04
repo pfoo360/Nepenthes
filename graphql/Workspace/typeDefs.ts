@@ -34,6 +34,10 @@ const typeDefs = gql`
       workspaceId: String!
       role: Role!
     ): WorkspaceUser!
+    deleteUserFromWorkspace(
+      userId: String!
+      workspaceId: String!
+    ): WorkspaceUser!
   }
 `;
 

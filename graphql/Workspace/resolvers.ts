@@ -230,6 +230,66 @@ const resolvers = {
 
       return updatedUser;
     },
+    deleteUserFromWorkspace: async (
+      _parent: any,
+      { userId, workspaceId }: { userId: string; workspaceId: string },
+      { req, res, session, user, prisma }: GraphQLContext
+    ) => {
+      //check auth
+      if (!session || !user)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //check if user args all exist
+      if (!userId || !workspaceId)
+        throw new GraphQLError("Missing arguments.", {
+          extensions: { code: "INVALID INPUT(S)" },
+        });
+
+      //check if user making request is an ADMIN in the workspace
+      const workspaceUser = await prisma.workspaceUser.findUnique({
+        where: {
+          workspaceId_userId: { userId: user.id, workspaceId: workspaceId },
+        },
+      });
+      if (!workspaceUser || workspaceUser.role !== ROLES.ADMIN)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //---user making request is an ADMIN in the workspace, can delete user from the workspace
+
+      //make sure that the workspace has at least ONE(1) ADMIN user
+      const userToBeDeleted = await prisma.workspaceUser.findUnique({
+        where: { workspaceId_userId: { userId, workspaceId } },
+      });
+      if (!userToBeDeleted)
+        throw new GraphQLError("User to be deleted does not exist.", {
+          extensions: { code: "INVALID INPUT(S)" },
+        });
+      //if the user to be deleted is an ADMIN AND if there is ONE(1) or less ADMINS in a workspace we cannot continue
+      if (userToBeDeleted.role === ROLES.ADMIN) {
+        const numberOfAdmins = await prisma.workspaceUser.count({
+          where: { AND: { workspaceId, role: ROLES.ADMIN } },
+        });
+        console.log(`NUMBEROFADMINS FOR ${workspaceId}`, numberOfAdmins);
+        if (numberOfAdmins <= 1)
+          throw new GraphQLError("Workspace requires at least ONE(1) ADMIN", {
+            extensions: { code: "UNAUTHORIZED" },
+          });
+      }
+
+      const deletedUser = await prisma.workspaceUser.delete({
+        where: { workspaceId_userId: { userId, workspaceId } },
+        select: {
+          user: { select: { id: true, username: true, email: true } },
+          role: true,
+        },
+      });
+
+      return deletedUser;
+    },
   },
 };
 

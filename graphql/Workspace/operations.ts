@@ -67,6 +67,21 @@ const operations = {
         }
       }
     `,
+    DELETE_A_USER: gql`
+      mutation DeleteUserFromWorkspace(
+        $userId: String!
+        $workspaceId: String!
+      ) {
+        deleteUserFromWorkspace(userId: $userId, workspaceId: $workspaceId) {
+          user {
+            id
+            username
+            email
+          }
+          role
+        }
+      }
+    `,
   },
 };
 
