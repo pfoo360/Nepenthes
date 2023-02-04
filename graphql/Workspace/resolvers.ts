@@ -158,6 +158,78 @@ const resolvers = {
         role: "ADMIN",
       };
     },
+    updateUserRole: async (
+      _parent: any,
+      {
+        userId,
+        workspaceId,
+        role,
+      }: { userId: string; workspaceId: string; role: Role },
+      { req, res, user, session, prisma }: GraphQLContext
+    ): Promise<WorkspaceUser> => {
+      //check auth
+      if (!session || !user)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //check if user args all exist
+      if (
+        !userId ||
+        !workspaceId ||
+        (role !== ROLES.ADMIN &&
+          role !== ROLES.MANAGER &&
+          role !== ROLES.DEVELOPER)
+      )
+        throw new GraphQLError("Missing arguments.", {
+          extensions: { code: "INVALID INPUT(S)" },
+        });
+
+      //check if user making request is an ADMIN in the workspace
+      const workspaceUser = await prisma.workspaceUser.findUnique({
+        where: {
+          workspaceId_userId: { userId: user.id, workspaceId: workspaceId },
+        },
+      });
+      if (!workspaceUser || workspaceUser.role !== ROLES.ADMIN)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //---user making request is an ADMIN in the workspace, can now update another user's role
+
+      //make sure that the workspace has at least ONE(1) ADMIN user
+      const userToBeUpdated = await prisma.workspaceUser.findUnique({
+        where: { workspaceId_userId: { userId, workspaceId } },
+      });
+      if (!userToBeUpdated)
+        throw new GraphQLError("User to be updated does not exist.", {
+          extensions: { code: "INVALID INPUT(S)" },
+        });
+      //if the user to be updated is an ADMIN
+      //AND if there is ONE(1) or less ADMINS in a workspace we cannot continue
+      if (userToBeUpdated.role === ROLES.ADMIN) {
+        const numberOfAdmins = await prisma.workspaceUser.count({
+          where: { AND: { workspaceId, role: ROLES.ADMIN } },
+        });
+        console.log(`NUMBEROFADMINS FOR ${workspaceId}`, numberOfAdmins);
+        if (numberOfAdmins <= 1)
+          throw new GraphQLError("Workspace requires at least ONE(1) ADMIN", {
+            extensions: { code: "UNAUTHORIZED" },
+          });
+      }
+
+      const updatedUser = await prisma.workspaceUser.update({
+        where: { workspaceId_userId: { userId, workspaceId } },
+        data: { role },
+        select: {
+          user: { select: { id: true, username: true, email: true } },
+          role: true,
+        },
+      });
+
+      return updatedUser;
+    },
   },
 };
 

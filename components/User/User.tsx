@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { Role, User } from "../../types/types";
 import returnRoleColor from "../../utils/returnRoleColor";
+import UpdateRole from "../UpdateRole/UpdateRole";
 
 const User: FC<{ user: User; role: Role }> = ({ user, role }) => {
   const color = returnRoleColor(role);
@@ -11,7 +12,7 @@ const User: FC<{ user: User; role: Role }> = ({ user, role }) => {
       <h1 className="break-words text-2xl pb-2">{user.username}</h1>
       <h2 className="break-words text-base pb-[1px]">{user.email}</h2>
       <h3 className={`break-words text-xs pb-1`}>{role}</h3>
-      <div>buttons go here</div>
+      <UpdateRole user={user} role={role} />
     </div>
   );
 };

@@ -47,6 +47,26 @@ const operations = {
         }
       }
     `,
+    UPDATE_A_USERS_ROLE: gql`
+      mutation UpdateUserRole(
+        $userId: String!
+        $role: Role!
+        $workspaceId: String!
+      ) {
+        updateUserRole(
+          userId: $userId
+          role: $role
+          workspaceId: $workspaceId
+        ) {
+          user {
+            id
+            username
+            email
+          }
+          role
+        }
+      }
+    `,
   },
 };
 

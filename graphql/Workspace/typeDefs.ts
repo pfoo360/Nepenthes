@@ -29,6 +29,11 @@ const typeDefs = gql`
       role: Role!
       workspaceId: String!
     ): WorkspaceUser!
+    updateUserRole(
+      userId: String!
+      workspaceId: String!
+      role: Role!
+    ): WorkspaceUser!
   }
 `;
 
