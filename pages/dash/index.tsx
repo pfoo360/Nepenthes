@@ -14,8 +14,8 @@ const Dash: NextPage = (a) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="bg-gray-50 pt-4 flex flex-col justify-center items-center">
-        <MyWorkspace />
         <AddWorkspace />
+        <MyWorkspace />
       </div>
     </>
   );
