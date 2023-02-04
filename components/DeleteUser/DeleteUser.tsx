@@ -54,7 +54,8 @@ const DeleteUser: FC<{ user: User }> = ({ user }) => {
         //only ADMINs in a workspace can see the admin panel and delete users
         //if current user has come this far, then they are most likely an ADMIN in the current workspace
         //workspaceUserCtx cannot to updated manually, so if current user is deleting theselves, then force them back to dashboard page. This will also update workspaceUsersCtx, userCx, and workspaceCtx
-        push("/dash");
+        //push("/dash");
+        location.reload();
       }
 
       const oldCache = cache.readQuery<{
