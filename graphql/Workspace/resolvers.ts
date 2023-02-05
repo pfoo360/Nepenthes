@@ -4,6 +4,7 @@ import {
   CreateWorkspaceResponse,
   WorkspaceUser,
   Role,
+  UpdateWorkspaceResponse,
 } from "./../../types/types";
 import ROLES from "../../utils/role";
 
@@ -289,6 +290,57 @@ const resolvers = {
       });
 
       return deletedUser;
+    },
+    updateWorkspaceName: async (
+      _parent: any,
+      { workspaceId, newName }: { workspaceId: string; newName: string },
+      { req, res, user, session, prisma }: GraphQLContext
+    ): Promise<UpdateWorkspaceResponse> => {
+      //check auth
+      if (!session || !user)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //check if user args all exist and are valid
+      if (!workspaceId || !newName)
+        throw new GraphQLError("Missing arguments.", {
+          extensions: { code: "INVALID INPUT(S)" },
+        });
+      if (newName.length > 25)
+        throw new GraphQLError("Invalid arguments.", {
+          extensions: { code: "INVALID INPUT(S)" },
+        });
+
+      //check if user making request is an ADMIN in the workspace
+      const workspaceUser = await prisma.workspaceUser.findUnique({
+        where: {
+          workspaceId_userId: { userId: user.id, workspaceId: workspaceId },
+        },
+      });
+      if (!workspaceUser || workspaceUser.role !== ROLES.ADMIN)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //user making request is an ADMIN in workspace and can update workspace name
+      const updatedWorkspace = await prisma.workspace.update({
+        where: { id: workspaceId },
+        data: { name: newName },
+        select: {
+          id: true,
+          name: true,
+          workspaceUser: {
+            select: {
+              user: { select: { id: true, username: true, email: true } },
+              role: true,
+            },
+          },
+        },
+      });
+
+      console.log("UPDATENAME", updatedWorkspace, newName, workspaceUser);
+      return updatedWorkspace;
     },
   },
 };

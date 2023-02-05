@@ -38,6 +38,7 @@ const typeDefs = gql`
       userId: String!
       workspaceId: String!
     ): WorkspaceUser!
+    updateWorkspaceName(workspaceId: String!, newName: String!): Workspace!
   }
 `;
 

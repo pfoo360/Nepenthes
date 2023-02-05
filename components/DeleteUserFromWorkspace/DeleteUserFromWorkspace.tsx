@@ -10,7 +10,7 @@ import workspaceOperations from "../../graphql/Workspace/operations";
 import Error from "../Error/Error";
 import { useRouter } from "next/router";
 
-const DeleteUser: FC<{ user: User }> = ({ user }) => {
+const DeleteUserFromWorkspace: FC<{ user: User }> = ({ user }) => {
   //button is only visible if current user is ADMIN
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
@@ -158,4 +158,4 @@ const DeleteUser: FC<{ user: User }> = ({ user }) => {
   );
 };
 
-export default DeleteUser;
+export default DeleteUserFromWorkspace;

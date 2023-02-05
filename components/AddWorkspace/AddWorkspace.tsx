@@ -64,7 +64,7 @@ const AddWorkspace: FC<AddWorkSpaceProps> = () => {
           myWorkspaces: {
             role: Role;
             workspace: { id: string; name: string; __typename: "Workspace" };
-            __type: "MyWorkspace";
+            __typename: "MyWorkspace";
           }[];
         };
       }>({

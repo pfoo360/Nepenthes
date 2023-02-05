@@ -82,6 +82,14 @@ const operations = {
         }
       }
     `,
+    UPDATE_WORKSPACE_NAME: gql`
+      mutation UpdateWorkspaceName($workspaceId: String!, $newName: String!) {
+        updateWorkspaceName(workspaceId: $workspaceId, newName: $newName) {
+          id
+          name
+        }
+      }
+    `,
   },
 };
 

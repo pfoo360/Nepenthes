@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Role, User } from "../../types/types";
 import returnRoleColor from "../../utils/returnRoleColor";
-import DeleteUser from "../DeleteUser/DeleteUser";
+import DeleteUserFromWorkspace from "../DeleteUserFromWorkspace/DeleteUserFromWorkspace";
 import UpdateRole from "../UpdateRole/UpdateRole";
 
 const User: FC<{ user: User; role: Role }> = ({ user, role }) => {
@@ -15,7 +15,7 @@ const User: FC<{ user: User; role: Role }> = ({ user, role }) => {
       <h3 className={`break-words text-xs pb-1`}>{role}</h3>
       <div className="flex flex-row justify-between">
         <UpdateRole user={user} role={role} />
-        <DeleteUser user={user} />
+        <DeleteUserFromWorkspace user={user} />
       </div>
     </div>
   );

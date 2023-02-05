@@ -45,3 +45,9 @@ export interface WorkspaceUserProviderValue {
   userId: string;
   role: Role;
 }
+
+export interface UpdateWorkspaceResponse {
+  id: string;
+  name: string;
+  workspaceUser: WorkspaceUser[];
+}

@@ -3,6 +3,7 @@ import { Role } from "../../types/types";
 import { FC } from "react";
 import Link from "next/link";
 import returnRoleColor from "../../utils/returnRoleColor";
+import UpdateWorkspaceName from "../UpdateWorkspaceName/UpdateWorkspaceName";
 
 interface WorkspaceProps {
   role: Role;
@@ -16,13 +17,22 @@ const Workspace: FC<WorkspaceProps> = ({ role, workspace }) => {
   const color = returnRoleColor(role);
 
   return (
-    <Link
-      href={`/w/${workspace.id}`}
-      className={`bg-${color}-500 bg- hover:bg-${color}-600 text-slate-50 rounded-sm break-words w-11/12 mb-4 pl-3 py-2`}
+    <div
+      className={`bg-${color}-500 bg- hover:bg-${color}-600 text-slate-50 rounded-sm break-words w-11/12 mb-4 pl-3 py-2 flex flex-row justify-between items-center`}
     >
-      <h1 className="text-lg mb-1">{workspace.name}</h1>
-      <p className="text-xs">{role}</p>
-    </Link>
+      <Link href={`/w/${workspace.id}`}>
+        <h1 className="text-lg mb-1">{workspace.name}</h1>
+        <p className="text-xs">{role}</p>
+      </Link>
+      {role === ROLES.ADMIN ? (
+        <div>
+          <UpdateWorkspaceName
+            workspaceId={workspace.id}
+            oldWorkspaceName={workspace.name}
+          />
+        </div>
+      ) : null}
+    </div>
   );
 
   // if (ROLES.ADMIN === role)
