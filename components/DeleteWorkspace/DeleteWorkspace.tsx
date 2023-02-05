@@ -41,6 +41,7 @@ const DeleteWorkspace: FC<DeleteWorkspace> = ({
   >(workspaceOperations.Mutation.DELETE_WORKSPACE, {
     onError: (error, clientOptions) => {
       console.log(error);
+      setSubmitError(error.message);
     },
     update: (cache, { data }) => {
       if (!data) return;
@@ -89,12 +90,16 @@ const DeleteWorkspace: FC<DeleteWorkspace> = ({
       console.log("DELTEWORKSPACE OLD CACHE", oldCache);
       console.log("UPDATED CACHE", updatedCache);
     },
-    onCompleted: (data, clientOptions) => {},
+    onCompleted: (data, clientOptions) => {
+      setSubmitError("");
+      setIsModalOpen(false);
+    },
   });
 
   const handleNewNameInputSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     console.log(workspaceId);
+    setSubmitError("");
     await deleteWorkspace({ variables: { workspaceId } });
   };
 
