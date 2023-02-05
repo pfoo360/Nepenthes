@@ -27,7 +27,7 @@ const NavBar = () => {
     <>
       <nav className="bg-gray-50 w-screen h-9 px-4 flex flex-row justify-between items-center border-b-gray-200 border-b">
         <Link
-          href={`/w/${workspace?.id}`}
+          href={workspace?.id ? `/w/${workspace.id}` : `/dash`}
           className="text-indigo-500 text-lg hover:text-indigo-700"
         >
           nepenthes
