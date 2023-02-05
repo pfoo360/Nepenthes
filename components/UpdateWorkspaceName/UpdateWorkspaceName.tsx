@@ -73,7 +73,7 @@ const UpdateWorkspaceName: FC<UpdateWorkspaceNameProps> = ({
 
       if (!oldCache) return;
 
-      const updatedWorkspaceUserRole = {
+      const updatedMyWorkspace = {
         role: ROLES.ADMIN,
         workspace: {
           id: data.updateWorkspaceName.id,
@@ -83,11 +83,11 @@ const UpdateWorkspaceName: FC<UpdateWorkspaceNameProps> = ({
         __typename: "MyWorkspace",
       };
 
-      const updatedArray = oldCache.me.myWorkspaces.map((workspaceUserRole) => {
-        if (workspaceUserRole.workspace.id !== data.updateWorkspaceName.id)
-          return workspaceUserRole;
-        if (workspaceUserRole.workspace.id === data.updateWorkspaceName.id)
-          return updatedWorkspaceUserRole;
+      const updatedArray = oldCache.me.myWorkspaces.map((myWorkspace) => {
+        if (myWorkspace.workspace.id !== data.updateWorkspaceName.id)
+          return myWorkspace;
+        if (myWorkspace.workspace.id === data.updateWorkspaceName.id)
+          return updatedMyWorkspace;
       });
 
       cache.writeQuery({
@@ -127,7 +127,7 @@ const UpdateWorkspaceName: FC<UpdateWorkspaceNameProps> = ({
     <>
       <button
         onClick={handleModalOpen}
-        className={`py-0.5 px-1 bg-amber-400 rounded-sm text-gray-50 hover:bg-amber-500 active:bg-amber-600 focus:outline-none focus:ring focus:ring-amber-300 disabled:bg-amber-400`}
+        className={`mx-1 my-2 py-0.5 px-1 bg-amber-400 rounded-sm text-gray-50 hover:bg-amber-500 active:bg-amber-600 focus:outline-none focus:ring focus:ring-amber-300 disabled:bg-amber-400`}
       >
         Edit
       </button>

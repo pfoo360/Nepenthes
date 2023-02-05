@@ -90,6 +90,14 @@ const operations = {
         }
       }
     `,
+    DELETE_WORKSPACE: gql`
+      mutation DeleteWorkspace($workspaceId: String!) {
+        deleteWorkspace(workspaceId: $workspaceId) {
+          id
+          name
+        }
+      }
+    `,
   },
 };
 

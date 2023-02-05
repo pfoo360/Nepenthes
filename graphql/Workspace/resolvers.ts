@@ -4,7 +4,8 @@ import {
   CreateWorkspaceResponse,
   WorkspaceUser,
   Role,
-  UpdateWorkspaceResponse,
+  UpdateWorkspaceNameResponse,
+  DeleteWorkspaceResponse,
 } from "./../../types/types";
 import ROLES from "../../utils/role";
 
@@ -295,7 +296,7 @@ const resolvers = {
       _parent: any,
       { workspaceId, newName }: { workspaceId: string; newName: string },
       { req, res, user, session, prisma }: GraphQLContext
-    ): Promise<UpdateWorkspaceResponse> => {
+    ): Promise<UpdateWorkspaceNameResponse> => {
       //check auth
       if (!session || !user)
         throw new GraphQLError("Unauthorized.", {
@@ -341,6 +342,50 @@ const resolvers = {
 
       console.log("UPDATENAME", updatedWorkspace, newName, workspaceUser);
       return updatedWorkspace;
+    },
+    deleteWorkspace: async (
+      _parent: any,
+      { workspaceId }: { workspaceId: string },
+      { req, res, session, user, prisma }: GraphQLContext
+    ): Promise<DeleteWorkspaceResponse> => {
+      //check auth
+      if (!session || !user)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //check if user args all exist and are valid
+      if (!workspaceId)
+        throw new GraphQLError("Missing arguments.", {
+          extensions: { code: "INVALID INPUT(S)" },
+        });
+
+      //check if user making request is an ADMIN in the workspace
+      const workspaceUser = await prisma.workspaceUser.findUnique({
+        where: {
+          workspaceId_userId: { userId: user.id, workspaceId: workspaceId },
+        },
+      });
+      if (!workspaceUser || workspaceUser.role !== ROLES.ADMIN)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      const deletedWorkspace = await prisma.workspace.delete({
+        where: { id: workspaceId },
+        select: {
+          id: true,
+          name: true,
+          workspaceUser: {
+            select: {
+              user: { select: { id: true, username: true, email: true } },
+              role: true,
+            },
+          },
+        },
+      });
+      console.log("DELETED WKSPC", deletedWorkspace);
+      return deletedWorkspace;
     },
   },
 };
