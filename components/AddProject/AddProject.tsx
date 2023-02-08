@@ -101,18 +101,27 @@ const AddProject: FC = () => {
     node.focus();
   }, []);
 
-  const [createProject, { loading: isSubmitting }] = useMutation(
-    ProjectOperations.Mutation.CREATE_PROJECT,
+  const [createProject, { loading: isSubmitting }] = useMutation<
     {
-      onError: (error, clientOptions) => {},
-      update: (cache, { data }) => {
-        console.log("ADDPROJECTUPDATE", data);
-      },
-      onCompleted(data, clientOptions) {
-        console.log("ADDPROJECTCOMPLETE", data);
-      },
-    }
-  );
+      createProject: {
+        id: string;
+        name: string;
+        description: string | null;
+        workspaceId: string;
+      };
+    },
+    { projectName: string; projectDescription: string; workspaceId: string }
+  >(ProjectOperations.Mutation.CREATE_PROJECT, {
+    onError: (error, clientOptions) => {
+      console.log(error);
+    },
+    update: (cache, { data }) => {
+      console.log("ADDPROJECTUPDATE", data);
+    },
+    onCompleted(data, clientOptions) {
+      console.log("ADDPROJECTCOMPLETE", data);
+    },
+  });
 
   const handleAddProjectInputSubmit = async (
     e: MouseEvent<HTMLButtonElement>

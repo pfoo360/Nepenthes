@@ -34,16 +34,17 @@ model Workspace {
   name          String
   createdAt     DateTime        @default(now())
   workspaceUser WorkspaceUser[]
-  Project       Project[]
+  project       Project[]
 }
 
 model WorkspaceUser {
-  id          String    @id @default(cuid())
-  workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role        Role
+  id                   String                 @id @default(cuid())
+  workspaceId          String
+  workspace            Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  userId               String
+  user                 User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role                 Role
+  projectWorkspaceUser ProjectWorkspaceUser[]
 
   @@unique(fields: [workspaceId, userId])
 }
@@ -55,9 +56,20 @@ enum Role {
 }
 
 model Project {
-  id          String    @id @default(cuid())
-  name        String
-  description String?
-  workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  id                   String                 @id @default(cuid())
+  name                 String
+  description          String?
+  workspaceId          String
+  workspace            Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  projectWorkspaceUser ProjectWorkspaceUser[]
+}
+
+model ProjectWorkspaceUser {
+  id              String        @id @default(cuid())
+  projectId       String
+  project         Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workspaceUserId String
+  workspaceUser   WorkspaceUser @relation(fields: [workspaceUserId], references: [id], onDelete: Cascade)
+
+  @@unique(fields: [projectId, workspaceUserId])
 }

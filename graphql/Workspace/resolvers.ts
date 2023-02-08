@@ -76,7 +76,9 @@ const resolvers = {
       const workspace = await prisma.workspace.create({
         data: {
           name: workspaceName,
-          workspaceUser: { create: { userId: user.id, role: "ADMIN" } },
+          workspaceUser: {
+            create: { userId: user.id, role: ROLES.ADMIN as Role },
+          },
         },
         select: {
           id: true,

@@ -29,6 +29,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
   params,
+  query,
 }) => {
   //check if session and user exists
   const sessionAndUser = await getServerSessionAndUser(req, res);
@@ -36,6 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     return { redirect: { destination: "/signin", permanent: false } };
   }
   const { user, sessionToken } = sessionAndUser;
+  console.log("PROJECT QUERY AND PARAMS", params, query);
 
   //check if workspace id provided by client exists in db
   if (!params?.workspaceId || typeof params.workspaceId !== "string")

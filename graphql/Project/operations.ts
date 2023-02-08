@@ -13,7 +13,10 @@ const operations = {
           projectDescription: $projectDescription
           workspaceId: $workspaceId
         ) {
-          a
+          id
+          name
+          description
+          workspaceId
         }
       }
     `,

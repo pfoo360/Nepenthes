@@ -5,7 +5,7 @@ const typeDefs = gql`
     id: ID
     name: String
     description: String
-    workspace: Workspace
+    workspaceId: String
   }
 
   type Mutation {
@@ -13,7 +13,7 @@ const typeDefs = gql`
       projectName: String!
       projectDescription: String
       workspaceId: String!
-    ): Test
+    ): Project!
   }
 
   type Test {

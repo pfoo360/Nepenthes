@@ -61,8 +61,23 @@ const resolvers = {
         projectName,
         typeof projectDescription,
         projectDescription,
+        workspaceUser,
         workspaceId
       );
+
+      const project = await prisma.project.create({
+        data: {
+          name: projectName,
+          description: projectDescription,
+          workspaceId: workspaceUser.workspaceId,
+          projectWorkspaceUser: {
+            create: { workspaceUserId: workspaceUser.id },
+          },
+        },
+      });
+
+      console.log(project);
+      return project;
       return { a: true };
     },
   },
