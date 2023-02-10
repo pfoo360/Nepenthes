@@ -7,11 +7,13 @@ const operations = {
         $projectName: String!
         $projectDescription: String
         $workspaceId: String!
+        $selectedWorkspaceUserIds: [String]!
       ) {
         createProject(
           projectName: $projectName
           projectDescription: $projectDescription
           workspaceId: $workspaceId
+          selectedWorkspaceUserIds: $selectedWorkspaceUserIds
         ) {
           id
           name

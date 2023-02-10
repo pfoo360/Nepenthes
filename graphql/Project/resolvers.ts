@@ -10,10 +10,12 @@ const resolvers = {
         projectName,
         projectDescription,
         workspaceId,
+        selectedWorkspaceUserIds,
       }: {
         projectName: string;
         projectDescription: string | undefined;
         workspaceId: string;
+        selectedWorkspaceUserIds: string[];
       },
       { req, res, prisma, session, user }: GraphQLContext
     ) => {
@@ -50,35 +52,36 @@ const resolvers = {
         });
 
       console.log(
-        !projectName,
-        !workspaceId,
-        projectName.length > 25,
-        projectDescription && projectDescription.length > 120
-      );
-
-      console.log(
         "CREATEPROJECT",
         projectName,
         typeof projectDescription,
         projectDescription,
         workspaceUser,
-        workspaceId
+        workspaceId,
+        selectedWorkspaceUserIds
       );
 
+      //projectsWorkspaceUsers are the users that are apart of the project
+      const projectsWorkspaceUsers = [
+        ...Array.from(selectedWorkspaceUserIds, (workspaceUserId) => ({
+          workspaceUserId,
+        })),
+        { workspaceUserId: workspaceUser.id },
+      ];
+      console.log(projectsWorkspaceUsers);
       const project = await prisma.project.create({
         data: {
           name: projectName,
           description: projectDescription,
           workspaceId: workspaceUser.workspaceId,
           projectWorkspaceUser: {
-            create: { workspaceUserId: workspaceUser.id },
+            create: projectsWorkspaceUsers,
           },
         },
       });
 
       console.log(project);
       return project;
-      return { a: true };
     },
   },
 };

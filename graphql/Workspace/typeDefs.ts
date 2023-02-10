@@ -8,6 +8,7 @@ const typeDefs = gql`
   }
 
   type WorkspaceUser {
+    id: ID
     user: User
     role: Role
   }

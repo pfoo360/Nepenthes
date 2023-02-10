@@ -15,6 +15,18 @@ const operations = {
         }
       }
     `,
+    GET_CURRENT_USERS_PROJECTS: gql`
+      query GetCurrentUsersProjects($workspaceId: String!) {
+        me {
+          myProjects(workspaceId: $workspaceId) {
+            id
+            name
+            description
+            workspaceId
+          }
+        }
+      }
+    `,
   },
   Mutation: {
     CREATE_USER: gql`

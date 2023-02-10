@@ -15,6 +15,7 @@ const typeDefs = gql`
   type Me {
     myAccount: User!
     myWorkspaces: [MyWorkspace]!
+    myProjects(workspaceId: String!): [Project]!
   }
 
   type MyWorkspace {

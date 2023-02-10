@@ -13,11 +13,8 @@ const typeDefs = gql`
       projectName: String!
       projectDescription: String
       workspaceId: String!
+      selectedWorkspaceUserIds: [String]!
     ): Project!
-  }
-
-  type Test {
-    a: Boolean
   }
 `;
 

@@ -27,7 +27,7 @@ const NavBar = () => {
     <>
       <nav className="bg-gray-50 w-screen h-9 px-4 flex flex-row justify-between items-center border-b-gray-200 border-b">
         <Link
-          href={workspace?.id ? `/w/${workspace.id}` : `/dash`}
+          href={workspace?.id ? `/workspace/${workspace.id}` : `/dash`}
           className="text-indigo-500 text-lg hover:text-indigo-700"
         >
           nepenthes
@@ -62,19 +62,19 @@ const NavBar = () => {
             {workspaceUser?.role}
           </p>
           <Link
-            href={`/w/${workspace?.id}`}
+            href={`/workspace/${workspace?.id}`}
             className="block text-gray-500 hover:text-indigo-500 mt-4 text-3xl px-4"
           >
             home
           </Link>
           <Link
-            href={`/p/${workspace?.id}`}
+            href={`/projects/${workspace?.id}`}
             className="block text-gray-500 hover:text-indigo-500 mt-4 text-3xl px-4"
           >
             projects
           </Link>
           <Link
-            href={`/t/${workspace?.id}`}
+            href={`/tickets/${workspace?.id}`}
             className="block text-gray-500 hover:text-indigo-500 mt-4 text-3xl px-4"
           >
             tickets
@@ -83,7 +83,7 @@ const NavBar = () => {
             <>
               <div className="w-11/12 h-px rounded-md bg-gray-200 mt-32" />
               <Link
-                href={`/a/${workspace?.id}`}
+                href={`/admin/${workspace?.id}`}
                 className="block text-indigo-500 hover:text-indigo-700 mt-4 text-3xl px-4"
               >
                 admin

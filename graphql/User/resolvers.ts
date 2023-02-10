@@ -1,6 +1,7 @@
 import { GraphQLError } from "graphql";
 import { GraphQLContext, CreateUserResponse, User } from "../../types/types";
 import bcrypt from "bcrypt";
+import ROLES from "../../utils/role";
 
 const resolvers = {
   Query: {
@@ -42,6 +43,7 @@ const resolvers = {
               name: true,
               workspaceUser: {
                 select: {
+                  id: true,
                   user: { select: { id: true, username: true, email: true } },
                   role: true,
                 },
@@ -54,6 +56,45 @@ const resolvers = {
       console.log("MYWORKSPACE", myWorkspace);
 
       return myWorkspace;
+    },
+    myProjects: async (
+      parent: User,
+      { workspaceId }: { workspaceId: string },
+      { req, res, session, user, prisma }: GraphQLContext
+    ) => {
+      console.log(parent, workspaceId);
+      //check if the user is apart of the workspace
+      const workspaceUser = await prisma.workspaceUser.findUnique({
+        where: { workspaceId_userId: { userId: parent.id, workspaceId } },
+      });
+      if (!workspaceUser)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //if user is an ADMIN in the workspace, return all projects that exists in the workspace
+      if (workspaceUser.role === ROLES.ADMIN) {
+        const projects = await prisma.project.findMany({
+          where: { workspaceId },
+        });
+        console.log(workspaceUser.role, projects);
+        return projects;
+      }
+      //if user is a MANAGER or DEVELOPER in the workspace, return the projects they are apart of
+      if (
+        workspaceUser.role === ROLES.MANAGER ||
+        workspaceUser.role === ROLES.DEVELOPER
+      ) {
+        const projects = await prisma.project.findMany({
+          where: {
+            projectWorkspaceUser: {
+              some: { workspaceUserId: workspaceUser.id },
+            },
+          },
+        });
+        console.log(workspaceUser.role, projects);
+        return projects;
+      }
     },
   },
   Mutation: {

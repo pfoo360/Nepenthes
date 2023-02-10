@@ -42,6 +42,7 @@ const resolvers = {
       const workspaceUsers = await prisma.workspaceUser.findMany({
         where: { workspaceId },
         select: {
+          id: true,
           user: { select: { id: true, username: true, email: true } },
           role: true,
         },
@@ -85,6 +86,7 @@ const resolvers = {
           name: true,
           workspaceUser: {
             select: {
+              id: true,
               user: { select: { id: true, email: true, username: true } },
               role: true,
             },
@@ -151,6 +153,7 @@ const resolvers = {
       const newlyCreatedWorkspaceUser = await prisma.workspaceUser.create({
         data: { workspaceId, userId: foundUser.id, role },
         select: {
+          id: true,
           user: { select: { id: true, username: true, email: true } },
           role: true,
         },
@@ -158,6 +161,7 @@ const resolvers = {
 
       return newlyCreatedWorkspaceUser;
       return {
+        id: "12323",
         user: { id: "123", username: "test", email: "fdsafd" },
         role: "ADMIN",
       };
@@ -227,6 +231,7 @@ const resolvers = {
         where: { workspaceId_userId: { userId, workspaceId } },
         data: { role },
         select: {
+          id: true,
           user: { select: { id: true, username: true, email: true } },
           role: true,
         },
@@ -238,7 +243,7 @@ const resolvers = {
       _parent: any,
       { userId, workspaceId }: { userId: string; workspaceId: string },
       { req, res, session, user, prisma }: GraphQLContext
-    ) => {
+    ): Promise<WorkspaceUser> => {
       //check auth
       if (!session || !user)
         throw new GraphQLError("Unauthorized.", {
@@ -287,6 +292,7 @@ const resolvers = {
       const deletedUser = await prisma.workspaceUser.delete({
         where: { workspaceId_userId: { userId, workspaceId } },
         select: {
+          id: true,
           user: { select: { id: true, username: true, email: true } },
           role: true,
         },
@@ -335,6 +341,7 @@ const resolvers = {
           name: true,
           workspaceUser: {
             select: {
+              id: true,
               user: { select: { id: true, username: true, email: true } },
               role: true,
             },
@@ -380,6 +387,7 @@ const resolvers = {
           name: true,
           workspaceUser: {
             select: {
+              id: true,
               user: { select: { id: true, username: true, email: true } },
               role: true,
             },

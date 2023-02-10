@@ -9,8 +9,16 @@ export interface User {
 
 export type Role = "ADMIN" | "MANAGER" | "DEVELOPER";
 export interface WorkspaceUser {
+  id: string;
   user: User;
   role: Role;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  description: string;
+  workspaceId: string;
 }
 
 export interface GraphQLContext<T = any> {
