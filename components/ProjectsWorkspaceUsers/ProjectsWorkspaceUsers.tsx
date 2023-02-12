@@ -37,8 +37,13 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
   ] = useState(listOfWorkspaceUsersNotApartOfTheProject);
 
   useEffect(() => {
+    console.log("USEEFFECT1", page, projectCtx?.id, workspaceCtx?.id);
     if (loading) return;
+    console.log("USEEFFECT2");
     if (!projectCtx?.id || !workspaceCtx?.id) return;
+    console.log("USEEFFECT3");
+    if (page < 1) return;
+    console.log("USEEFFECT4");
 
     getProjectsWorkspaceUsers({
       variables: {
@@ -47,7 +52,7 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
         page,
       },
     });
-  }, [page]);
+  }, [page, projectCtx?.id, workspaceCtx?.id]);
 
   const [getProjectsWorkspaceUsers, { loading, error, data }] = useLazyQuery<
     {

@@ -3,6 +3,7 @@ import getServerSessionAndUser from "../../../utils/getServerSessionAndUser";
 import prisma from "../../../lib/prisma";
 import ROLES from "../../../utils/role";
 import ProjectsWorkspaceUsers from "../../../components/ProjectsWorkspaceUsers/ProjectsWorkspaceUsers";
+import DeleteProject from "../../../components/DeleteProject/DeleteProject";
 import NavBar from "../../../components/NavBar/NavBar";
 import { FC } from "react";
 import { Role, User } from "../../../types/types";
@@ -34,6 +35,7 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
             listOfWorkspaceUsersNotApartOfTheProject
           }
         />
+        <DeleteProject />
       </div>
     </>
   );
