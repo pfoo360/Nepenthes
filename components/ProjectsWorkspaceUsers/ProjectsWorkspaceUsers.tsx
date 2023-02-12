@@ -11,14 +11,13 @@ import AddWorkspaceUserToProject from "../AddWorkspaceUserToProject/AddWorkspace
 import DeleteWorkspaceUserFromProject from "../DeleteWorkspaceUserFromProject/DeleteWorkspaceUserFromProject";
 
 //todo: listOfWOrkspaceUsersNotapartoftheproject state and pass the state down
-//todo: update delete user
-//todo: update add user
+//todo: update delete user; send setstate fn (ifelse update cache and then update setstate fn)
+//todo: update add user; send state variable to display names; since addMany does not return back rows added, just keep the force reload on success
 
 interface ProjectsWorkspaceUsersProps {
   count: number;
   listOfWorkspaceUsersNotApartOfTheProject: Array<{
     id: string;
-    workspaceId: string;
     user: User;
     role: Role;
   }>;
@@ -36,10 +35,15 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
   const projectCtx = useProjectContext();
 
   const [page, setPage] = useState(count > 0 ? 1 : 0);
+  const [
+    workspaceUsersNotApartOfTheProject,
+    setWorkspaceUsersNotApartOfTheProject,
+  ] = useState(listOfWorkspaceUsersNotApartOfTheProject);
 
   useEffect(() => {
     if (loading) return;
     if (!projectCtx?.id || !workspaceCtx?.id) return;
+
     getProjectsWorkspaceUsers({
       variables: {
         projectId: projectCtx.id,
@@ -85,7 +89,7 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
     projectCtx.workspaceId !== workspaceUserCtx.workspaceId
   )
     return null;
-  //if (!count) return null;
+  if (count === null || count === undefined) return null;
 
   return (
     <div className="flex flex-col">
@@ -95,8 +99,8 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
             <div className=" flex items-center">
               <h1 className="text-2xl font-medium text-gray-900 pl-6">Team</h1>
               <AddWorkspaceUserToProject
-                listOfWorkspaceUsersNotApartOfTheProject={
-                  listOfWorkspaceUsersNotApartOfTheProject
+                workspaceUsersNotApartOfTheProject={
+                  workspaceUsersNotApartOfTheProject
                 }
               />
             </div>
@@ -147,6 +151,9 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
                               projectWorkspaceUserId={id}
                               workspaceUser={workspaceUser}
                               page={page}
+                              setWorkspaceUsersNotApartOfTheProject={
+                                setWorkspaceUsersNotApartOfTheProject
+                              }
                             />
                           </td>
                         </tr>

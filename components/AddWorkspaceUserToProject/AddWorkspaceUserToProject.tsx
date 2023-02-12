@@ -10,26 +10,21 @@ import Modal from "../Modal/Modal";
 import Error from "../Error/Error";
 
 interface AddWorkspaceUserToProjectProps {
-  listOfWorkspaceUsersNotApartOfTheProject: Array<{
+  workspaceUsersNotApartOfTheProject: Array<{
     id: string;
-    workspaceId: string;
     user: User;
     role: Role;
   }>;
 }
 
 const AddWorkspaceUserToProject: FC<AddWorkspaceUserToProjectProps> = ({
-  listOfWorkspaceUsersNotApartOfTheProject,
+  workspaceUsersNotApartOfTheProject,
 }) => {
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
   const projectCtx = useProjectContext();
 
-  const [
-    workspaceUsersNotApartOfTheProject,
-    setWorkspaceUsersNotApartOfTheProject,
-  ] = useState(listOfWorkspaceUsersNotApartOfTheProject);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedWorkspaceUserIds, setSelectedWorkspaceUserIds] = useState<
     Array<string>
@@ -128,14 +123,9 @@ const AddWorkspaceUserToProject: FC<AddWorkspaceUserToProjectProps> = ({
             disabled={isSubmitting}
             className={`border border-gray-300 rounded-sm px-2 w-full h-32 py-1 mb-6 text-base text-gray-900 placeholder-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200 overflow-y-scroll `}
           >
-            {listOfWorkspaceUsersNotApartOfTheProject.map(
-              ({ id, role, user, workspaceId }) => (
-                <option
-                  key={id}
-                  value={id}
-                >{`${user.username}, ${role}`}</option>
-              )
-            )}
+            {workspaceUsersNotApartOfTheProject.map(({ id, role, user }) => (
+              <option key={id} value={id}>{`${user.username}, ${role}`}</option>
+            ))}
           </select>
           {submitError ? <Error message={submitError} /> : null}
           <div className="flex flex-row justify-end mt-4">

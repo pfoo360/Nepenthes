@@ -11,7 +11,6 @@ interface ProjectDetailsProps {
   count: number;
   listOfWorkspaceUsersNotApartOfTheProject: Array<{
     id: string;
-    workspaceId: string;
     user: User;
     role: Role;
   }>;
@@ -154,7 +153,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
       select: {
         id: true,
-        workspaceId: true,
         user: { select: { id: true, username: true, email: true } },
         role: true,
       },

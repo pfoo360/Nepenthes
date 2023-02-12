@@ -1,4 +1,4 @@
-import { FC, useState, MouseEvent } from "react";
+import { FC, useState, MouseEvent, Dispatch, SetStateAction } from "react";
 import useUserContext from "../../hooks/useUserContext";
 import useWorkspaceContext from "../../hooks/useWorkspaceContext";
 import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
@@ -14,11 +14,25 @@ interface DeleteWorkspaceUserFromProjectProps {
   projectWorkspaceUserId: string;
   workspaceUser: { id: string; user: User; role: Role };
   page: number;
+  setWorkspaceUsersNotApartOfTheProject: Dispatch<
+    SetStateAction<
+      {
+        id: string;
+        user: User;
+        role: Role;
+      }[]
+    >
+  >;
 }
 
 const DeleteWorkspaceUserFromProject: FC<
   DeleteWorkspaceUserFromProjectProps
-> = ({ projectWorkspaceUserId, workspaceUser, page }) => {
+> = ({
+  projectWorkspaceUserId,
+  workspaceUser,
+  page,
+  setWorkspaceUsersNotApartOfTheProject,
+}) => {
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
@@ -42,7 +56,12 @@ const DeleteWorkspaceUserFromProject: FC<
     deleteWorkspaceUserFromProject,
     { loading: isSubmitting, data, error },
   ] = useMutation<
-    { deleteWorkspaceUserFromProject: { id: string; user: User; role: Role } },
+    {
+      deleteWorkspaceUserFromProject: {
+        id: string;
+        workspaceUser: { id: string; user: User; role: Role };
+      };
+    },
     { workspaceId: string; projectId: string; projectWorkspaceUserId: string }
   >(projectOperations.Mutation.DELETE_WORKSPACEUSER_FROM_PROJECT, {
     onError: (error, clientOptions) => {
@@ -81,10 +100,20 @@ const DeleteWorkspaceUserFromProject: FC<
         data: { ...oldCache, getProjectsWorkspaceUsers: updatedArray },
       });
 
-      console.log(
-        "DELETEWORKSPACEUSERFROMPROJECT",
-        data.deleteWorkspaceUserFromProject.id
-      );
+      setWorkspaceUsersNotApartOfTheProject((prev) => {
+        console.log(prev);
+        console.log(data.deleteWorkspaceUserFromProject.workspaceUser);
+        return [
+          ...prev,
+          {
+            id: data.deleteWorkspaceUserFromProject.workspaceUser.id,
+            user: data.deleteWorkspaceUserFromProject.workspaceUser.user,
+            role: data.deleteWorkspaceUserFromProject.workspaceUser.role,
+          },
+        ];
+      });
+
+      console.log("DELETEWORKSPACEUSERFROMPROJECT", data);
       console.log("old", oldCache);
 
       const updatedCache = cache.readQuery<{
