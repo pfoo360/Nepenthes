@@ -10,10 +10,6 @@ import USERS_PER_PAGE from "../../utils/usersPerPage";
 import AddWorkspaceUserToProject from "../AddWorkspaceUserToProject/AddWorkspaceUserToProject";
 import DeleteWorkspaceUserFromProject from "../DeleteWorkspaceUserFromProject/DeleteWorkspaceUserFromProject";
 
-//todo: listOfWOrkspaceUsersNotapartoftheproject state and pass the state down
-//todo: update delete user; send setstate fn (ifelse update cache and then update setstate fn)
-//todo: update add user; send state variable to display names; since addMany does not return back rows added, just keep the force reload on success
-
 interface ProjectsWorkspaceUsersProps {
   count: number;
   listOfWorkspaceUsersNotApartOfTheProject: Array<{
