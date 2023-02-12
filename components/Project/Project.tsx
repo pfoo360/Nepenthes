@@ -1,14 +1,8 @@
 import { FC } from "react";
 import Link from "next/link";
+import { Project } from "../../types/types";
 
-interface ProjectProps {
-  id: string;
-  name: string;
-  description: string;
-  workspaceId: string;
-}
-
-const Project: FC<ProjectProps> = ({ id, name, description, workspaceId }) => {
+const Project: FC<Project> = ({ id, name, description, workspaceId }) => {
   return (
     <Link
       href={`/p/${workspaceId}/${id}`}

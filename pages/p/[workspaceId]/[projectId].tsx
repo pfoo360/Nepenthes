@@ -2,9 +2,42 @@ import type { GetServerSideProps, NextPage } from "next";
 import getServerSessionAndUser from "../../../utils/getServerSessionAndUser";
 import prisma from "../../../lib/prisma";
 import ROLES from "../../../utils/role";
+import ProjectsWorkspaceUsers from "../../../components/ProjectsWorkspaceUsers/ProjectsWorkspaceUsers";
+import NavBar from "../../../components/NavBar/NavBar";
+import { FC } from "react";
+import { Role, User } from "../../../types/types";
 
-const ProjectDetails = () => {
-  return <div>projectdetails</div>;
+interface ProjectDetailsProps {
+  count: number;
+  listOfWorkspaceUsersNotApartOfTheProject: Array<{
+    id: string;
+    workspaceId: string;
+    user: User;
+    role: Role;
+  }>;
+}
+
+const ProjectDetails: FC<ProjectDetailsProps> = ({
+  count,
+  listOfWorkspaceUsersNotApartOfTheProject,
+}) => {
+  console.log(
+    "listOfWorkspaceUsersNotApartOfTheProject",
+    listOfWorkspaceUsersNotApartOfTheProject
+  );
+  return (
+    <>
+      <NavBar />
+      <div className="w-full">
+        <ProjectsWorkspaceUsers
+          count={count}
+          listOfWorkspaceUsersNotApartOfTheProject={
+            listOfWorkspaceUsersNotApartOfTheProject
+          }
+        />
+      </div>
+    </>
+  );
 };
 
 export default ProjectDetails;
@@ -51,7 +84,10 @@ export const getServerSideProps: GetServerSideProps = async ({
     return { redirect: { destination: "/dash", permanent: false } };
 
   //check if project id provided by client exists in db AND if project belongs to the current workspace
-  const project = await prisma.project.findUnique({ where: { id: projectId } });
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    select: { id: true, name: true, description: true, workspaceId: true },
+  });
   if (!project) return { notFound: true };
   if (project.workspaceId !== workspace.id)
     return { redirect: { destination: "/dash", permanent: false } };
@@ -77,6 +113,23 @@ export const getServerSideProps: GetServerSideProps = async ({
       return { redirect: { destination: "/dash", permanent: false } };
   }
 
+  //find all users that are apart of the project and the count
+  const projectWorkspaceUserAndCount = await Promise.all([
+    prisma.projectWorkspaceUser.findMany({
+      where: { projectId: projectId },
+      select: {
+        workspaceUser: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    }),
+    prisma.projectWorkspaceUser.count({
+      where: { projectId },
+    }),
+  ]);
+
   // console.log(user, sessionToken);
   // console.log(workspaceId, projectId);
   // console.log(project);
@@ -84,5 +137,44 @@ export const getServerSideProps: GetServerSideProps = async ({
   // console.log(workspaceUser);
   // console.log(project);
 
-  return { props: { user, workspace, workspaceUser } };
+  const count = projectWorkspaceUserAndCount[1];
+
+  //used in next db query to find the workspace users that are NOT apart of the project
+  const listOfWorkspaceUserIdsThatBelongToUsersThatAreAlreadyApartOfTheProject =
+    Array.from(projectWorkspaceUserAndCount[0], (x) => x.workspaceUser);
+
+  console.log(
+    listOfWorkspaceUserIdsThatBelongToUsersThatAreAlreadyApartOfTheProject
+  );
+  const listOfWorkspaceUsersNotApartOfTheProject =
+    await prisma.workspaceUser.findMany({
+      where: {
+        workspaceId: workspaceId,
+        NOT: listOfWorkspaceUserIdsThatBelongToUsersThatAreAlreadyApartOfTheProject,
+      },
+      select: {
+        id: true,
+        workspaceId: true,
+        user: { select: { id: true, username: true, email: true } },
+        role: true,
+      },
+    });
+
+  console.log("************", listOfWorkspaceUsersNotApartOfTheProject);
+  console.log("************", project);
+
+  //todo: find all remaining workspaceUsers that do not exist in current projectWorkspaceUsers
+  //find all projectWorkspaceUsers for table, create button to add new workspaceUsers to project, update cache for table, update list of remaining workspaceUseres by filtering out who was added?, create button to delete workspaceUsers from project
+  //delete project, update project name? and desc?
+
+  return {
+    props: {
+      user,
+      workspace,
+      workspaceUser,
+      project,
+      count,
+      listOfWorkspaceUsersNotApartOfTheProject,
+    },
+  };
 };

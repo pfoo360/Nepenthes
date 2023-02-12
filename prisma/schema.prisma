@@ -63,6 +63,8 @@ model Project {
   workspace            Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   createdAt            DateTime               @default(now())
   projectWorkspaceUser ProjectWorkspaceUser[]
+
+  @@unique(fields: [id, workspaceId])
 }
 
 model ProjectWorkspaceUser {

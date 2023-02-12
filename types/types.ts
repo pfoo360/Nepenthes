@@ -17,7 +17,7 @@ export interface WorkspaceUser {
 export interface Project {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   workspaceId: string;
 }
 

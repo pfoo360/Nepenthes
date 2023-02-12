@@ -8,6 +8,22 @@ const typeDefs = gql`
     workspaceId: String
   }
 
+  type ProjectsWorkspaceUser {
+    id: String
+    workspaceUser: WorkspaceUser
+  }
+
+  type AddWorkspaceUserToProjectResponse {
+    count: Int
+  }
+
+  type Query {
+    getProjectsWorkspaceUsers(
+      projectId: String!
+      workspaceId: String!
+      page: Int!
+    ): [ProjectsWorkspaceUser]!
+  }
   type Mutation {
     createProject(
       projectName: String!
@@ -15,6 +31,16 @@ const typeDefs = gql`
       workspaceId: String!
       selectedWorkspaceUserIds: [String]!
     ): Project!
+    addWorkspaceUserToProject(
+      selectedWorkspaceUserIds: [String]!
+      workspaceId: String!
+      projectId: String!
+    ): AddWorkspaceUserToProjectResponse!
+    deleteWorkspaceUserFromProject(
+      workspaceId: String!
+      projectId: String!
+      projectWorkspaceUserId: String!
+    ): ProjectsWorkspaceUser!
   }
 `;
 
