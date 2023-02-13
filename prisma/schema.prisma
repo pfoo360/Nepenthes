@@ -45,6 +45,8 @@ model WorkspaceUser {
   user                 User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   role                 Role
   projectWorkspaceUser ProjectWorkspaceUser[]
+  ticketSubmitter      TicketSubmitter[]
+  ticketDeveloper      TicketDeveloper[]
 
   @@unique(fields: [workspaceId, userId])
 }
@@ -63,6 +65,7 @@ model Project {
   workspace            Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   createdAt            DateTime               @default(now())
   projectWorkspaceUser ProjectWorkspaceUser[]
+  ticket               Ticket[]
 
   @@unique(fields: [id, workspaceId])
 }
@@ -75,4 +78,54 @@ model ProjectWorkspaceUser {
   workspaceUser   WorkspaceUser @relation(fields: [workspaceUserId], references: [id], onDelete: Cascade)
 
   @@unique(fields: [projectId, workspaceUserId])
+}
+
+model Ticket {
+  id              String            @id @default(cuid())
+  title           String
+  description     String?
+  ticketSubmitter TicketSubmitter[]
+  ticketDeveloper TicketDeveloper[]
+  projectId       String
+  project         Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  priority        Priority
+  status          Status
+  type            Type
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @default(now())
+}
+
+model TicketSubmitter {
+  id          String        @id @default(cuid())
+  ticketId    String
+  ticket      Ticket        @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  submitterId String
+  submitter   WorkspaceUser @relation(fields: [submitterId], references: [id], onDelete: Cascade)
+}
+
+model TicketDeveloper {
+  id          String        @id @default(cuid())
+  ticketId    String
+  ticket      Ticket        @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  developerId String
+  developer   WorkspaceUser @relation(fields: [developerId], references: [id], onDelete: Cascade)
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Status {
+  ONGOING
+  RESOLVED
+}
+
+enum Type {
+  BUG
+  ISSUE
+  ERROR
+  FEATURE
+  OTHER
 }

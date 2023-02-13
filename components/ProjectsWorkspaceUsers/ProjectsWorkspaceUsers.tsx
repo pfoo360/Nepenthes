@@ -1,4 +1,4 @@
-import { useState, useEffect, FC } from "react";
+import { useState, useEffect, FC, Dispatch, SetStateAction } from "react";
 import { useLazyQuery } from "@apollo/client";
 import projectOperations from "../../graphql/Project/operations";
 import useUserContext from "../../hooks/useUserContext";
@@ -12,16 +12,26 @@ import DeleteWorkspaceUserFromProject from "../DeleteWorkspaceUserFromProject/De
 
 interface ProjectsWorkspaceUsersProps {
   count: number;
-  listOfWorkspaceUsersNotApartOfTheProject: Array<{
+  workspaceUsersNotApartOfTheProject: Array<{
     id: string;
     user: User;
     role: Role;
   }>;
+  setWorkspaceUsersNotApartOfTheProject: Dispatch<
+    SetStateAction<
+      {
+        id: string;
+        user: User;
+        role: Role;
+      }[]
+    >
+  >;
 }
 
 const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
   count,
-  listOfWorkspaceUsersNotApartOfTheProject,
+  workspaceUsersNotApartOfTheProject,
+  setWorkspaceUsersNotApartOfTheProject,
 }) => {
   const MAX_NUM_OF_PAGES = Math.ceil(count / USERS_PER_PAGE);
 
@@ -31,10 +41,6 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
   const projectCtx = useProjectContext();
 
   const [page, setPage] = useState(count > 0 ? 1 : 0);
-  const [
-    workspaceUsersNotApartOfTheProject,
-    setWorkspaceUsersNotApartOfTheProject,
-  ] = useState(listOfWorkspaceUsersNotApartOfTheProject);
 
   useEffect(() => {
     console.log("USEEFFECT1", page, projectCtx?.id, workspaceCtx?.id);

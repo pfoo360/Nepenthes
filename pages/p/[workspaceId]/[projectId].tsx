@@ -5,7 +5,7 @@ import ROLES from "../../../utils/role";
 import ProjectsWorkspaceUsers from "../../../components/ProjectsWorkspaceUsers/ProjectsWorkspaceUsers";
 import DeleteProject from "../../../components/DeleteProject/DeleteProject";
 import NavBar from "../../../components/NavBar/NavBar";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Role, User } from "../../../types/types";
 
 interface ProjectDetailsProps {
@@ -25,13 +25,19 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
     "listOfWorkspaceUsersNotApartOfTheProject",
     listOfWorkspaceUsersNotApartOfTheProject
   );
+
+  const [
+    workspaceUsersNotApartOfTheProject,
+    setWorkspaceUsersNotApartOfTheProject,
+  ] = useState(listOfWorkspaceUsersNotApartOfTheProject);
   return (
     <>
       <NavBar />
       <ProjectsWorkspaceUsers
         count={count}
-        listOfWorkspaceUsersNotApartOfTheProject={
-          listOfWorkspaceUsersNotApartOfTheProject
+        workspaceUsersNotApartOfTheProject={workspaceUsersNotApartOfTheProject}
+        setWorkspaceUsersNotApartOfTheProject={
+          setWorkspaceUsersNotApartOfTheProject
         }
       />
       <DeleteProject />
