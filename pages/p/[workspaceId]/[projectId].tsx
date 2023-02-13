@@ -42,9 +42,6 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
 
   return (
     <>
-      <div>{JSON.stringify(workspaceUsersNotApartOfTheProject)}</div>
-      <div>--------------------------</div>
-      <div>{JSON.stringify(workspaceUsersApartOfTheProject)}</div>
       <NavBar />
       <ProjectsWorkspaceUsers
         count={count}
