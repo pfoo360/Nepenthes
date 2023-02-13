@@ -28,15 +28,13 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
   return (
     <>
       <NavBar />
-      <div className="w-full">
-        <ProjectsWorkspaceUsers
-          count={count}
-          listOfWorkspaceUsersNotApartOfTheProject={
-            listOfWorkspaceUsersNotApartOfTheProject
-          }
-        />
-        <DeleteProject />
-      </div>
+      <ProjectsWorkspaceUsers
+        count={count}
+        listOfWorkspaceUsersNotApartOfTheProject={
+          listOfWorkspaceUsersNotApartOfTheProject
+        }
+      />
+      <DeleteProject />
     </>
   );
 };
