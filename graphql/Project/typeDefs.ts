@@ -41,6 +41,7 @@ const typeDefs = gql`
       projectId: String!
       projectWorkspaceUserId: String!
     ): ProjectsWorkspaceUser!
+    deleteProject(workspaceId: String!, projectId: String!): Project!
   }
 `;
 

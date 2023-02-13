@@ -8,6 +8,7 @@ import useProjectContext from "../../hooks/useProjectContext";
 import { User, Role } from "../../types/types";
 import Modal from "../Modal/Modal";
 import Error from "../Error/Error";
+import ROLES from "../../utils/role";
 
 interface AddWorkspaceUserToProjectProps {
   workspaceUsersNotApartOfTheProject: Array<{
@@ -63,6 +64,11 @@ const AddWorkspaceUserToProject: FC<AddWorkspaceUserToProjectProps> = ({
   if (
     projectCtx.workspaceId !== workspaceCtx.id ||
     projectCtx.workspaceId !== workspaceUserCtx.workspaceId
+  )
+    return null;
+  if (
+    workspaceUserCtx.role !== ROLES.ADMIN &&
+    workspaceUserCtx.role !== ROLES.MANAGER
   )
     return null;
 

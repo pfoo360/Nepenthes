@@ -355,8 +355,8 @@ const resolvers = {
           extensions: { code: "UNAUTHORIZED" },
         });
 
-      //if user making the delete request is a MANAGER in the workspace, then make sure they are assigned to the project first; MANAGERS can only delete projects that are assigned to them
-      //if user making the delete request is a ADMIN in the workspace, they are allowed to delete the project even if they are NOT assigned to it
+      //if user making the delete request is a MANAGER in the workspace, then make sure they are assigned to the project first; MANAGERS can only delete project's team members if the MANAGER is apart of the project too
+      //if user making the delete request is a ADMIN in the workspace, they are allowed to delete project's team members even if ADMIN is NOT assigned to it
       if (workspaceUser.role === ROLES.MANAGER) {
         const isManagerApartOfTheProject =
           await prisma.projectWorkspaceUser.findUnique({
@@ -396,6 +396,80 @@ const resolvers = {
       console.log(deletedProjectWorkspaceUser);
 
       return deletedProjectWorkspaceUser;
+    },
+    deleteProject: async (
+      _parent: any,
+      { workspaceId, projectId }: { workspaceId: string; projectId: string },
+      { req, res, prisma, user, session }: GraphQLContext
+    ) => {
+      //check auth
+      if (!session || !user)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      //check if args exist
+      if (!workspaceId || !projectId)
+        throw new GraphQLError("Invalid argument(s).", {
+          extensions: { code: "INVALID INPUT(S)" },
+        });
+
+      //check if user making request is an ADMIN or MANAGER in the workspace
+      const workspaceUser = await prisma.workspaceUser.findUnique({
+        where: {
+          workspaceId_userId: { userId: user.id, workspaceId },
+        },
+      });
+      if (
+        !workspaceUser ||
+        (workspaceUser.role !== ROLES.ADMIN &&
+          workspaceUser.role !== ROLES.MANAGER)
+      )
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      console.log("DELETEPROJECT", workspaceUser);
+      //MANAGERS are only allowed to delete projects that have been assigned to them or projects they created
+      //ADMINS are allowed to delete any project as long as the project is apart of the workspace
+      if (workspaceUser.role === ROLES.MANAGER) {
+        const isManagerApartOfTheProject =
+          await prisma.projectWorkspaceUser.findUnique({
+            where: {
+              projectId_workspaceUserId: {
+                projectId,
+                workspaceUserId: workspaceUser.id,
+              },
+            },
+          });
+        console.log("isManagerApartOfTheProject", isManagerApartOfTheProject);
+        //if cannot find MANAGER in project then they are unauthorized to continue with deletion
+        if (!isManagerApartOfTheProject)
+          throw new GraphQLError("Unauthorized.", {
+            extensions: { code: "UNAUTHORIZED" },
+          });
+      }
+
+      //is project apart of the workspace
+      const project = await prisma.project.findUnique({
+        where: {
+          id_workspaceId: {
+            id: projectId,
+            workspaceId: workspaceUser.workspaceId,
+          },
+        },
+      });
+      if (!project)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
+      const deletedProject = await prisma.project.delete({
+        where: { id: projectId },
+      });
+      console.log("DELETEPROJECT", deletedProject);
+      console.log("DELETEPROJECT", project);
+      return deletedProject;
     },
   },
 };

@@ -88,6 +88,16 @@ const operations = {
         }
       }
     `,
+    DELETE_PROJECT: gql`
+      mutation DeleteProject($workspaceId: String!, $projectId: String!) {
+        deleteProject(workspaceId: $workspaceId, projectId: $projectId) {
+          id
+          name
+          description
+          workspaceId
+        }
+      }
+    `,
   },
 };
 
