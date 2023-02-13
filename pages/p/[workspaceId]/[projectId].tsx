@@ -15,11 +15,17 @@ interface ProjectDetailsProps {
     user: User;
     role: Role;
   }>;
+  listOfWorkspaceUsersApartOfTheProject: Array<{
+    id: string;
+    user: User;
+    role: Role;
+  }>;
 }
 
 const ProjectDetails: FC<ProjectDetailsProps> = ({
   count,
   listOfWorkspaceUsersNotApartOfTheProject,
+  listOfWorkspaceUsersApartOfTheProject,
 }) => {
   console.log(
     "listOfWorkspaceUsersNotApartOfTheProject",
@@ -30,8 +36,15 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
     workspaceUsersNotApartOfTheProject,
     setWorkspaceUsersNotApartOfTheProject,
   ] = useState(listOfWorkspaceUsersNotApartOfTheProject);
+
+  const [workspaceUsersApartOfTheProject, setWorkspaceUsersApartOfTheProject] =
+    useState(listOfWorkspaceUsersApartOfTheProject);
+
   return (
     <>
+      <div>{JSON.stringify(workspaceUsersNotApartOfTheProject)}</div>
+      <div>--------------------------</div>
+      <div>{JSON.stringify(workspaceUsersApartOfTheProject)}</div>
       <NavBar />
       <ProjectsWorkspaceUsers
         count={count}
@@ -126,6 +139,8 @@ export const getServerSideProps: GetServerSideProps = async ({
         workspaceUser: {
           select: {
             id: true,
+            user: { select: { id: true, email: true, username: true } },
+            role: true,
           },
         },
       },
@@ -144,9 +159,13 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const count = projectWorkspaceUserAndCount[1];
 
+  console.log("0000000000000000000000000", projectWorkspaceUserAndCount[0]);
+
   //used in next db query to find the workspace users that are NOT apart of the project
   const listOfWorkspaceUserIdsThatBelongToUsersThatAreAlreadyApartOfTheProject =
-    Array.from(projectWorkspaceUserAndCount[0], (x) => x.workspaceUser);
+    Array.from(projectWorkspaceUserAndCount[0], (x) => ({
+      id: x.workspaceUser.id,
+    }));
 
   console.log(
     listOfWorkspaceUserIdsThatBelongToUsersThatAreAlreadyApartOfTheProject
@@ -179,6 +198,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       project,
       count,
       listOfWorkspaceUsersNotApartOfTheProject,
+      listOfWorkspaceUsersApartOfTheProject: projectWorkspaceUserAndCount[0],
     },
   };
 };
