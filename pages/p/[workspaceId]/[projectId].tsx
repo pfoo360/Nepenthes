@@ -16,9 +16,7 @@ interface ProjectDetailsProps {
     role: Role;
   }>;
   listOfWorkspaceUsersApartOfTheProject: Array<{
-    id: string;
-    user: User;
-    role: Role;
+    workspaceUser: { id: string; user: User; role: Role };
   }>;
 }
 
@@ -42,6 +40,17 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
 
   return (
     <>
+      <div>{JSON.stringify(workspaceUsersNotApartOfTheProject)}</div>
+      <div>++++++++++++++++++++++++++</div>
+      <div>
+        {JSON.stringify(workspaceUsersApartOfTheProject[0].workspaceUser.id)}
+      </div>
+      <div>
+        {JSON.stringify(workspaceUsersApartOfTheProject[0].workspaceUser.user)}
+      </div>
+      <div>
+        {JSON.stringify(workspaceUsersApartOfTheProject[0].workspaceUser.role)}
+      </div>
       <NavBar />
       <ProjectsWorkspaceUsers
         count={count}
