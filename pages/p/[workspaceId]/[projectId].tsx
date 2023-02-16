@@ -53,11 +53,6 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
   if (workspaceUserCtx.userId !== userCtx.id) return null;
   if (workspaceUserCtx.workspaceId !== workspaceCtx.id) return null;
   if (workspaceUserCtx.workspaceId !== projectCtx.workspaceId) return null;
-  if (
-    workspaceUserCtx.role !== ROLES.ADMIN &&
-    workspaceUserCtx.role !== ROLES.MANAGER
-  )
-    return null;
 
   return (
     <>
