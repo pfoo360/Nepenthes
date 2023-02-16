@@ -61,9 +61,11 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
       <div>{JSON.stringify(workspaceUsersApartOfTheProject)}</div>} */}
       <NavBar />
       <div className="mx-6 mt-2 mb-1 text-gray-900 text-lg">
-        <h1 className="font-semibold text-gray-500 text-sm">Name</h1>
+        <h1 className="font-semibold text-gray-500 text-sm">Project Name</h1>
         <p className="px-4">{projectCtx.name}</p>
-        <h1 className="font-semibold text-gray-500 text-sm">Description</h1>
+        <h1 className="font-semibold text-gray-500 text-sm">
+          Project Description
+        </h1>
         <p className="px-4 break-all">{projectCtx.description}</p>
       </div>
       <ProjectsTickets
