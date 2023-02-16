@@ -118,8 +118,8 @@ enum Priority {
 }
 
 enum Status {
-  ONGOING
-  RESOLVED
+  OPEN
+  CLOSED
 }
 
 enum Type {

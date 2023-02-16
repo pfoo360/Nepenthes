@@ -23,6 +23,17 @@ interface DeleteWorkspaceUserFromProjectProps {
       }[]
     >
   >;
+  setWorkspaceUsersApartOfTheProject: Dispatch<
+    SetStateAction<
+      {
+        workspaceUser: {
+          id: string;
+          user: User;
+          role: Role;
+        };
+      }[]
+    >
+  >;
 }
 
 const DeleteWorkspaceUserFromProject: FC<
@@ -32,6 +43,7 @@ const DeleteWorkspaceUserFromProject: FC<
   workspaceUser,
   page,
   setWorkspaceUsersNotApartOfTheProject,
+  setWorkspaceUsersApartOfTheProject,
 }) => {
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
@@ -111,6 +123,16 @@ const DeleteWorkspaceUserFromProject: FC<
             role: data.deleteWorkspaceUserFromProject.workspaceUser.role,
           },
         ];
+      });
+
+      setWorkspaceUsersApartOfTheProject((prev) => {
+        console.log("DATA", data);
+        console.log("PREV", prev);
+        return prev.filter(
+          (workspaceUser) =>
+            workspaceUser.workspaceUser.id !==
+            data.deleteWorkspaceUserFromProject.workspaceUser.id
+        );
       });
 
       console.log("DELETEWORKSPACEUSERFROMPROJECT", data);

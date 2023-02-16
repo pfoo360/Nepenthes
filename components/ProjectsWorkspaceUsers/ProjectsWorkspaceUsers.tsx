@@ -26,12 +26,24 @@ interface ProjectsWorkspaceUsersProps {
       }[]
     >
   >;
+  setWorkspaceUsersApartOfTheProject: Dispatch<
+    SetStateAction<
+      {
+        workspaceUser: {
+          id: string;
+          user: User;
+          role: Role;
+        };
+      }[]
+    >
+  >;
 }
 
 const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
   count,
   workspaceUsersNotApartOfTheProject,
   setWorkspaceUsersNotApartOfTheProject,
+  setWorkspaceUsersApartOfTheProject,
 }) => {
   const MAX_NUM_OF_PAGES = Math.ceil(count / USERS_PER_PAGE);
 
@@ -160,6 +172,9 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
                               page={page}
                               setWorkspaceUsersNotApartOfTheProject={
                                 setWorkspaceUsersNotApartOfTheProject
+                              }
+                              setWorkspaceUsersApartOfTheProject={
+                                setWorkspaceUsersApartOfTheProject
                               }
                             />
                           </td>

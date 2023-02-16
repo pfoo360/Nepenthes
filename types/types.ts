@@ -8,6 +8,11 @@ export interface User {
 }
 
 export type Role = "ADMIN" | "MANAGER" | "DEVELOPER";
+
+export type Priority = "LOW" | "MEDIUM" | "HIGH";
+
+export type Type = "BUG" | "ISSUE" | "ERROR" | "FEATURE" | "OTHER";
+
 export interface WorkspaceUser {
   id: string;
   user: User;

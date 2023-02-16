@@ -5,9 +5,15 @@ import ROLES from "../../../utils/role";
 import ProjectsWorkspaceUsers from "../../../components/ProjectsWorkspaceUsers/ProjectsWorkspaceUsers";
 import DeleteProject from "../../../components/DeleteProject/DeleteProject";
 import NavBar from "../../../components/NavBar/NavBar";
+import ProjectsTickets from "../../../components/ProjectsTickets/ProjectsTickets";
 import { FC, useState } from "react";
 import { Role, User } from "../../../types/types";
+import useUserContext from "../../../hooks/useUserContext";
+import useWorkspaceContext from "../../../hooks/useWorkspaceContext";
+import useWorkspaceUserContext from "../../../hooks/useWorkspaceUserContext";
+import useProjectContext from "../../../hooks/useProjectContext";
 
+//todo:upoon del wsu from proj, set wsaotp
 interface ProjectDetailsProps {
   count: number;
   listOfWorkspaceUsersNotApartOfTheProject: Array<{
@@ -38,26 +44,43 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
   const [workspaceUsersApartOfTheProject, setWorkspaceUsersApartOfTheProject] =
     useState(listOfWorkspaceUsersApartOfTheProject);
 
+  const userCtx = useUserContext();
+  const workspaceCtx = useWorkspaceContext();
+  const workspaceUserCtx = useWorkspaceUserContext();
+  const projectCtx = useProjectContext();
+  if (!userCtx || !workspaceCtx || !workspaceUserCtx || !projectCtx)
+    return null;
+  if (workspaceUserCtx.userId !== userCtx.id) return null;
+  if (workspaceUserCtx.workspaceId !== workspaceCtx.id) return null;
+  if (workspaceUserCtx.workspaceId !== projectCtx.workspaceId) return null;
+  if (
+    workspaceUserCtx.role !== ROLES.ADMIN &&
+    workspaceUserCtx.role !== ROLES.MANAGER
+  )
+    return null;
+
   return (
     <>
-      <div>{JSON.stringify(workspaceUsersNotApartOfTheProject)}</div>
+      {/* {  <div>{JSON.stringify(workspaceUsersNotApartOfTheProject)}</div>
       <div>++++++++++++++++++++++++++</div>
-      <div>
-        {JSON.stringify(workspaceUsersApartOfTheProject[0].workspaceUser.id)}
-      </div>
-      <div>
-        {JSON.stringify(workspaceUsersApartOfTheProject[0].workspaceUser.user)}
-      </div>
-      <div>
-        {JSON.stringify(workspaceUsersApartOfTheProject[0].workspaceUser.role)}
-      </div>
+      <div>{JSON.stringify(workspaceUsersApartOfTheProject)}</div>} */}
       <NavBar />
+      <div className="mx-6 mt-2 mb-1 text-gray-900 text-lg">
+        <h1 className="font-semibold">Name</h1>
+        <p className="px-4 text-gray-700">{projectCtx.name}</p>
+        <h1 className="font-semibold">Description</h1>
+        <p className="px-4 break-all text-gray-700">{projectCtx.description}</p>
+      </div>
+      <ProjectsTickets
+        workspaceUsersApartOfTheProject={workspaceUsersApartOfTheProject}
+      />
       <ProjectsWorkspaceUsers
         count={count}
         workspaceUsersNotApartOfTheProject={workspaceUsersNotApartOfTheProject}
         setWorkspaceUsersNotApartOfTheProject={
           setWorkspaceUsersNotApartOfTheProject
         }
+        setWorkspaceUsersApartOfTheProject={setWorkspaceUsersApartOfTheProject}
       />
       <DeleteProject />
     </>
@@ -107,7 +130,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (!workspaceUser)
     return { redirect: { destination: "/dash", permanent: false } };
 
-  //check if project id provided by client exists in db AND if project belongs to the current workspace
+  //check if project id provided by client exists in db AND if project belongs to the workspace the user is apart of
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     select: { id: true, name: true, description: true, workspaceId: true },
