@@ -61,10 +61,10 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
       <div>{JSON.stringify(workspaceUsersApartOfTheProject)}</div>} */}
       <NavBar />
       <div className="mx-6 mt-2 mb-1 text-gray-900 text-lg">
-        <h1 className="font-semibold">Name</h1>
-        <p className="px-4 text-gray-700">{projectCtx.name}</p>
-        <h1 className="font-semibold">Description</h1>
-        <p className="px-4 break-all text-gray-700">{projectCtx.description}</p>
+        <h1 className="font-semibold text-gray-500 text-sm">Name</h1>
+        <p className="px-4">{projectCtx.name}</p>
+        <h1 className="font-semibold text-gray-500 text-sm">Description</h1>
+        <p className="px-4 break-all">{projectCtx.description}</p>
       </div>
       <ProjectsTickets
         workspaceUsersApartOfTheProject={workspaceUsersApartOfTheProject}
@@ -136,7 +136,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   //below this point we know: user and session exists, workspace exists, user is apart of the workspace, project exists, project is apart of the workspace
 
-  console.log(workspaceUser.role);
+  console.log("ROLE", workspaceUser.role);
   //a workspace's ADMIN can view any project in their workspace
   //non-ADMINs can only view a project IF they are apart of the project
   //IF a project is apart of the workspace AND the user is apart of the workspace AND the user is an ADMIN in the workspace, they have unconditional access to the project
