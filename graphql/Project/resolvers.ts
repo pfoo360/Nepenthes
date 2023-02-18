@@ -21,7 +21,7 @@ const resolvers = {
         });
 
       //make sure args exist
-      if (!projectId)
+      if (!projectId || !workspaceId || page < 1)
         throw new GraphQLError("Invalid argument(s).", {
           extensions: { code: "INVALID INPUT(S)" },
         });

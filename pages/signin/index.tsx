@@ -31,7 +31,7 @@ const SignIn: NextPage = () => {
     { username: string; password: string }
   >(authOperations.Mutation.SIGN_IN, {
     onCompleted: ({ signIn }) => {
-      if (signIn.successStatus) push("/dash");
+      if (signIn.successStatus) push("/workspaces");
     },
     onError: ({ cause, name, clientErrors, graphQLErrors, message }) => {
       if (graphQLErrors.length === 0) {
@@ -149,7 +149,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const sessionAndUser = await getServerSessionAndUser(req, res);
 
   if (sessionAndUser?.sessionToken && sessionAndUser.user) {
-    return { redirect: { destination: "/dash", permanent: false } };
+    return { redirect: { destination: "/workspaces", permanent: false } };
   }
 
   return { props: {} };

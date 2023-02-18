@@ -20,14 +20,14 @@ const NavBar = () => {
 
   const handleToDashboardClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    push("/dash");
+    push("/workspaces");
   };
 
   return (
     <>
       <nav className="bg-gray-50 w-screen h-9 px-4 flex flex-row justify-between items-center border-b-gray-200 border-b">
         <Link
-          href={workspace?.id ? `/workspace/${workspace.id}` : `/dash`}
+          href={workspace?.id ? `/w/${workspace.id}` : `/workspaces`}
           className="text-indigo-500 text-lg hover:text-indigo-700"
         >
           nepenthes
@@ -62,7 +62,7 @@ const NavBar = () => {
             {workspaceUser?.role}
           </p>
           <Link
-            href={`/workspace/${workspace?.id}`}
+            href={`/w/${workspace?.id}`}
             className="block text-gray-500 hover:text-indigo-500 mt-4 text-3xl px-4"
           >
             home

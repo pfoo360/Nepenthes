@@ -11,7 +11,7 @@ import AddWorkspaceUserToProject from "../AddWorkspaceUserToProject/AddWorkspace
 import DeleteWorkspaceUserFromProject from "../DeleteWorkspaceUserFromProject/DeleteWorkspaceUserFromProject";
 
 interface ProjectsWorkspaceUsersProps {
-  count: number;
+  projectWorkspaceUserCount: number;
   workspaceUsersNotApartOfTheProject: Array<{
     id: string;
     user: User;
@@ -40,19 +40,21 @@ interface ProjectsWorkspaceUsersProps {
 }
 
 const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
-  count,
+  projectWorkspaceUserCount,
   workspaceUsersNotApartOfTheProject,
   setWorkspaceUsersNotApartOfTheProject,
   setWorkspaceUsersApartOfTheProject,
 }) => {
-  const MAX_NUM_OF_PAGES = Math.ceil(count / USERS_PER_PAGE);
+  const MAX_NUM_OF_PAGES = Math.ceil(
+    projectWorkspaceUserCount / USERS_PER_PAGE
+  );
 
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
   const projectCtx = useProjectContext();
 
-  const [page, setPage] = useState(count > 0 ? 1 : 0);
+  const [page, setPage] = useState(projectWorkspaceUserCount > 0 ? 1 : 0);
 
   useEffect(() => {
     console.log("USEEFFECT1", page, projectCtx?.id, workspaceCtx?.id);
@@ -108,15 +110,19 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
     projectCtx.workspaceId !== workspaceUserCtx.workspaceId
   )
     return null;
-  if (count === null || count === undefined) return null;
+  if (
+    projectWorkspaceUserCount === null ||
+    projectWorkspaceUserCount === undefined
+  )
+    return null;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col mx-6">
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="py-2 inline-block min-w-full sm:px-6 lg:px-8">
           <div className="overflow-hidden">
             <div className=" flex items-center">
-              <h1 className="text-2xl font-medium text-gray-900 pl-6">Team</h1>
+              <h1 className="text-2xl font-medium text-gray-900">Team</h1>
               <AddWorkspaceUserToProject
                 workspaceUsersNotApartOfTheProject={
                   workspaceUsersNotApartOfTheProject

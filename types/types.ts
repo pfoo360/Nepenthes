@@ -13,6 +13,8 @@ export type Priority = "LOW" | "MEDIUM" | "HIGH";
 
 export type Type = "BUG" | "ISSUE" | "ERROR" | "FEATURE" | "OTHER";
 
+export type Status = "OPEN" | "CLOSED";
+
 export interface WorkspaceUser {
   id: string;
   user: User;

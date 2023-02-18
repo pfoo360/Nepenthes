@@ -15,7 +15,7 @@ import useProjectContext from "../../../hooks/useProjectContext";
 
 //todo:upoon del wsu from proj, set wsaotp
 interface ProjectDetailsProps {
-  count: number;
+  projectWorkspaceUserCount: number;
   listOfWorkspaceUsersNotApartOfTheProject: Array<{
     id: string;
     user: User;
@@ -24,12 +24,14 @@ interface ProjectDetailsProps {
   listOfWorkspaceUsersApartOfTheProject: Array<{
     workspaceUser: { id: string; user: User; role: Role };
   }>;
+  projectTicketCount: number;
 }
 
 const ProjectDetails: FC<ProjectDetailsProps> = ({
-  count,
+  projectWorkspaceUserCount,
   listOfWorkspaceUsersNotApartOfTheProject,
   listOfWorkspaceUsersApartOfTheProject,
+  projectTicketCount,
 }) => {
   console.log(
     "listOfWorkspaceUsersNotApartOfTheProject",
@@ -70,9 +72,10 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
       </div>
       <ProjectsTickets
         workspaceUsersApartOfTheProject={workspaceUsersApartOfTheProject}
+        projectTicketCount={projectTicketCount}
       />
       <ProjectsWorkspaceUsers
-        count={count}
+        projectWorkspaceUserCount={projectWorkspaceUserCount}
         workspaceUsersNotApartOfTheProject={workspaceUsersNotApartOfTheProject}
         setWorkspaceUsersNotApartOfTheProject={
           setWorkspaceUsersNotApartOfTheProject
@@ -100,7 +103,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     !params.projectId ||
     typeof params.projectId !== "string"
   )
-    return { redirect: { destination: "/dash", permanent: false } };
+    return { redirect: { destination: "/workspaces", permanent: false } };
 
   //check if session and user exists
   const sessionAndUser = await getServerSessionAndUser(req, res);
@@ -125,7 +128,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     },
   });
   if (!workspaceUser)
-    return { redirect: { destination: "/dash", permanent: false } };
+    return { redirect: { destination: "/workspaces", permanent: false } };
 
   //check if project id provided by client exists in db AND if project belongs to the workspace the user is apart of
   const project = await prisma.project.findUnique({
@@ -134,7 +137,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
   if (!project) return { notFound: true };
   if (project.workspaceId !== workspace.id)
-    return { redirect: { destination: "/dash", permanent: false } };
+    return { redirect: { destination: "/workspaces", permanent: false } };
 
   //below this point we know: user and session exists, workspace exists, user is apart of the workspace, project exists, project is apart of the workspace
 
@@ -154,7 +157,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     });
     console.log("projectWorkspaceUser", projectWorkspaceUser);
     if (!projectWorkspaceUser)
-      return { redirect: { destination: "/dash", permanent: false } };
+      return { redirect: { destination: "/workspaces", permanent: false } };
   }
 
   //find all users that are apart of the project and the count
@@ -182,8 +185,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   // console.log(workspace);
   // console.log(workspaceUser);
   // console.log(project);
-
-  const count = projectWorkspaceUserAndCount[1];
 
   console.log("0000000000000000000000000", projectWorkspaceUserAndCount[0]);
 
@@ -216,15 +217,22 @@ export const getServerSideProps: GetServerSideProps = async ({
   //find all projectWorkspaceUsers for table, create button to add new workspaceUsers to project, update cache for table, update list of remaining workspaceUseres by filtering out who was added?, create button to delete workspaceUsers from project
   //delete project, update project name? and desc?
 
+  const projectTicketCount = await prisma.ticket.count({
+    where: { projectId },
+  });
+
+  console.log("TICKET COUNT", projectTicketCount);
+
   return {
     props: {
       user,
       workspace,
       workspaceUser,
       project,
-      count,
+      projectWorkspaceUserCount: projectWorkspaceUserAndCount[1],
       listOfWorkspaceUsersNotApartOfTheProject,
       listOfWorkspaceUsersApartOfTheProject: projectWorkspaceUserAndCount[0],
+      projectTicketCount,
     },
   };
 };

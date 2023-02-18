@@ -6,7 +6,7 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import { User, Role, Priority, Type } from "../../types/types";
+import { User, Role, Priority, Type, Status } from "../../types/types";
 import Modal from "../Modal/Modal";
 import Error from "../Error/Error";
 import PRIORITIES from "../../utils/priority";
@@ -16,6 +16,8 @@ import useWorkspaceContext from "../../hooks/useWorkspaceContext";
 import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
 import useProjectContext from "../../hooks/useProjectContext";
 import ROLES from "../../utils/role";
+import ticketOperations from "../../graphql/Ticket/operations";
+import { useMutation } from "@apollo/client";
 
 interface AddTicketProps {
   workspaceUsersApartOfTheProject: {
@@ -25,9 +27,13 @@ interface AddTicketProps {
       role: Role;
     };
   }[];
+  page: number;
 }
 
-const AddTicket: FC<AddTicketProps> = ({ workspaceUsersApartOfTheProject }) => {
+const AddTicket: FC<AddTicketProps> = ({
+  workspaceUsersApartOfTheProject,
+  page,
+}) => {
   const PRIORITY_VALUES = Object.values(PRIORITIES);
   const TYPE_VALUES = Object.values(TYPES);
 
@@ -57,6 +63,165 @@ const AddTicket: FC<AddTicketProps> = ({ workspaceUsersApartOfTheProject }) => {
   const [typeInitialFocus, setTypeInitialFocus] = useState(false);
   const [typeError, setTypeError] = useState("");
 
+  const [submitError, setSubmitError] = useState("");
+
+  const [createTicket, { data, loading: isSubmitting, error }] = useMutation<
+    {
+      createTicket: {
+        id: string;
+        title: string;
+        ticketSubmitter: {
+          submitter: { id: string; user: { username: string } };
+        };
+        ticketDeveloper: Array<{
+          developer: { id: string; user: { username: string } };
+        }>;
+        status: Status;
+        createdAt: number;
+      };
+    },
+    {
+      title: string;
+      description: string;
+      workspaceUserIds: string[];
+      projectId: string;
+      workspaceId: string;
+      priority: Priority;
+      type: Type;
+    }
+  >(ticketOperations.Mutation.CREATE_TICKET, {
+    onError: (error, clientOptions) => {
+      console.log(error);
+      setSubmitError(error.message);
+    },
+    update: (cache, { data }) => {
+      if (!data) return;
+      if (
+        !projectCtx?.id ||
+        !workspaceCtx?.id ||
+        page === undefined ||
+        page === null
+      )
+        return;
+
+      const oldCache = cache.readQuery<{
+        getProjectsTickets: Array<{
+          id: string;
+          title: string;
+          ticketSubmitter: {
+            submitter: { id: string; user: { username: string } };
+          };
+          ticketDeveloper: Array<{
+            developer: { id: string; user: { username: string } };
+          }>;
+          status: Status;
+          createdAt: number;
+        }>;
+      }>({
+        query: ticketOperations.Query.GET_PROJECTS_TICKETS,
+        variables: {
+          projectId: projectCtx.id,
+          workspaceId: workspaceCtx.id,
+          page,
+        },
+      });
+
+      if (!oldCache || page === 0) {
+        return location.reload();
+      }
+
+      cache.writeQuery({
+        query: ticketOperations.Query.GET_PROJECTS_TICKETS,
+        variables: {
+          projectId: projectCtx.id,
+          workspaceId: workspaceCtx.id,
+          page,
+        },
+        data: {
+          ...oldCache,
+          getProjectsTickets: [
+            data.createTicket,
+            ...oldCache.getProjectsTickets,
+          ],
+        },
+      });
+
+      const newCache = cache.readQuery<{
+        getProjectsTickets: Array<{
+          id: string;
+          title: string;
+          ticketSubmitter: {
+            submitter: { id: string; user: { username: string } };
+          };
+          ticketDeveloper: Array<{
+            developer: { id: string; user: { username: string } };
+          }>;
+          status: Status;
+          createdAt: number;
+        }>;
+      }>({
+        query: ticketOperations.Query.GET_PROJECTS_TICKETS,
+        variables: {
+          projectId: projectCtx.id,
+          workspaceId: workspaceCtx.id,
+          page,
+        },
+      });
+      console.log("ADDTICKETUPDATE", data);
+      console.log(page);
+      console.log("OLDCACHE", oldCache);
+      console.log("NEWCACHE", newCache);
+    },
+    onCompleted(data, clientOptions) {
+      console.log("ADDTICKETCOMPLETE", data);
+      setTitle("");
+      setTitleInitialFocus(false);
+      setTitleError("");
+      setDescription("");
+      setDescriptionInitialFocus(false);
+      setDescriptionError("");
+      setDescriptionLength(0);
+      setWorkspaceUserIds([]);
+      setWorkspaceUserIdsInitialFocus(false);
+      setWorkspaceUserIdsError("");
+      setPriority(PRIORITY_VALUES[0] as Priority);
+      setPriorityInitialFocus(false);
+      setPriorityError("");
+      setType(TYPE_VALUES[0] as Type);
+      setTypeInitialFocus(false);
+      setTypeError("");
+      setModalOpen(false);
+    },
+  });
+
+  const handleAddTicketSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+    if (!projectCtx?.id) return;
+    if (!workspaceCtx?.id) return;
+    if (
+      titleError ||
+      descriptionError ||
+      workspaceUserIdsError ||
+      priorityError ||
+      typeError
+    )
+      return;
+    await createTicket({
+      variables: {
+        title,
+        description,
+        workspaceUserIds,
+        projectId: projectCtx.id,
+        workspaceId: workspaceCtx.id,
+        priority,
+        type,
+      },
+    });
+    console.log(workspaceUserIds);
+    console.log(userCtx, workspaceCtx, workspaceUserCtx, projectCtx);
+  };
+
   const handleModalOpen = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setModalOpen(true);
@@ -66,6 +231,8 @@ const AddTicket: FC<AddTicketProps> = ({ workspaceUsersApartOfTheProject }) => {
     e: MouseEvent<HTMLButtonElement> | MouseEvent<HTMLDivElement>
   ) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     setTitle("");
     setTitleInitialFocus(false);
     setTitleError("");
@@ -180,12 +347,6 @@ const AddTicket: FC<AddTicketProps> = ({ workspaceUsersApartOfTheProject }) => {
     if (TYPE_VALUES.indexOf(type) < 0) setTypeError("Invalid value");
   }, [type]);
 
-  const handleAddTicketSubmit = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    console.log(workspaceUserIds);
-    console.log(userCtx, workspaceCtx, workspaceUserCtx, projectCtx);
-  };
-
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
@@ -211,6 +372,7 @@ const AddTicket: FC<AddTicketProps> = ({ workspaceUsersApartOfTheProject }) => {
       </button>
       <Modal open={modalOpen} onClose={handleModalClose}>
         <form className="p-2 rounded relative bg-gray-50 w-[300px] h-auto flex flex-col">
+          {submitError ? <Error message={submitError} /> : null}
           <input
             type="text"
             id="title"
@@ -220,7 +382,7 @@ const AddTicket: FC<AddTicketProps> = ({ workspaceUsersApartOfTheProject }) => {
             onBlur={handleTitleInitialFocus}
             required
             ref={inputRef}
-            disabled={false}
+            disabled={isSubmitting}
             placeholder="Ticket title"
             className={`border border-gray-300 rounded-sm px-2 w-full py-1 mt-5 mb-3 text-4xl text-gray-900 placeholder-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200`}
           />
@@ -234,7 +396,7 @@ const AddTicket: FC<AddTicketProps> = ({ workspaceUsersApartOfTheProject }) => {
             onChange={handleDescriptionTextAreaChange}
             onBlur={handleDescriptionInitialFocus}
             maxLength={120}
-            disabled={false}
+            disabled={isSubmitting}
             placeholder="Description"
             className={`border border-gray-300 rounded-sm px-2 w-full h-32 py-1 mt-2 mb-0.5 text-lg text-gray-900 placeholder-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200 resize-none`}
           />
@@ -255,7 +417,7 @@ const AddTicket: FC<AddTicketProps> = ({ workspaceUsersApartOfTheProject }) => {
             value={workspaceUserIds}
             onChange={handleWorkspaceUserIdsSelectChange}
             onBlur={handleWorkspaceUserIdsInitialFocus}
-            disabled={false}
+            disabled={isSubmitting}
             className={`border border-gray-300 rounded-sm px-2 w-full h-32 py-1 mb-6 text-base text-gray-900 placeholder-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200 overflow-y-scroll `}
           >
             {workspaceUsersApartOfTheProject.map(
@@ -276,7 +438,7 @@ const AddTicket: FC<AddTicketProps> = ({ workspaceUsersApartOfTheProject }) => {
             value={priority}
             onChange={handlePrioritySelectChange}
             onBlur={handlePriorityInitialFocus}
-            disabled={false}
+            disabled={isSubmitting}
             className={`border border-gray-300 rounded-sm px-2 w-full py-1 mb-6 text-lg text-gray-900 placeholder-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200`}
           >
             {PRIORITY_VALUES.map((priority) => (
@@ -292,7 +454,7 @@ const AddTicket: FC<AddTicketProps> = ({ workspaceUsersApartOfTheProject }) => {
             value={type}
             onChange={handleTypeSelectChange}
             onBlur={handleTypeInitialFocus}
-            disabled={false}
+            disabled={isSubmitting}
             className={`border border-gray-300 rounded-sm px-2 w-full py-1 mb-6 text-lg text-gray-900 placeholder-gray-300 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200`}
           >
             {TYPE_VALUES.map((type) => (
@@ -305,7 +467,7 @@ const AddTicket: FC<AddTicketProps> = ({ workspaceUsersApartOfTheProject }) => {
           <div className="flex flex-row justify-end mt-4">
             <button
               onClick={handleModalClose}
-              disabled={false}
+              disabled={isSubmitting}
               className={`flex-shrink-0 bg-slate-300 rounded-sm py-1 px-2 mr-2 text-gray-50 text-xl hover:bg-slate-500 active:bg-slate-700 focus:outline-none focus:ring focus:ring-slate-300 disabled:bg-slate-200`}
             >
               Close
@@ -313,7 +475,14 @@ const AddTicket: FC<AddTicketProps> = ({ workspaceUsersApartOfTheProject }) => {
             <button
               type="submit"
               onClick={handleAddTicketSubmit}
-              disabled={false}
+              disabled={
+                isSubmitting ||
+                !!titleError ||
+                !!descriptionError ||
+                !!workspaceUserIdsError ||
+                !!priorityError ||
+                !!typeError
+              }
               className={`flex-shrink-0 bg-indigo-500 rounded-sm py-1 px-2 text-gray-50 text-xl hover:bg-indigo-600 active:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-300 disabled:bg-indigo-400`}
             >
               Add

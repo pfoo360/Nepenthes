@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   //check if workspace id provided by client exists in db
   if (!params?.workspaceId || typeof params.workspaceId !== "string")
-    return { redirect: { destination: "/dash", permanent: false } };
+    return { redirect: { destination: "/workspaces", permanent: false } };
   const { workspaceId } = params;
   const workspace = await prisma.workspace.findUnique({
     where: { id: workspaceId },
@@ -48,7 +48,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     },
   });
   if (!workspaceUser || workspaceUser.role !== ROLES.ADMIN)
-    return { redirect: { destination: "/dash", permanent: false } };
+    return { redirect: { destination: "/workspaces", permanent: false } };
 
   console.log("ADMIN GSSP", user, sessionToken, workspace, workspaceUser);
 

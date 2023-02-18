@@ -24,6 +24,7 @@ const typeDefs = gql`
       page: Int!
     ): [ProjectsWorkspaceUser]!
   }
+
   type Mutation {
     createProject(
       projectName: String!

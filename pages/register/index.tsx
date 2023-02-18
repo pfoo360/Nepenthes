@@ -239,7 +239,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const sessionAndUser = await getServerSessionAndUser(req, res);
 
   if (sessionAndUser?.sessionToken && sessionAndUser.user) {
-    return { redirect: { destination: "/dash", permanent: false } };
+    return { redirect: { destination: "/workspaces", permanent: false } };
   }
   return { props: {} };
 };

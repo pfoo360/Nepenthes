@@ -81,24 +81,24 @@ model ProjectWorkspaceUser {
 }
 
 model Ticket {
-  id              String            @id @default(cuid())
-  title           String
-  description     String?
-  ticketSubmitter TicketSubmitter[]
-  ticketDeveloper TicketDeveloper[]
-  projectId       String
-  project         Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  priority        Priority
-  status          Status
-  type            Type
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @default(now())
+  id                String            @id @default(cuid())
+  title             String
+  description       String?
+  ticketSubmitterId String            @unique
+  ticketSubmitter   TicketSubmitter   @relation(fields: [ticketSubmitterId], references: [id], onDelete: Cascade)
+  ticketDeveloper   TicketDeveloper[]
+  projectId         String
+  project           Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  priority          Priority
+  status            Status
+  type              Type
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @default(now())
 }
 
 model TicketSubmitter {
   id          String        @id @default(cuid())
-  ticketId    String
-  ticket      Ticket        @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticket      Ticket?
   submitterId String
   submitter   WorkspaceUser @relation(fields: [submitterId], references: [id], onDelete: Cascade)
 }
