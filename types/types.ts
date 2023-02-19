@@ -7,6 +7,11 @@ export interface User {
   email: string;
 }
 
+export interface Workspace {
+  id: string;
+  name: string;
+}
+
 export type Role = "ADMIN" | "MANAGER" | "DEVELOPER";
 
 export type Priority = "LOW" | "MEDIUM" | "HIGH";
@@ -14,6 +19,31 @@ export type Priority = "LOW" | "MEDIUM" | "HIGH";
 export type Type = "BUG" | "ISSUE" | "ERROR" | "FEATURE" | "OTHER";
 
 export type Status = "OPEN" | "CLOSED";
+
+export interface Ticket {
+  id: string;
+  title: string;
+  description: string;
+  ticketSubmitter: {
+    id: string;
+    submitter: WorkspaceUser;
+  };
+  ticketDeveloper: Array<{
+    id: string;
+    developer: WorkspaceUser;
+  }>;
+  project: {
+    id: string;
+    name: string;
+    description: string;
+    workspace: Workspace;
+  };
+  priority: Priority;
+  status: Status;
+  type: Type;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface WorkspaceUser {
   id: string;

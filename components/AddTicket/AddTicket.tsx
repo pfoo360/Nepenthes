@@ -76,6 +76,10 @@ const AddTicket: FC<AddTicketProps> = ({
         ticketDeveloper: Array<{
           developer: { id: string; user: { username: string } };
         }>;
+        project: {
+          id: string;
+          workspaceId: string;
+        };
         status: Status;
         createdAt: number;
       };
@@ -114,6 +118,10 @@ const AddTicket: FC<AddTicketProps> = ({
           ticketDeveloper: Array<{
             developer: { id: string; user: { username: string } };
           }>;
+          project: {
+            id: string;
+            workspaceId: string;
+          };
           status: Status;
           createdAt: number;
         }>;
@@ -146,20 +154,7 @@ const AddTicket: FC<AddTicketProps> = ({
         },
       });
 
-      const newCache = cache.readQuery<{
-        getProjectsTickets: Array<{
-          id: string;
-          title: string;
-          ticketSubmitter: {
-            submitter: { id: string; user: { username: string } };
-          };
-          ticketDeveloper: Array<{
-            developer: { id: string; user: { username: string } };
-          }>;
-          status: Status;
-          createdAt: number;
-        }>;
-      }>({
+      const newCache = cache.readQuery({
         query: ticketOperations.Query.GET_PROJECTS_TICKETS,
         variables: {
           projectId: projectCtx.id,

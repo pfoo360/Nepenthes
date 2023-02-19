@@ -9,6 +9,7 @@ import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
 import useProjectContext from "../../hooks/useProjectContext";
 import TICKETS_PER_PAGE from "../../utils/ticketsPerPage";
 import moment from "moment";
+import Link from "next/link";
 
 interface ProjectsTicketsProps {
   workspaceUsersApartOfTheProject: {
@@ -63,6 +64,10 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
         ticketDeveloper: Array<{
           developer: { id: string; user: { username: string } };
         }>;
+        project: {
+          id: string;
+          workspaceId: string;
+        };
         status: Status;
         createdAt: number;
       }>;
@@ -157,6 +162,7 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
                       title,
                       ticketSubmitter: { submitter },
                       ticketDeveloper,
+                      project,
                       status,
                       createdAt,
                     }) => {
@@ -196,6 +202,14 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
                             {moment(createdAt).format(
                               "MMMM Do YYYY, h:mm:ss a"
                             )}
+                          </td>
+                          <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal">
+                            <Link
+                              href={`/t/${project.workspaceId}/${project.id}/${id}`}
+                              className="text-blue-500 underline decoration-dotted"
+                            >
+                              More details
+                            </Link>
                           </td>
                         </tr>
                       );

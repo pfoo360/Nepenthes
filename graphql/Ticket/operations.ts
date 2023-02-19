@@ -31,6 +31,10 @@ const operations = {
               }
             }
           }
+          project {
+            id
+            workspaceId
+          }
           status
           createdAt
         }
@@ -74,6 +78,10 @@ const operations = {
                 username
               }
             }
+          }
+          project {
+            id
+            workspaceId
           }
           status
           createdAt
