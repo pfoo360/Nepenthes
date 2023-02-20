@@ -10,6 +10,7 @@ import useProjectContext from "../../hooks/useProjectContext";
 import TICKETS_PER_PAGE from "../../utils/ticketsPerPage";
 import moment from "moment";
 import Link from "next/link";
+import ROLES from "../../utils/role";
 
 interface ProjectsTicketsProps {
   workspaceUsersApartOfTheProject: {
@@ -100,7 +101,12 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
     projectCtx.workspaceId !== workspaceUserCtx.workspaceId
   )
     return null;
-
+  console.log(
+    "================",
+    workspaceUsersApartOfTheProject.find(
+      ({ workspaceUser: { id, role, user } }) => id === workspaceUserCtx.id
+    )
+  );
   return (
     <div className="flex flex-col mx-6">
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -108,12 +114,19 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
           <div className="overflow-hidden">
             <div className=" flex items-center">
               <h1 className="text-2xl font-medium text-gray-900">Tickets</h1>
-              <AddTicket
-                workspaceUsersApartOfTheProject={
-                  workspaceUsersApartOfTheProject
-                }
-                page={page}
-              />
+              {workspaceUserCtx.role === ROLES.ADMIN ||
+              (workspaceUserCtx.role === ROLES.MANAGER &&
+                workspaceUsersApartOfTheProject.find(
+                  ({ workspaceUser: { id, role, user } }) =>
+                    id === workspaceUserCtx.id
+                )) ? (
+                <AddTicket
+                  workspaceUsersApartOfTheProject={
+                    workspaceUsersApartOfTheProject
+                  }
+                  page={page}
+                />
+              ) : null}
             </div>
             <table className="min-w-full">
               <thead className="border-b">
@@ -204,12 +217,24 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
                             )}
                           </td>
                           <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal">
-                            <Link
-                              href={`/t/${project.workspaceId}/${project.id}/${id}`}
-                              className="text-blue-500 underline decoration-dotted"
-                            >
-                              More details
-                            </Link>
+                            {workspaceUserCtx.role === ROLES.ADMIN ||
+                            (workspaceUserCtx.role === ROLES.MANAGER &&
+                              workspaceUsersApartOfTheProject.find(
+                                ({ workspaceUser: { id, role, user } }) =>
+                                  id === workspaceUserCtx.id
+                              )) ||
+                            ticketDeveloper.find(
+                              ({ developer: { id, user } }) =>
+                                id === workspaceUserCtx.id
+                            ) ||
+                            submitter.id === workspaceUserCtx.id ? (
+                              <Link
+                                href={`/t/${project.workspaceId}/${project.id}/${id}`}
+                                className="text-blue-500 underline decoration-dotted"
+                              >
+                                More details
+                              </Link>
+                            ) : null}
                           </td>
                         </tr>
                       );

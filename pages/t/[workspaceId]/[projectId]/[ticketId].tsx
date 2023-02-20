@@ -3,27 +3,27 @@ import getServerSessionAndUser from "../../../../utils/getServerSessionAndUser";
 import prisma from "../../../../lib/prisma";
 import ROLES from "../../../../utils/role";
 import { default as TicketComponent } from "../../../../components/Ticket/Ticket";
-import DeleteProject from "../../../../components/DeleteProject/DeleteProject";
 import NavBar from "../../../../components/NavBar/NavBar";
-import ProjectsTickets from "../../../../components/ProjectsTickets/ProjectsTickets";
-import { FC, useState } from "react";
-import { Role, User, Ticket } from "../../../../types/types";
-import useUserContext from "../../../../hooks/useUserContext";
-import useWorkspaceContext from "../../../../hooks/useWorkspaceContext";
-import useWorkspaceUserContext from "../../../../hooks/useWorkspaceUserContext";
-import useProjectContext from "../../../../hooks/useProjectContext";
+import { Ticket, Role } from "../../../../types/types";
 
 interface TicketDetailsProps {
   ticket_stringify: string;
+  managersAssignedToProject: Array<{ workspaceUserId: string }>;
 }
 
-const TicketDetails: NextPage<TicketDetailsProps> = ({ ticket_stringify }) => {
+const TicketDetails: NextPage<TicketDetailsProps> = ({
+  ticket_stringify,
+  managersAssignedToProject,
+}) => {
   const ticket: Ticket = JSON.parse(ticket_stringify);
 
   return (
     <>
       <NavBar />
-      <TicketComponent ticket={ticket} />
+      <TicketComponent
+        ticket={ticket}
+        managersAssignedToProject={managersAssignedToProject}
+      />
     </>
   );
 };
@@ -86,7 +86,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   console.log("PROJECT", project);
 
   //a workspace's ADMIN can view any project in the workspace
-  //a workspace's non-ADMINs can only view a project IF they are apart of the project
+  //a workspace's non-ADMINs can only view a project IF they are assigned to the project
   //if a user is NOT an ADMIN of a workspace, check to see if user is at least assigned to project
   if (workspaceUser.role !== ROLES.ADMIN) {
     const projectWorkspaceUser = await prisma.projectWorkspaceUser.findUnique({
@@ -155,12 +155,12 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (ticket.project.id !== project.id)
     return { redirect: { destination: "/workspaces", permanent: false } };
 
-  //we know: ticket is apart of project and project is apart of workspace
-  //we know: user is an ADMIN of workspace OR user is a MANAGER/DEVELOPER of workspace and assigned to project
+  //below this we know: ticket is apart of project and project is apart of workspace
+  //below this we know: user is an ADMIN of workspace OR user is a MANAGER/DEVELOPER of workspace AND assigned to project
 
-  //ADMINs can see all ticket details of a workspace unconditionally
-  //MANAGERs can see all ticket details of projects if they are assigned to the project
-  //DEVELOPERs can see all ticket details where they are listed as a ticketDeveloper
+  //ADMINs can see ticket details of a project unconditionally
+  //MANAGERs can see ticket details of projects if they are assigned to project
+  //everyone else can see ticket details if they are listed on the ticket
   if (
     workspaceUser.role !== ROLES.ADMIN &&
     workspaceUser.role !== ROLES.MANAGER
@@ -168,10 +168,25 @@ export const getServerSideProps: GetServerSideProps = async ({
     if (
       !ticket.ticketDeveloper.find(
         ({ id, developer }) => developer.id === workspaceUser.id
-      )
+      ) &&
+      ticket.ticketSubmitter.submitter.id !== workspaceUser.id
     )
       return { redirect: { destination: "/workspaces", permanent: false } };
   }
+
+  //used to determine when to display 'edit ticket' button
+  const managersAssignedToProject = await prisma.projectWorkspaceUser.findMany({
+    where: {
+      AND: {
+        projectId: project.id,
+        workspaceUser: { role: ROLES.MANAGER as Role },
+      },
+    },
+    select: {
+      workspaceUserId: true,
+    },
+  });
+  console.log("managersAssignedToProject", managersAssignedToProject);
 
   return {
     props: {
@@ -180,6 +195,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       workspaceUser,
       project,
       ticket_stringify: JSON.stringify(ticket),
+      managersAssignedToProject,
     },
   };
 };

@@ -9,9 +9,17 @@ import { Role, User } from "../../types/types";
 import USERS_PER_PAGE from "../../utils/usersPerPage";
 import AddWorkspaceUserToProject from "../AddWorkspaceUserToProject/AddWorkspaceUserToProject";
 import DeleteWorkspaceUserFromProject from "../DeleteWorkspaceUserFromProject/DeleteWorkspaceUserFromProject";
+import ROLES from "../../utils/role";
 
 interface ProjectsWorkspaceUsersProps {
   projectWorkspaceUserCount: number;
+  workspaceUsersApartOfTheProject: Array<{
+    workspaceUser: {
+      id: string;
+      user: User;
+      role: Role;
+    };
+  }>;
   workspaceUsersNotApartOfTheProject: Array<{
     id: string;
     user: User;
@@ -44,6 +52,7 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
   workspaceUsersNotApartOfTheProject,
   setWorkspaceUsersNotApartOfTheProject,
   setWorkspaceUsersApartOfTheProject,
+  workspaceUsersApartOfTheProject,
 }) => {
   const MAX_NUM_OF_PAGES = Math.ceil(
     projectWorkspaceUserCount / USERS_PER_PAGE
@@ -115,7 +124,12 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
     projectWorkspaceUserCount === undefined
   )
     return null;
-
+  console.log(
+    "APART",
+    workspaceUsersApartOfTheProject.find(
+      ({ workspaceUser: { id } }) => workspaceUserCtx.id === id
+    )
+  );
   return (
     <div className="flex flex-col mx-6">
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -123,11 +137,17 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
           <div className="overflow-hidden">
             <div className=" flex items-center">
               <h1 className="text-2xl font-medium text-gray-900">Team</h1>
-              <AddWorkspaceUserToProject
-                workspaceUsersNotApartOfTheProject={
-                  workspaceUsersNotApartOfTheProject
-                }
-              />
+              {workspaceUserCtx.role === ROLES.ADMIN ||
+              (workspaceUserCtx.role === ROLES.MANAGER &&
+                workspaceUsersApartOfTheProject.find(
+                  ({ workspaceUser: { id } }) => workspaceUserCtx.id === id
+                )) ? (
+                <AddWorkspaceUserToProject
+                  workspaceUsersNotApartOfTheProject={
+                    workspaceUsersNotApartOfTheProject
+                  }
+                />
+              ) : null}
             </div>
             <table className="min-w-full">
               <thead className="border-b">
@@ -172,17 +192,24 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
                             {workspaceUser.role}
                           </td>
                           <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal">
-                            <DeleteWorkspaceUserFromProject
-                              projectWorkspaceUserId={id}
-                              workspaceUser={workspaceUser}
-                              page={page}
-                              setWorkspaceUsersNotApartOfTheProject={
-                                setWorkspaceUsersNotApartOfTheProject
-                              }
-                              setWorkspaceUsersApartOfTheProject={
-                                setWorkspaceUsersApartOfTheProject
-                              }
-                            />
+                            {workspaceUserCtx.role === ROLES.ADMIN ||
+                            (workspaceUserCtx.role === ROLES.MANAGER &&
+                              workspaceUsersApartOfTheProject.find(
+                                ({ workspaceUser: { id } }) =>
+                                  workspaceUserCtx.id === id
+                              )) ? (
+                              <DeleteWorkspaceUserFromProject
+                                projectWorkspaceUserId={id}
+                                workspaceUser={workspaceUser}
+                                page={page}
+                                setWorkspaceUsersNotApartOfTheProject={
+                                  setWorkspaceUsersNotApartOfTheProject
+                                }
+                                setWorkspaceUsersApartOfTheProject={
+                                  setWorkspaceUsersApartOfTheProject
+                                }
+                              />
+                            ) : null}
                           </td>
                         </tr>
                       );

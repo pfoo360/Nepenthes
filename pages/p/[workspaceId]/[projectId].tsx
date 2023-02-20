@@ -76,6 +76,7 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
       />
       <ProjectsWorkspaceUsers
         projectWorkspaceUserCount={projectWorkspaceUserCount}
+        workspaceUsersApartOfTheProject={workspaceUsersApartOfTheProject}
         workspaceUsersNotApartOfTheProject={workspaceUsersNotApartOfTheProject}
         setWorkspaceUsersNotApartOfTheProject={
           setWorkspaceUsersNotApartOfTheProject
