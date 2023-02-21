@@ -64,11 +64,17 @@ const typeDefs = gql`
       priority: Priority!
       type: Type!
     ): Ticket!
-  }
-
-  type Test {
-    a: Boolean
-    b: String
+    updateTicket(
+      title: String!
+      description: String!
+      workspaceUserIds: [String!]!
+      priority: Priority!
+      type: Type!
+      status: Status!
+      workspaceId: String!
+      projectId: String!
+      ticketId: String!
+    ): Ticket!
   }
 `;
 

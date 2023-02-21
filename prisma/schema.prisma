@@ -109,6 +109,8 @@ model TicketDeveloper {
   ticket      Ticket        @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   developerId String
   developer   WorkspaceUser @relation(fields: [developerId], references: [id], onDelete: Cascade)
+
+  @@unique(fields: [ticketId, developerId])
 }
 
 enum Priority {

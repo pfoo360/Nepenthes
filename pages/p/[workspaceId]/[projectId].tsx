@@ -83,7 +83,10 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
         }
         setWorkspaceUsersApartOfTheProject={setWorkspaceUsersApartOfTheProject}
       />
-      <DeleteProject />
+      {workspaceUserCtx.role === ROLES.ADMIN ||
+      workspaceUserCtx.role === ROLES.MANAGER ? (
+        <DeleteProject />
+      ) : null}
     </>
   );
 };
@@ -223,6 +226,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
 
   console.log("TICKET COUNT", projectTicketCount);
+  //workspaceUser.role = "DEVELOPER";
 
   return {
     props: {

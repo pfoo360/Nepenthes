@@ -25,7 +25,7 @@ const NavBar = () => {
 
   return (
     <>
-      <nav className="bg-gray-50 w-screen h-9 px-4 flex flex-row justify-between items-center border-b-gray-200 border-b">
+      <nav className="bg-gray-50 h-9 px-4 flex flex-row justify-between items-center border-b-gray-200 border-b">
         <Link
           href={workspace?.id ? `/w/${workspace.id}` : `/workspaces`}
           className="text-indigo-500 text-lg hover:text-indigo-700"

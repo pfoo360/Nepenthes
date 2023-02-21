@@ -175,6 +175,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   }
 
   //used to determine when to display 'edit ticket' button
+  //might get rid of below
   const managersAssignedToProject = await prisma.projectWorkspaceUser.findMany({
     where: {
       AND: {

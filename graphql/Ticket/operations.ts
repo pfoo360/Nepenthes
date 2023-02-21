@@ -88,6 +88,37 @@ const operations = {
         }
       }
     `,
+    UPDATE_TICKET: gql`
+      mutation UpdateTicket(
+        $title: String!
+        $description: String!
+        $workspaceUserIds: [String!]!
+        $priority: Priority!
+        $type: Type!
+        $status: Status!
+        $workspaceId: String!
+        $projectId: String!
+        $ticketId: String!
+      ) {
+        updateTicket(
+          title: $title
+          description: $description
+          workspaceUserIds: $workspaceUserIds
+          priority: $priority
+          type: $type
+          status: $status
+          workspaceId: $workspaceId
+          projectId: $projectId
+          ticketId: $ticketId
+        ) {
+          id
+          project {
+            id
+            workspaceId
+          }
+        }
+      }
+    `,
   },
 };
 
