@@ -707,6 +707,7 @@ const resolvers = {
 
       //if user is MANAGER or DEVELOPER in the workspace, check if user is assigned to project
       //if user is a DEVELOPER in the workspace, check if user is listed on the ticket
+      workspaceUser.role = "DEVELOPER";
       if (workspaceUser.role !== ROLES.ADMIN) {
         const isAssignedToProject =
           await prisma.projectWorkspaceUser.findUnique({

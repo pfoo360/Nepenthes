@@ -148,5 +148,5 @@ model TicketComment {
   id       String   @id @default(cuid())
   comment  Comment?
   ticketId String
-  ticket   Ticket   @relation(fields: [ticketId], references: [id])
+  ticket   Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }
