@@ -47,6 +47,7 @@ model WorkspaceUser {
   projectWorkspaceUser ProjectWorkspaceUser[]
   ticketSubmitter      TicketSubmitter[]
   ticketDeveloper      TicketDeveloper[]
+  comment              Comment[]
 
   @@unique(fields: [workspaceId, userId])
 }
@@ -94,6 +95,7 @@ model Ticket {
   type              Type
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @default(now())
+  ticketComment     TicketComment[]
 }
 
 model TicketSubmitter {
@@ -130,4 +132,21 @@ enum Type {
   ERROR
   FEATURE
   OTHER
+}
+
+model Comment {
+  id            String          @id @default(cuid())
+  comment       String
+  authorId      String
+  author        WorkspaceUser   @relation(fields: [authorId], references: [id])
+  createdAt     DateTime        @default(now())
+  ticketComment TicketComment[]
+}
+
+model TicketComment {
+  id        String  @id @default(cuid())
+  ticketId  String
+  ticket    Ticket  @relation(fields: [ticketId], references: [id])
+  commentId String
+  comment   Comment @relation(fields: [commentId], references: [id])
 }

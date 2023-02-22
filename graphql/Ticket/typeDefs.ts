@@ -46,6 +46,22 @@ const typeDefs = gql`
     OTHER
   }
 
+  type Comment {
+    id: ID
+    comment: String
+    authorId: String
+    author: WorkspaceUser
+    createdAt: Date
+  }
+
+  type TicketComment {
+    id: ID
+    ticketId: String
+    ticket: Ticket
+    commentId: String
+    comment: Comment
+  }
+
   type Query {
     getProjectsTickets(
       projectId: String!
@@ -75,6 +91,12 @@ const typeDefs = gql`
       projectId: String!
       ticketId: String!
     ): Ticket!
+    createComment(
+      comment: String!
+      workspaceId: String!
+      projectId: String!
+      ticketId: String!
+    ): Comment!
   }
 `;
 

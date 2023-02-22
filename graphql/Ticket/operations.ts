@@ -119,6 +119,34 @@ const operations = {
         }
       }
     `,
+    CREATE_COMMENT: gql`
+      mutation CreateComment(
+        $comment: String!
+        $workspaceId: String!
+        $projectId: String!
+        $ticketId: String!
+      ) {
+        createComment(
+          comment: $comment
+          workspaceId: $workspaceId
+          projectId: $projectId
+          ticketId: $ticketId
+        ) {
+          id
+          comment
+          author {
+            id
+            user {
+              id
+              username
+              email
+            }
+            role
+          }
+          createdAt
+        }
+      }
+    `,
   },
 };
 

@@ -2,8 +2,9 @@ import type { GetServerSideProps, NextPage } from "next";
 import getServerSessionAndUser from "../../../../utils/getServerSessionAndUser";
 import prisma from "../../../../lib/prisma";
 import ROLES from "../../../../utils/role";
-import { default as TicketComponent } from "../../../../components/Ticket/Ticket";
 import NavBar from "../../../../components/NavBar/NavBar";
+import { default as TicketComponent } from "../../../../components/Ticket/Ticket";
+import Comment from "../../../../components/Comment/Comment";
 import { Ticket, Role } from "../../../../types/types";
 
 interface TicketDetailsProps {
@@ -24,6 +25,7 @@ const TicketDetails: NextPage<TicketDetailsProps> = ({
         ticket={ticket}
         managersAssignedToProject={managersAssignedToProject}
       />
+      <Comment ticket={ticket} />
     </>
   );
 };
