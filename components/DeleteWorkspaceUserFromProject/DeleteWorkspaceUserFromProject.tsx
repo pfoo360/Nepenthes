@@ -157,7 +157,7 @@ const DeleteWorkspaceUserFromProject: FC<
       console.log("DELETEWORKSPACEUSERFROMPROJECT", data);
       setSubmitError("");
       setIsModalOpen(false);
-      //location.reload()
+      location.reload();
     },
   });
 

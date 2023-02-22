@@ -190,37 +190,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     });
 
-  //workspaceUser.role = "DEVELOPER";
-  // const a = await prisma.ticketDeveloper.findMany({
-  //   where: {
-  //     AND: {
-  //       ticket: { projectId: project.id },
-  //       developer: { id: workspaceUser.id },
-  //     },
-  //   },
-  //   select: {
-  //     id: true,
-  //     ticketId: true,
-  //     developerId: true,
-  //     ticket: {
-  //       select: {
-  //         projectId: true,
-  //         title: true,
-  //         description: true,
-  //         project: { select: { id: true, name: true, description: true } },
-  //       },
-  //     },
-  //     developer: {
-  //       select: {
-  //         id: true,
-  //         role: true,
-  //         user: { select: { id: true, username: true, email: true } },
-  //       },
-  //     },
-  //   },
-  // });
-  // console.log("aAAAAAAAAAaa", a);
-
   return {
     props: {
       user,

@@ -392,8 +392,48 @@ const resolvers = {
           },
         });
 
+      const deletedTickedDevelopers = await prisma.ticketDeveloper.deleteMany({
+        where: {
+          AND: {
+            ticket: { projectId: project.id },
+            developer: { id: deletedProjectWorkspaceUser.workspaceUser.id },
+          },
+        },
+      });
+      //workspaceUser.role = "DEVELOPER";
+      // const a = await prisma.ticketDeveloper.findMany({
+      //   where: {
+      //     AND: {
+      //       ticket: { projectId: project.id },
+      //       developer: { id: workspaceUser.id },
+      //     },
+      //   },
+      //   select: {
+      //     id: true,
+      //     ticketId: true,
+      //     developerId: true,
+      //     ticket: {
+      //       select: {
+      //         projectId: true,
+      //         title: true,
+      //         description: true,
+      //         project: { select: { id: true, name: true, description: true } },
+      //       },
+      //     },
+      //     developer: {
+      //       select: {
+      //         id: true,
+      //         role: true,
+      //         user: { select: { id: true, username: true, email: true } },
+      //       },
+      //     },
+      //   },
+      // });
+      // console.log("aAAAAAAAAAaa", a);
+
       console.log(projectId, workspaceId, projectWorkspaceUserId);
-      console.log(deletedProjectWorkspaceUser);
+      console.log("DPWU", deletedProjectWorkspaceUser.workspaceUser.id);
+      console.log("DTD", deletedTickedDevelopers);
 
       return deletedProjectWorkspaceUser;
     },
