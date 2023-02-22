@@ -99,73 +99,74 @@ const AddTicket: FC<AddTicketProps> = ({
       setSubmitError(error.message);
     },
     update: (cache, { data }) => {
-      if (!data) return;
-      if (
-        !projectCtx?.id ||
-        !workspaceCtx?.id ||
-        page === undefined ||
-        page === null
-      )
-        return;
+      // if (!data) return;
+      // if (
+      //   !projectCtx?.id ||
+      //   !workspaceCtx?.id ||
+      //   page === undefined ||
+      //   page === null
+      // )
+      //   return;
 
-      const oldCache = cache.readQuery<{
-        getProjectsTickets: Array<{
-          id: string;
-          title: string;
-          ticketSubmitter: {
-            submitter: { id: string; user: { username: string } };
-          };
-          ticketDeveloper: Array<{
-            developer: { id: string; user: { username: string } };
-          }>;
-          project: {
-            id: string;
-            workspaceId: string;
-          };
-          status: Status;
-          createdAt: number;
-        }>;
-      }>({
-        query: ticketOperations.Query.GET_PROJECTS_TICKETS,
-        variables: {
-          projectId: projectCtx.id,
-          workspaceId: workspaceCtx.id,
-          page,
-        },
-      });
+      // const oldCache = cache.readQuery<{
+      //   getProjectsTickets: Array<{
+      //     id: string;
+      //     title: string;
+      //     ticketSubmitter: {
+      //       submitter: { id: string; user: { username: string } };
+      //     };
+      //     ticketDeveloper: Array<{
+      //       developer: { id: string; user: { username: string } };
+      //     }>;
+      //     project: {
+      //       id: string;
+      //       workspaceId: string;
+      //     };
+      //     status: Status;
+      //     createdAt: number;
+      //   }>;
+      // }>({
+      //   query: ticketOperations.Query.GET_PROJECTS_TICKETS,
+      //   variables: {
+      //     projectId: projectCtx.id,
+      //     workspaceId: workspaceCtx.id,
+      //     page,
+      //   },
+      // });
 
-      if (!oldCache || page === 0) {
-        return location.reload();
-      }
+      // if (!oldCache || page === 0) {
+      //   return location.reload();
+      // }
 
-      cache.writeQuery({
-        query: ticketOperations.Query.GET_PROJECTS_TICKETS,
-        variables: {
-          projectId: projectCtx.id,
-          workspaceId: workspaceCtx.id,
-          page,
-        },
-        data: {
-          ...oldCache,
-          getProjectsTickets: [
-            data.createTicket,
-            ...oldCache.getProjectsTickets,
-          ],
-        },
-      });
+      // cache.writeQuery({
+      //   query: ticketOperations.Query.GET_PROJECTS_TICKETS,
+      //   variables: {
+      //     projectId: projectCtx.id,
+      //     workspaceId: workspaceCtx.id,
+      //     page,
+      //   },
+      //   data: {
+      //     ...oldCache,
+      //     getProjectsTickets: [
+      //       data.createTicket,
+      //       ...oldCache.getProjectsTickets,
+      //     ],
+      //   },
+      // });
 
-      const newCache = cache.readQuery({
-        query: ticketOperations.Query.GET_PROJECTS_TICKETS,
-        variables: {
-          projectId: projectCtx.id,
-          workspaceId: workspaceCtx.id,
-          page,
-        },
-      });
-      console.log("ADDTICKETUPDATE", data);
-      console.log(page);
-      console.log("OLDCACHE", oldCache);
-      console.log("NEWCACHE", newCache);
+      // const newCache = cache.readQuery({
+      //   query: ticketOperations.Query.GET_PROJECTS_TICKETS,
+      //   variables: {
+      //     projectId: projectCtx.id,
+      //     workspaceId: workspaceCtx.id,
+      //     page,
+      //   },
+      // });
+      // console.log("ADDTICKETUPDATE", data);
+      // console.log(page);
+      // console.log("OLDCACHE", oldCache);
+      // console.log("NEWCACHE", newCache);
+      location.reload();
     },
     onCompleted(data, clientOptions) {
       console.log("ADDTICKETCOMPLETE", data);
