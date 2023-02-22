@@ -12,6 +12,7 @@ import Error from "../../components/Error/Error";
 import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
 import getServerSessionAndUser from "../../utils/getServerSessionAndUser";
+import Link from "next/link";
 
 const Register = () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -148,87 +149,96 @@ const Register = () => {
 
   return (
     <div className={`fixed top-0 left-0 w-full h-full bg-gray-50`}>
-      <form
-        className={`border border-gray-400 flex flex-col justify-center items-center mx-8 mt-14 `}
-      >
-        {successMessage && (
-          <p className={`text-lg text-emerald-600 my-1`}>{successMessage}</p>
-        )}
-        {errorMessage && <Error message={errorMessage} />}
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value={username}
-          onChange={handleUsernameChange}
-          onBlur={handleUsernameInitialFocus}
-          ref={inputRef}
-          placeholder="Username"
-          disabled={submitting}
-          required
-          className={`border border-gray-300 rounded-sm w-5/6 pl-2 py-1 mt-8 text-md placeholder-gray-400 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200`}
-        />
-        {usernameInitialFocus && usernameError && (
-          <Error message={usernameError} />
-        )}
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={email}
-          onChange={handleEmailChange}
-          onBlur={handleEmailInitialFocus}
-          placeholder="Email"
-          disabled={submitting}
-          required
-          className={`border border-gray-300 rounded-sm w-5/6 pl-2 py-1 mt-8 text-md placeholder-gray-400 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200`}
-        />
-        {emailInitialFocus && emailError && <Error message={emailError} />}
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={password}
-          onChange={handlePasswordChange}
-          onBlur={handlePasswordInitialFocus}
-          placeholder="Password"
-          disabled={submitting}
-          required
-          className={`border border-gray-300 rounded-sm w-5/6 pl-2 py-1 mt-8 text-md placeholder-gray-400 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200`}
-        />
-        {passwordInitialFocus && passwordError && (
-          <Error message={passwordError} />
-        )}
-        <input
-          type="password"
-          id="confirmPassword"
-          name="confirmPassword"
-          value={confirmPassword}
-          onChange={handleConfirmPasswordChange}
-          onBlur={handleConfirmPasswordInitialFocus}
-          placeholder="Confirm password"
-          disabled={submitting}
-          required
-          className={`border border-gray-300 rounded-sm w-5/6 pl-2 py-1 mt-8 text-md placeholder-gray-400 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200`}
-        />
-        {confirmPasswordInitialFocus && confirmPasswordError && (
-          <Error message={confirmPasswordError} />
-        )}
-        <button
-          type="submit"
-          disabled={
-            !!usernameError ||
-            !!emailError ||
-            !!passwordError ||
-            !!confirmPasswordError ||
-            submitting
-          }
-          onClick={handleSubmit}
-          className={`w-5/6 my-8 py-3 bg-indigo-500 rounded-sm text-gray-50 hover:bg-indigo-600 active:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-300 disabled:bg-indigo-400`}
-        >
-          Register
-        </button>
-      </form>
+      <div className="border border-gray-400 mx-8 mt-14 flex flex-col justify-center items-center">
+        <form className={`flex flex-col justify-center items-center w-full`}>
+          {successMessage && (
+            <p className={`text-lg text-emerald-600 my-1`}>{successMessage}</p>
+          )}
+          {errorMessage && <Error message={errorMessage} />}
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={username}
+            onChange={handleUsernameChange}
+            onBlur={handleUsernameInitialFocus}
+            ref={inputRef}
+            placeholder="Username"
+            disabled={submitting}
+            required
+            className={`border border-gray-300 rounded-sm w-5/6 pl-2 py-1 mt-8 text-md placeholder-gray-400 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200`}
+          />
+          {usernameInitialFocus && usernameError && (
+            <Error message={usernameError} />
+          )}
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={email}
+            onChange={handleEmailChange}
+            onBlur={handleEmailInitialFocus}
+            placeholder="Email"
+            disabled={submitting}
+            required
+            className={`border border-gray-300 rounded-sm w-5/6 pl-2 py-1 mt-8 text-md placeholder-gray-400 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200`}
+          />
+          {emailInitialFocus && emailError && <Error message={emailError} />}
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={password}
+            onChange={handlePasswordChange}
+            onBlur={handlePasswordInitialFocus}
+            placeholder="Password"
+            disabled={submitting}
+            required
+            className={`border border-gray-300 rounded-sm w-5/6 pl-2 py-1 mt-8 text-md placeholder-gray-400 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200`}
+          />
+          {passwordInitialFocus && passwordError && (
+            <Error message={passwordError} />
+          )}
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+            onBlur={handleConfirmPasswordInitialFocus}
+            placeholder="Confirm password"
+            disabled={submitting}
+            required
+            className={`border border-gray-300 rounded-sm w-5/6 pl-2 py-1 mt-8 text-md placeholder-gray-400 bg-gray-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-200`}
+          />
+          {confirmPasswordInitialFocus && confirmPasswordError && (
+            <Error message={confirmPasswordError} />
+          )}
+          <button
+            type="submit"
+            disabled={
+              !!usernameError ||
+              !!emailError ||
+              !!passwordError ||
+              !!confirmPasswordError ||
+              submitting
+            }
+            onClick={handleSubmit}
+            className={`w-5/6 my-8 py-3 bg-indigo-500 rounded-sm text-gray-50 hover:bg-indigo-600 active:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-300 disabled:bg-indigo-400`}
+          >
+            Register
+          </button>
+        </form>
+        <p className="text-gray-900 my-4">
+          Already have an account?{" "}
+          <Link
+            href="/signin"
+            className="text-blue-500 underline decoration-dotted"
+          >
+            sign in
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
