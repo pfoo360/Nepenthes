@@ -211,10 +211,8 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
                           <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal">
                             {status}
                           </td>
-                          <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal">
-                            {moment(createdAt).format(
-                              "MMMM Do YYYY, h:mm:ss a"
-                            )}
+                          <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal break-word">
+                            {moment(createdAt).format("MMM DD YYYY, h:mm:ss a")}
                           </td>
                           <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal">
                             {workspaceUserCtx.role === ROLES.ADMIN ||

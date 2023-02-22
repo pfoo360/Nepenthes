@@ -747,24 +747,48 @@ const resolvers = {
       //user is assigned to the workspace, project is owned by the same workspace, ticket is apart of project
       //user is: (an ADMIN in the workspace) OR (user is a MANAGER in the workspace + assigned to project) OR (user is a DEVELOPER in the workspace + assigned to project + listed on the ticket as a dev)
 
-      const createdComment = await prisma.comment.create({
+      // const createdComment = await prisma.comment.create({
+      //   data: {
+      //     comment,
+      //     authorId: workspaceUser.id,
+      //     ticketComment: { create: { ticketId: ticket.id } },
+      //   },
+      //   select: {
+      //     id: true,
+      //     comment: true,
+      //     authorId: true,
+      //     author: {
+      //       select: {
+      //         id: true,
+      //         user: { select: { id: true, username: true, email: true } },
+      //         role: true,
+      //       },
+      //     },
+      //     createdAt: true,
+      //   },
+      // });
+      const createdComment = await prisma.ticketComment.create({
         data: {
-          comment,
-          authorId: workspaceUser.id,
-          ticketComment: { create: { ticketId: ticket.id } },
+          ticketId: ticket.id,
+          comment: { create: { comment, authorId: workspaceUser.id } },
         },
         select: {
           id: true,
-          comment: true,
-          authorId: true,
-          author: {
+          ticketId: true,
+          comment: {
             select: {
               id: true,
-              user: { select: { id: true, username: true, email: true } },
-              role: true,
+              comment: true,
+              author: {
+                select: {
+                  id: true,
+                  user: { select: { id: true, username: true, email: true } },
+                  role: true,
+                },
+              },
+              createdAt: true,
             },
           },
-          createdAt: true,
         },
       });
 

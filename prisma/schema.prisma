@@ -135,18 +135,18 @@ enum Type {
 }
 
 model Comment {
-  id            String          @id @default(cuid())
-  comment       String
-  authorId      String
-  author        WorkspaceUser   @relation(fields: [authorId], references: [id])
-  createdAt     DateTime        @default(now())
-  ticketComment TicketComment[]
+  id              String        @id @default(cuid())
+  comment         String
+  authorId        String
+  author          WorkspaceUser @relation(fields: [authorId], references: [id])
+  createdAt       DateTime      @default(now())
+  ticketCommentId String        @unique
+  ticketComment   TicketComment @relation(fields: [ticketCommentId], references: [id], onDelete: Cascade)
 }
 
 model TicketComment {
-  id        String  @id @default(cuid())
-  ticketId  String
-  ticket    Ticket  @relation(fields: [ticketId], references: [id])
-  commentId String
-  comment   Comment @relation(fields: [commentId], references: [id])
+  id       String   @id @default(cuid())
+  comment  Comment?
+  ticketId String
+  ticket   Ticket   @relation(fields: [ticketId], references: [id])
 }

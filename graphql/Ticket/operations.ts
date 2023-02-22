@@ -133,17 +133,21 @@ const operations = {
           ticketId: $ticketId
         ) {
           id
-          comment
-          author {
+          ticketId
+          comment {
             id
-            user {
+            comment
+            author {
               id
-              username
-              email
+              user {
+                id
+                username
+                email
+              }
+              role
             }
-            role
+            createdAt
           }
-          createdAt
         }
       }
     `,

@@ -1,17 +1,26 @@
-import { FC, useState, useEffect, ChangeEvent, MouseEvent } from "react";
+import {
+  FC,
+  useState,
+  useEffect,
+  ChangeEvent,
+  MouseEvent,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import ticketOperations from "../../graphql/Ticket/operations";
 import { useMutation } from "@apollo/client";
-import { Ticket, Role } from "../../types/types";
+import { TicketComment, WorkspaceUser } from "../../types/types";
 import useUserContext from "../../hooks/useUserContext";
 import useWorkspaceContext from "../../hooks/useWorkspaceContext";
 import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
 import useProjectContext from "../../hooks/useProjectContext";
 
 interface AddCommentProps {
-  ticket: Ticket;
+  ticketId: string;
+  setComments: Dispatch<SetStateAction<TicketComment[]>>;
 }
 
-const AddComment: FC<AddCommentProps> = ({ ticket }) => {
+const AddComment: FC<AddCommentProps> = ({ ticketId, setComments }) => {
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
@@ -24,17 +33,13 @@ const AddComment: FC<AddCommentProps> = ({ ticket }) => {
     {
       createComment: {
         id: string;
-        comment: string;
-        author: {
+        ticketId: string;
+        comment: {
           id: string;
-          user: {
-            id: string;
-            username: string;
-            email: string;
-          };
-          role: Role;
+          comment: string;
+          author: WorkspaceUser;
+          createdAt: Date;
         };
-        createdAt: Date;
       };
     },
     {
@@ -48,10 +53,14 @@ const AddComment: FC<AddCommentProps> = ({ ticket }) => {
       console.log("ADD_COMMENT", error);
     },
     update: (cache, { data }) => {
+      if (!data) return;
       console.log("ADD_COMMENT", data);
+      console.log("ADD_COMMENT", typeof data.createComment.comment.createdAt);
+      setComments((prev) => [...prev, data.createComment]);
     },
     onCompleted: (data, clientOptions) => {
       console.log("ADD_COMMENT", data);
+      setComment("");
     },
   });
 
@@ -70,15 +79,15 @@ const AddComment: FC<AddCommentProps> = ({ ticket }) => {
     e.preventDefault();
     if (commentError) return;
     if (isSubmitting) return;
-    if (!workspaceUserCtx?.workspaceId) return;
+    if (!workspaceUserCtx?.workspaceId || !projectCtx?.id || !ticketId) return;
     console.log(comment);
-    console.log(ticket);
+    console.log(ticketId);
     await createComment({
       variables: {
         comment,
         workspaceId: workspaceUserCtx?.workspaceId,
-        projectId: ticket.project.id,
-        ticketId: ticket.id,
+        projectId: projectCtx.id,
+        ticketId,
       },
     });
   };

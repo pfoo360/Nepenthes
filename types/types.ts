@@ -45,6 +45,18 @@ export interface Ticket {
   updatedAt: string;
 }
 
+export interface Comment {
+  id: string;
+  comment: string;
+  author: WorkspaceUser;
+  createdAt: string | Date;
+}
+
+export interface TicketComment {
+  id: string;
+  ticketId: string;
+  comment: Comment;
+}
 export interface WorkspaceUser {
   id: string;
   user: User;

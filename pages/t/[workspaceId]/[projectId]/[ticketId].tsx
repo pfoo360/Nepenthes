@@ -5,7 +5,7 @@ import ROLES from "../../../../utils/role";
 import NavBar from "../../../../components/NavBar/NavBar";
 import { default as TicketComponent } from "../../../../components/Ticket/Ticket";
 import Comment from "../../../../components/Comment/Comment";
-import { Ticket, Role } from "../../../../types/types";
+import { Ticket, Role, TicketComment } from "../../../../types/types";
 
 interface TicketDetailsProps {
   ticket_stringify: string;
@@ -16,8 +16,9 @@ const TicketDetails: NextPage<TicketDetailsProps> = ({
   ticket_stringify,
   managersAssignedToProject,
 }) => {
-  const ticket: Ticket = JSON.parse(ticket_stringify);
-
+  const ticket: Ticket & { ticketComment: Array<TicketComment> } =
+    JSON.parse(ticket_stringify);
+  console.log("TICKET", ticket);
   return (
     <>
       <NavBar />
@@ -25,7 +26,7 @@ const TicketDetails: NextPage<TicketDetailsProps> = ({
         ticket={ticket}
         managersAssignedToProject={managersAssignedToProject}
       />
-      <Comment ticket={ticket} />
+      <Comment ticketId={ticket.id} ticketComment={ticket.ticketComment} />
     </>
   );
 };
@@ -150,6 +151,26 @@ export const getServerSideProps: GetServerSideProps = async ({
       type: true,
       createdAt: true,
       updatedAt: true,
+      ticketComment: {
+        select: {
+          id: true,
+          ticketId: true,
+          comment: {
+            select: {
+              id: true,
+              comment: true,
+              author: {
+                select: {
+                  id: true,
+                  user: { select: { id: true, username: true, email: true } },
+                  role: true,
+                },
+              },
+              createdAt: true,
+            },
+          },
+        },
+      },
     },
   });
   console.log("TICKET", ticket);

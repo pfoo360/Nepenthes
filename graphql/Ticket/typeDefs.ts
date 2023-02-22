@@ -49,7 +49,6 @@ const typeDefs = gql`
   type Comment {
     id: ID
     comment: String
-    authorId: String
     author: WorkspaceUser
     createdAt: Date
   }
@@ -57,8 +56,6 @@ const typeDefs = gql`
   type TicketComment {
     id: ID
     ticketId: String
-    ticket: Ticket
-    commentId: String
     comment: Comment
   }
 
@@ -96,7 +93,7 @@ const typeDefs = gql`
       workspaceId: String!
       projectId: String!
       ticketId: String!
-    ): Comment!
+    ): TicketComment!
   }
 `;
 
