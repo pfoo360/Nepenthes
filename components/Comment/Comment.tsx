@@ -28,7 +28,7 @@ const Comment: FC<CommentProps> = ({ ticketId, ticketComment }) => {
           <h1 className="text-gray-50 font-bold">Comments</h1>
         </div>
         <div className="flex flex-col">
-          <div className="h-80 overflow-y-auto">
+          <div className="h-48 overflow-y-auto">
             <div className="overflow-x-auto sm:-mx-6">
               <div className="py-2 inline-block min-w-full sm:pl-6 lg:pl-8">
                 <div className="overflow-hidden">
