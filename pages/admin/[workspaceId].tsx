@@ -9,11 +9,11 @@ import WorkspacesUsers from "../../components/WorkspacesUsers/WorkspacesUsers";
 
 const Admin: NextPage = () => {
   return (
-    <div>
+    <>
       <NavBar />
       <AddUserToWorkspace />
       <WorkspacesUsers />
-    </div>
+    </>
   );
 };
 

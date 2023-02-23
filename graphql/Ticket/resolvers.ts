@@ -446,7 +446,7 @@ const resolvers = {
           extensions: { code: "UNAUTHORIZED" },
         });
 
-      workspaceUser.role = "MANAGER";
+      //workspaceUser.role = "MANAGER";
       console.log("WORKSPACEUSER", workspaceUser);
 
       //check if project is apart of the same workspace the user is apart of
@@ -707,7 +707,7 @@ const resolvers = {
 
       //if user is MANAGER or DEVELOPER in the workspace, check if user is assigned to project
       //if user is a DEVELOPER in the workspace, check if user is listed on the ticket
-      workspaceUser.role = "DEVELOPER";
+      //workspaceUser.role = "DEVELOPER";
       if (workspaceUser.role !== ROLES.ADMIN) {
         const isAssignedToProject =
           await prisma.projectWorkspaceUser.findUnique({

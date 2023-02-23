@@ -58,9 +58,6 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
 
   return (
     <>
-      {/* {  <div>{JSON.stringify(workspaceUsersNotApartOfTheProject)}</div>
-      <div>++++++++++++++++++++++++++</div>
-      <div>{JSON.stringify(workspaceUsersApartOfTheProject)}</div>} */}
       <NavBar />
       <div className="mx-6 mt-2 mb-1 text-gray-900 text-lg">
         <h1 className="font-semibold text-gray-500 text-sm">Project Name</h1>

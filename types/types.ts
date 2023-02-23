@@ -70,6 +70,17 @@ export interface Project {
   workspaceId: string;
 }
 
+export interface PieChartData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    backgroundColor: string[];
+    borderColor: string[];
+    borderWidth: number;
+  }[];
+}
+
 export interface GraphQLContext<T = any> {
   req: NextApiRequest;
   res: NextApiResponse<T>;

@@ -1,8 +1,8 @@
 const TYPES = {
   BUG: "BUG",
-  ISSUE: "ISSUE",
   ERROR: "ERROR",
   FEATURE: "FEATURE",
+  ISSUE: "ISSUE",
   OTHER: "OTHER",
 };
 
