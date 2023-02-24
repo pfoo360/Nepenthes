@@ -5,12 +5,18 @@ const typeDefs = gql`
 
   type Mutation {
     signIn(username: String!, password: String!): SignInResponse
+    signOut: SignOutResponse
   }
 
   type SignInResponse {
     successStatus: Boolean
     message: String
     user: User
+  }
+
+  type SignOutResponse {
+    successStatus: Boolean
+    message: String
   }
 `;
 

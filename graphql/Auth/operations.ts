@@ -15,6 +15,14 @@ const operations = {
         }
       }
     `,
+    SIGN_OUT: gql`
+      mutation SignIn {
+        signOut {
+          successStatus
+          message
+        }
+      }
+    `,
   },
 };
 

@@ -82,7 +82,7 @@ const NavBar = () => {
           </Link>
           {workspaceUser?.role === ROLES.ADMIN ? (
             <>
-              <div className="w-11/12 h-px rounded-md bg-gray-200 mt-32" />
+              <div className="w-11/12 h-px rounded-md bg-gray-200 mt-20" />
               <Link
                 href={`/admin/${workspace?.id}`}
                 className="block text-indigo-500 hover:text-indigo-700 mt-4 text-3xl px-4"
@@ -92,7 +92,7 @@ const NavBar = () => {
             </>
           ) : null}
 
-          <div className="w-11/12 h-px rounded-md bg-gray-200 mt-32 mb-4" />
+          <div className="w-11/12 h-px rounded-md bg-gray-200 mt-20 mb-4" />
           <div className="w-full flex flex-row justify-between items-center px-4 mb-4">
             <button
               onClick={handleToDashboardClick}

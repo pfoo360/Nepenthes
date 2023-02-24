@@ -1,6 +1,7 @@
 import { serialize } from "cookie";
 import { IncomingMessage, ServerResponse } from "http";
 import prisma from "../lib/prisma";
+import NEPENTHES_SESSION from "./nepenthesSession";
 
 const getServerSessionAndUser = async (
   req: IncomingMessage & {
@@ -20,10 +21,10 @@ const getServerSessionAndUser = async (
 } | null> => {
   try {
     if (!req?.cookies) return null;
-    if (!req.cookies["nepenthes-session"]) return null;
+    if (!req.cookies[NEPENTHES_SESSION]) return null;
 
     const sessionAndUser = await prisma.session.findUnique({
-      where: { sessionToken: req.cookies["nepenthes-session"] },
+      where: { sessionToken: req.cookies[NEPENTHES_SESSION] },
       select: {
         expires: true,
         sessionToken: true,
@@ -32,7 +33,7 @@ const getServerSessionAndUser = async (
     });
 
     if (!sessionAndUser) {
-      delete req.cookies["nepenthes-session"];
+      delete req.cookies[NEPENTHES_SESSION];
       return null;
     }
 
@@ -44,20 +45,16 @@ const getServerSessionAndUser = async (
         where: { sessionToken: sessionAndUser.sessionToken },
       });
 
-      const cookie = serialize(
-        "nepenthes-session",
-        sessionAndUser.sessionToken,
-        {
-          maxAge: -1,
-          path: "/",
-          httpOnly: true,
-          sameSite: true,
-          secure: true,
-        }
-      );
+      const cookie = serialize(NEPENTHES_SESSION, sessionAndUser.sessionToken, {
+        maxAge: -1,
+        path: "/",
+        httpOnly: true,
+        sameSite: true,
+        secure: true,
+      });
       res.setHeader("Set-Cookie", cookie);
 
-      delete req.cookies["nepenthes-session"];
+      delete req.cookies[NEPENTHES_SESSION];
 
       return null;
     }
