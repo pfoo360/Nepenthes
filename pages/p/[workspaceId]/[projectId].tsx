@@ -162,23 +162,24 @@ export const getServerSideProps: GetServerSideProps = async ({
   }
 
   //find all users that are apart of the project and the count
-  const projectWorkspaceUserAndCount = await Promise.all([
-    prisma.projectWorkspaceUser.findMany({
-      where: { projectId: projectId },
-      select: {
-        workspaceUser: {
-          select: {
-            id: true,
-            user: { select: { id: true, email: true, username: true } },
-            role: true,
+  const [listOfWorkspaceUsersApartOfTheProject, projectWorkspaceUserCount] =
+    await Promise.all([
+      prisma.projectWorkspaceUser.findMany({
+        where: { projectId: projectId },
+        select: {
+          workspaceUser: {
+            select: {
+              id: true,
+              user: { select: { id: true, email: true, username: true } },
+              role: true,
+            },
           },
         },
-      },
-    }),
-    prisma.projectWorkspaceUser.count({
-      where: { projectId },
-    }),
-  ]);
+      }),
+      prisma.projectWorkspaceUser.count({
+        where: { projectId },
+      }),
+    ]);
 
   // console.log(user, sessionToken);
   // console.log(workspaceId, projectId);
@@ -187,11 +188,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   // console.log(workspaceUser);
   // console.log(project);
 
-  console.log("0000000000000000000000000", projectWorkspaceUserAndCount[0]);
+  console.log(
+    "0000000000000000000000000",
+    listOfWorkspaceUsersApartOfTheProject
+  );
 
   //used in next db query to find the workspace users that are NOT apart of the project
   const listOfWorkspaceUserIdsThatBelongToUsersThatAreAlreadyApartOfTheProject =
-    Array.from(projectWorkspaceUserAndCount[0], (x) => ({
+    Array.from(listOfWorkspaceUsersApartOfTheProject, (x) => ({
       id: x.workspaceUser.id,
     }));
 
@@ -231,9 +235,9 @@ export const getServerSideProps: GetServerSideProps = async ({
       workspace,
       workspaceUser,
       project,
-      projectWorkspaceUserCount: projectWorkspaceUserAndCount[1],
       listOfWorkspaceUsersNotApartOfTheProject,
-      listOfWorkspaceUsersApartOfTheProject: projectWorkspaceUserAndCount[0],
+      listOfWorkspaceUsersApartOfTheProject,
+      projectWorkspaceUserCount,
       projectTicketCount,
     },
   };

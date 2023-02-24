@@ -61,7 +61,7 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
         title: string;
         ticketSubmitter: {
           submitter: { id: string; user: { username: string } };
-        };
+        } | null;
         ticketDeveloper: Array<{
           developer: { id: string; user: { username: string } };
         }>;
@@ -76,7 +76,7 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
     { projectId: string; workspaceId: string; page: number }
   >(ticketOperations.Query.GET_PROJECTS_TICKETS);
 
-  console.log(data);
+  console.log("DATAAAAAAAAAAAAAaaaa", data);
 
   const increment = () => {
     if (page >= MAX_NUM_OF_PAGES) return;
@@ -173,7 +173,7 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
                     ({
                       id,
                       title,
-                      ticketSubmitter: { submitter },
+                      ticketSubmitter,
                       ticketDeveloper,
                       project,
                       status,
@@ -184,8 +184,15 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
                           <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal">
                             {title}
                           </td>
-                          <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal">
-                            {submitter.user.username}
+                          <td
+                            className={`text-sm text-gray-900 font-light px-6 py-4 whitespace-normal ${
+                              !ticketSubmitter?.submitter?.user?.username
+                                ? "text-gray-400"
+                                : null
+                            }`}
+                          >
+                            {ticketSubmitter?.submitter?.user?.username ??
+                              `[deleted]`}
                           </td>
                           <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal">
                             {ticketDeveloper.map(
@@ -225,7 +232,8 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
                               ({ developer: { id, user } }) =>
                                 id === workspaceUserCtx.id
                             ) ||
-                            submitter.id === workspaceUserCtx.id ? (
+                            ticketSubmitter?.submitter?.id ===
+                              workspaceUserCtx.id ? (
                               <Link
                                 href={`/t/${project.workspaceId}/${project.id}/${id}`}
                                 className="text-blue-500 underline decoration-dotted"

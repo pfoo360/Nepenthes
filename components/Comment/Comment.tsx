@@ -72,8 +72,14 @@ const Comment: FC<CommentProps> = ({ ticketId, ticketComment }) => {
                         ) => {
                           const DATA = (
                             <>
-                              <td className="text-sm text-gray-900 font-light px-4 py-2 whitespace-normal break-all">
-                                {author.user.username}
+                              <td
+                                className={`text-sm text-gray-900 font-light px-4 py-2 whitespace-normal break-all ${
+                                  !author?.user?.username
+                                    ? "text-gray-400"
+                                    : null
+                                }`}
+                              >
+                                {author?.user?.username ?? `[deleted]`}
                               </td>
                               <td className="text-sm text-gray-900 font-light px-4 py-2 whitespace-normal break-all">
                                 {comment}

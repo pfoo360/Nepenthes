@@ -107,7 +107,6 @@ const AddTicket: FC<AddTicketProps> = ({
       //   page === null
       // )
       //   return;
-
       // const oldCache = cache.readQuery<{
       //   getProjectsTickets: Array<{
       //     id: string;
@@ -133,11 +132,9 @@ const AddTicket: FC<AddTicketProps> = ({
       //     page,
       //   },
       // });
-
       // if (!oldCache || page === 0) {
       //   return location.reload();
       // }
-
       // cache.writeQuery({
       //   query: ticketOperations.Query.GET_PROJECTS_TICKETS,
       //   variables: {
@@ -153,7 +150,6 @@ const AddTicket: FC<AddTicketProps> = ({
       //     ],
       //   },
       // });
-
       // const newCache = cache.readQuery({
       //   query: ticketOperations.Query.GET_PROJECTS_TICKETS,
       //   variables: {
@@ -166,7 +162,6 @@ const AddTicket: FC<AddTicketProps> = ({
       // console.log(page);
       // console.log("OLDCACHE", oldCache);
       // console.log("NEWCACHE", newCache);
-      location.reload();
     },
     onCompleted(data, clientOptions) {
       console.log("ADDTICKETCOMPLETE", data);
@@ -187,6 +182,7 @@ const AddTicket: FC<AddTicketProps> = ({
       setTypeInitialFocus(false);
       setTypeError("");
       setModalOpen(false);
+      location.reload();
     },
   });
 

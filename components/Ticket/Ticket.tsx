@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Ticket } from "../../types/types";
+import { Ticket, TicketComment } from "../../types/types";
 import moment from "moment";
 import useUserContext from "../../hooks/useUserContext";
 import useWorkspaceContext from "../../hooks/useWorkspaceContext";
@@ -9,7 +9,7 @@ import Link from "next/link";
 import ROLES from "../../utils/role";
 
 interface TicketProps {
-  ticket: Ticket;
+  ticket: Ticket & { ticketComment: Array<TicketComment> };
   managersAssignedToProject: Array<{ workspaceUserId: string }>;
 }
 
@@ -36,7 +36,7 @@ const Ticket: FC<TicketProps> = ({ ticket, managersAssignedToProject }) => {
   );
   console.log(
     "SUBMITTER?",
-    workspaceUserCtx.id === ticket.ticketSubmitter.submitter.id
+    workspaceUserCtx.id === ticket?.ticketSubmitter?.submitter?.id
   );
   console.log(
     "DEVELOPER?",
@@ -61,7 +61,6 @@ const Ticket: FC<TicketProps> = ({ ticket, managersAssignedToProject }) => {
             managersAssignedToProject.find(
               ({ workspaceUserId }) => workspaceUserCtx.id === workspaceUserId
             )) ||
-          workspaceUserCtx.id === ticket.ticketSubmitter.submitter.id ||
           ticket.ticketDeveloper.find(
             ({ developer: { id, role, user } }) => id === workspaceUserCtx.id
           ) ? (
@@ -90,8 +89,14 @@ const Ticket: FC<TicketProps> = ({ ticket, managersAssignedToProject }) => {
           </div>
           <div className="my-3 w-full">
             <h1 className=" text-base text-gray-900 font-bold">SUBMITTER</h1>
-            <h2 className="mx-3 text-sm text-gray-900 mt-[2px]">
-              {ticket.ticketSubmitter.submitter.user.username}
+            <h2
+              className={`mx-3 text-sm text-gray-900 mt-[2px] ${
+                !ticket?.ticketSubmitter?.submitter?.user?.username
+                  ? "text-gray-400"
+                  : null
+              }`}
+            >
+              {ticket.ticketSubmitter?.submitter?.user?.username ?? `[deleted]`}
             </h2>
           </div>
           <div className="my-3 w-full">

@@ -3,7 +3,11 @@ interface ErrorProps {
 }
 
 const Error: React.FC<ErrorProps> = ({ message }) => {
-  return <p className={`text-base text-red-600 my-1 px-4`}>{message}</p>;
+  return (
+    <div className="flex flex-row justify-center mb-1">
+      <p className={`text-base text-red-600`}>{message}</p>
+    </div>
+  );
 };
 
 export default Error;

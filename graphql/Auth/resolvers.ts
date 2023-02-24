@@ -1,7 +1,6 @@
 import { GraphQLError } from "graphql";
-import { GraphQLContext } from "../../types/types";
+import { GraphQLContext, SignInResponse } from "../../types/types";
 import bcrypt from "bcrypt";
-import { SignInResponse } from "../../types/types";
 import crypto from "crypto";
 import { serialize } from "cookie";
 

@@ -85,8 +85,8 @@ model Ticket {
   id                String            @id @default(cuid())
   title             String
   description       String?
-  ticketSubmitterId String            @unique
-  ticketSubmitter   TicketSubmitter   @relation(fields: [ticketSubmitterId], references: [id], onDelete: Cascade)
+  ticketSubmitterId String?           @unique
+  ticketSubmitter   TicketSubmitter?  @relation(fields: [ticketSubmitterId], references: [id], onDelete: SetNull)
   ticketDeveloper   TicketDeveloper[]
   projectId         String
   project           Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -135,13 +135,13 @@ enum Type {
 }
 
 model Comment {
-  id              String        @id @default(cuid())
+  id              String         @id @default(cuid())
   comment         String
-  authorId        String
-  author          WorkspaceUser @relation(fields: [authorId], references: [id])
-  createdAt       DateTime      @default(now())
-  ticketCommentId String        @unique
-  ticketComment   TicketComment @relation(fields: [ticketCommentId], references: [id], onDelete: Cascade)
+  authorId        String?
+  author          WorkspaceUser? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  createdAt       DateTime       @default(now())
+  ticketCommentId String         @unique
+  ticketComment   TicketComment  @relation(fields: [ticketCommentId], references: [id], onDelete: Cascade)
 }
 
 model TicketComment {

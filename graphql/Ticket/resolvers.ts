@@ -105,6 +105,7 @@ const resolvers = {
             createdAt: true,
             updatedAt: true,
           },
+          orderBy: { createdAt: "desc" },
         });
 
         console.log(project, workspaceUser, projectsTickets);
@@ -113,31 +114,29 @@ const resolvers = {
       }
 
       if (workspaceUser.role !== ROLES.ADMIN) {
-        const projectExistsAndUserAssignedToProject = await Promise.all([
-          prisma.project.findUnique({
-            where: {
-              id_workspaceId: {
-                id: projectId,
-                workspaceId: workspaceUser.workspaceId,
+        //[0] checks if project exists AND project is apart of the workspace
+        //[1] checks if the user is assigned to the project
+        const [isProjectExistsAndApartOfWorkspace, isUserAssignedToProject] =
+          await Promise.all([
+            prisma.project.findUnique({
+              where: {
+                id_workspaceId: {
+                  id: projectId,
+                  workspaceId: workspaceUser.workspaceId,
+                },
               },
-            },
-          }),
-          prisma.projectWorkspaceUser.findUnique({
-            where: {
-              projectId_workspaceUserId: {
-                projectId,
-                workspaceUserId: workspaceUser.id,
+            }),
+            prisma.projectWorkspaceUser.findUnique({
+              where: {
+                projectId_workspaceUserId: {
+                  projectId,
+                  workspaceUserId: workspaceUser.id,
+                },
               },
-            },
-          }),
-        ]);
+            }),
+          ]);
 
-        //projectExistsAndUserAssignedToProject[0] checks if project exists AND project is apart of the workspace
-        //projectExistsAndUserAssignedToProject[1] checks if the user is assigned to the project
-        if (
-          !projectExistsAndUserAssignedToProject[0] ||
-          !projectExistsAndUserAssignedToProject[1]
-        )
+        if (!isProjectExistsAndApartOfWorkspace || !isUserAssignedToProject)
           throw new GraphQLError("Unauthorized.", {
             extensions: { code: "UNAUTHORIZED" },
           });
@@ -190,11 +189,12 @@ const resolvers = {
             createdAt: true,
             updatedAt: true,
           },
+          orderBy: { createdAt: "desc" },
         });
 
         console.log(
-          projectExistsAndUserAssignedToProject[0],
-          projectExistsAndUserAssignedToProject[1],
+          isProjectExistsAndApartOfWorkspace,
+          isUserAssignedToProject,
           workspaceUser,
           projectsTickets
         );

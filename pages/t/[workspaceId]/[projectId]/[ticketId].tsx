@@ -191,8 +191,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     if (
       !ticket.ticketDeveloper.find(
         ({ id, developer }) => developer.id === workspaceUser.id
-      ) &&
-      ticket.ticketSubmitter.submitter.id !== workspaceUser.id
+      )
     )
       return { redirect: { destination: "/workspaces", permanent: false } };
   }

@@ -29,6 +29,7 @@ const AllWorkspaceUsersTickets: NextPage<AllWorkspaceUsersTicketsProps> = ({
   if (workspaceUserCtx.userId !== userCtx.id) return null;
   if (workspaceUserCtx.workspaceId !== workspaceCtx.id) return null;
 
+  console.log("TICKETS", tickets);
   return (
     <>
       <NavBar />
@@ -119,8 +120,15 @@ const AllWorkspaceUsersTickets: NextPage<AllWorkspaceUsersTicketsProps> = ({
                               <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal">
                                 {title}
                               </td>
-                              <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal">
-                                {ticketSubmitter.submitter.user.username}
+                              <td
+                                className={`text-sm text-gray-900 font-light px-6 py-4 whitespace-normal ${
+                                  !ticketSubmitter?.submitter?.user?.username
+                                    ? "text-gray-400"
+                                    : null
+                                }`}
+                              >
+                                {ticketSubmitter?.submitter?.user?.username ??
+                                  `[deleted]`}
                               </td>
                               <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-normal">
                                 {ticketDeveloper.map(({ id, developer }) => (
@@ -262,6 +270,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         createdAt: true,
         updatedAt: true,
       },
+      orderBy: { createdAt: "desc" },
     });
   }
   //MANAGERs of a workspace will see all tickets of projects they are assigned to
@@ -272,15 +281,101 @@ export const getServerSideProps: GetServerSideProps = async ({
           projectWorkspaceUser: { some: { workspaceUserId: workspaceUser.id } },
         },
       },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        ticketSubmitter: {
+          select: {
+            id: true,
+            submitter: {
+              select: {
+                id: true,
+                user: { select: { id: true, username: true, email: true } },
+                role: true,
+              },
+            },
+          },
+        },
+        ticketDeveloper: {
+          select: {
+            id: true,
+            developer: {
+              select: {
+                id: true,
+                user: { select: { id: true, username: true, email: true } },
+                role: true,
+              },
+            },
+          },
+        },
+        project: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            workspace: { select: { id: true, name: true } },
+          },
+        },
+        priority: true,
+        status: true,
+        type: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: { createdAt: "desc" },
     });
   }
   //DEVELOPERs of a workspace will see all tickets where they are listed as a dev
   if (workspaceUser.role === ROLES.DEVELOPER) {
     tickets = await prisma.ticket.findMany({
       where: { ticketDeveloper: { some: { developerId: workspaceUser.id } } },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        ticketSubmitter: {
+          select: {
+            id: true,
+            submitter: {
+              select: {
+                id: true,
+                user: { select: { id: true, username: true, email: true } },
+                role: true,
+              },
+            },
+          },
+        },
+        ticketDeveloper: {
+          select: {
+            id: true,
+            developer: {
+              select: {
+                id: true,
+                user: { select: { id: true, username: true, email: true } },
+                role: true,
+              },
+            },
+          },
+        },
+        project: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            workspace: { select: { id: true, name: true } },
+          },
+        },
+        priority: true,
+        status: true,
+        type: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: { createdAt: "desc" },
     });
   }
-
+  console.log(tickets);
   return {
     props: {
       user,

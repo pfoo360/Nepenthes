@@ -23,12 +23,21 @@ const WorkspacesUsers: FC = () => {
     variables: { workspaceId: workspaceUser.workspaceId },
   });
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div className="flex flex-col items-center">
+        <p className="text-gray-900">Loading...</p>
+      </div>
+    );
 
   if (error) return <Error message="Looks like something went wrong..." />;
 
   if (!workspacesUsers || workspacesUsers.getWorkspacesUsers.length === 0)
-    return <p>Seems like there is nothing here...</p>;
+    return (
+      <div className="flex flex-col items-center">
+        <p className="text-gray-900">Seems like there is nothing here...</p>
+      </div>
+    );
 
   console.log(workspacesUsers.getWorkspacesUsers);
 

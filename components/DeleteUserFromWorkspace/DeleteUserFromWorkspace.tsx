@@ -103,6 +103,7 @@ const DeleteUserFromWorkspace: FC<{ user: User }> = ({ user }) => {
       setError("");
       setIsModalOpen(false);
       console.log("DELETEUSERCOMPLETE", data);
+      location.reload();
     },
   });
 

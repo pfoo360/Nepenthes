@@ -80,37 +80,35 @@ const resolvers = {
       //if the user making the request is NOT an ADMIN in the workspace, make sure the project the user is requesting is a project that belongs to the workspace AND that the user is assigned to the project. If project belongs to the workspace AND the user is assigned to the project, return all the users apart of the project
       //ADMINs in a workspace do not need to be apart of the project to view the users that are apart of the project
       if (workspaceUser.role !== ROLES.ADMIN) {
-        const projectExistsAndUserAssignedToProject = await Promise.all([
-          prisma.project.findUnique({
-            where: {
-              id_workspaceId: {
-                id: projectId,
-                workspaceId: workspaceUser.workspaceId,
+        //[0] checks if project exists AND is apart of the workspace
+        //[1] checks if the user is apart of the project
+        const [isProjectExistsAndApartOfWorkspace, isUserAssignedToProject] =
+          await Promise.all([
+            prisma.project.findUnique({
+              where: {
+                id_workspaceId: {
+                  id: projectId,
+                  workspaceId: workspaceUser.workspaceId,
+                },
               },
-            },
-          }),
-          prisma.projectWorkspaceUser.findUnique({
-            where: {
-              projectId_workspaceUserId: {
-                projectId,
-                workspaceUserId: workspaceUser.id,
+            }),
+            prisma.projectWorkspaceUser.findUnique({
+              where: {
+                projectId_workspaceUserId: {
+                  projectId,
+                  workspaceUserId: workspaceUser.id,
+                },
               },
-            },
-          }),
-        ]);
+            }),
+          ]);
 
-        //projectExistsAndUserAssignedToProject[0] checks if project exists AND is apart of the workspace
-        //projectExistsAndUserAssignedToProject[1] checks if the user is apart of the project
-        if (
-          !projectExistsAndUserAssignedToProject[0] ||
-          !projectExistsAndUserAssignedToProject[1]
-        )
+        if (!isProjectExistsAndApartOfWorkspace || !isUserAssignedToProject)
           throw new GraphQLError("Unauthorized.", {
             extensions: { code: "UNAUTHORIZED" },
           });
 
-        console.log(projectExistsAndUserAssignedToProject[0]);
-        console.log(projectExistsAndUserAssignedToProject[1]);
+        console.log(isProjectExistsAndApartOfWorkspace);
+        console.log(isUserAssignedToProject);
 
         const projectsWorkspaceUsers =
           await prisma.projectWorkspaceUser.findMany({

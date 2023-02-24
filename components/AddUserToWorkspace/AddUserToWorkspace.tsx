@@ -157,12 +157,14 @@ const AddUserToWorkspace: FC = () => {
 
   return (
     <>
-      <button
-        onClick={handleModalOpen}
-        className={`py-3 px-2 bg-indigo-500 rounded-sm text-gray-50 hover:bg-indigo-600 active:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-300 disabled:bg-indigo-400`}
-      >
-        Add user to workspace
-      </button>
+      <div className="flex flex-col items-center my-2">
+        <button
+          onClick={handleModalOpen}
+          className={`py-3 px-2 bg-indigo-500 rounded-sm text-gray-50 hover:bg-indigo-600 active:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-300 disabled:bg-indigo-400`}
+        >
+          Add user to workspace
+        </button>
+      </div>
       <Modal open={open} onClose={handleModalClose}>
         <form className="p-2 rounded relative bg-gray-50 w-full h-auto flex flex-col">
           <input

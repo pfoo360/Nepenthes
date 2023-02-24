@@ -162,11 +162,10 @@ export const getServerSideProps: GetServerSideProps = async ({
   //now we need to see who is allowed to edit the specific ticket in a project
   //user needs to be an ADMIN of the workspace to be able to edit ticket
   //user needs to be a MANAGER of the workspace and assigned to the project to be able to edit ticket
-  //user needs to be listed on the ticket to be able to edit ticket
+  //user needs to be listed on the ticket as a dev to edit ticket
   if (
     workspaceUser.role !== ROLES.ADMIN &&
     workspaceUser.role !== ROLES.MANAGER &&
-    workspaceUser.id !== ticket.ticketSubmitter.submitter.id &&
     !ticket.ticketDeveloper.find(
       ({ developer: { id, role, user } }) => id === workspaceUser.id
     )

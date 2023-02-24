@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
 import ROLES from "../../utils/role";
 import useUserContext from "../../hooks/useUserContext";
+import SignOut from "../SignOut/SignOut";
 
 const NavBar = () => {
   const { push } = useRouter();
@@ -99,7 +100,7 @@ const NavBar = () => {
             >
               to dashboard
             </button>
-            <div>logout</div>
+            <SignOut />
           </div>
         </div>
       ) : null}

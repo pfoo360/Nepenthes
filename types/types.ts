@@ -27,7 +27,7 @@ export interface Ticket {
   ticketSubmitter: {
     id: string;
     submitter: WorkspaceUser;
-  };
+  } | null;
   ticketDeveloper: Array<{
     id: string;
     developer: WorkspaceUser;
