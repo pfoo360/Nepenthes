@@ -27,14 +27,15 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
   workspaceUsersApartOfTheProject,
   projectTicketCount,
 }) => {
-  const MAX_NUM_OF_PAGES = Math.ceil(projectTicketCount / TICKETS_PER_PAGE);
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(projectTicketCount);
+
+  const MAX_NUM_OF_PAGES = Math.ceil(count / TICKETS_PER_PAGE);
 
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
   const projectCtx = useProjectContext();
-
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (loading) return;
@@ -94,7 +95,9 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
     projectCtx.workspaceId !== workspaceUserCtx.workspaceId
   )
     return null;
+
   console.log(data);
+  console.log(page, MAX_NUM_OF_PAGES, projectTicketCount);
 
   return (
     <div className="flex flex-col mx-6">
@@ -113,7 +116,7 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
                   workspaceUsersApartOfTheProject={
                     workspaceUsersApartOfTheProject
                   }
-                  page={page}
+                  setCount={setCount}
                 />
               ) : null}
             </div>
@@ -220,9 +223,7 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
                             ticketDeveloper.find(
                               ({ developer: { id, user } }) =>
                                 id === workspaceUserCtx.id
-                            ) ||
-                            ticketSubmitter?.submitter?.id ===
-                              workspaceUserCtx.id ? (
+                            ) ? (
                               <Link
                                 href={`/t/${project.workspaceId}/${project.id}/${id}`}
                                 className="text-blue-500 underline decoration-dotted"

@@ -5,6 +5,8 @@ import {
   ChangeEvent,
   useEffect,
   useCallback,
+  SetStateAction,
+  Dispatch,
 } from "react";
 import { User, Role, Priority, Type, Status } from "../../types/types";
 import Modal from "../Modal/Modal";
@@ -28,12 +30,12 @@ interface AddTicketProps {
       role: Role;
     };
   }[];
-  page: number;
+  setCount: Dispatch<SetStateAction<number>>;
 }
 
 const AddTicket: FC<AddTicketProps> = ({
   workspaceUsersApartOfTheProject,
-  page,
+  setCount,
 }) => {
   const PRIORITY_VALUES = Object.values(PRIORITIES);
   const TYPE_VALUES = Object.values(TYPES);
@@ -99,6 +101,8 @@ const AddTicket: FC<AddTicketProps> = ({
       setSubmitError(error.message);
     },
     update: async (cache, { data }) => {
+      setCount((prev) => prev + 1);
+
       await apolloClient.resetStore();
 
       // if (!data) return;

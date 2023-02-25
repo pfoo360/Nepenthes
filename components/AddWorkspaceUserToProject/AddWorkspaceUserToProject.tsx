@@ -44,12 +44,14 @@ interface AddWorkspaceUserToProjectProps {
       }[]
     >
   >;
+  setCount: Dispatch<SetStateAction<number>>;
 }
 
 const AddWorkspaceUserToProject: FC<AddWorkspaceUserToProjectProps> = ({
   workspaceUsersNotApartOfTheProject,
   setWorkspaceUsersNotApartOfTheProject,
   setWorkspaceUsersApartOfTheProject,
+  setCount,
 }) => {
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
@@ -75,9 +77,12 @@ const AddWorkspaceUserToProject: FC<AddWorkspaceUserToProjectProps> = ({
         setSubmitError(error.message);
       },
       update: async (cache, { data }) => {
+        if (!data?.addWorkspaceUserToProject?.count) return;
         if (data?.addWorkspaceUserToProject.count === 0) return; //no rows were created in db
 
         //NOTE: prisma does NOT return the newly created entries when creating many entires
+
+        setCount((prev) => prev + data.addWorkspaceUserToProject.count);
 
         setWorkspaceUsersNotApartOfTheProject((prev) =>
           prev.filter((workspaceUser) => {

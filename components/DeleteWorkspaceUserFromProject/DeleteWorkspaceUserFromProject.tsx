@@ -35,6 +35,7 @@ interface DeleteWorkspaceUserFromProjectProps {
       }[]
     >
   >;
+  setCount: Dispatch<SetStateAction<number>>;
 }
 
 const DeleteWorkspaceUserFromProject: FC<
@@ -45,6 +46,7 @@ const DeleteWorkspaceUserFromProject: FC<
   page,
   setWorkspaceUsersNotApartOfTheProject,
   setWorkspaceUsersApartOfTheProject,
+  setCount,
 }) => {
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
@@ -71,6 +73,8 @@ const DeleteWorkspaceUserFromProject: FC<
     },
     update: async (cache, { data }) => {
       if (!data) return;
+
+      setCount((prev) => prev - 1);
 
       setWorkspaceUsersNotApartOfTheProject((prev) => {
         return [

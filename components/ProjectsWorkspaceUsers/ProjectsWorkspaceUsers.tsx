@@ -54,15 +54,15 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
   setWorkspaceUsersApartOfTheProject,
   workspaceUsersApartOfTheProject,
 }) => {
-  const MAX_NUM_OF_PAGES = Math.ceil(
-    projectWorkspaceUserCount / USERS_PER_PAGE
-  );
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(projectWorkspaceUserCount);
+
+  const MAX_NUM_OF_PAGES = Math.ceil(count / USERS_PER_PAGE);
+
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
   const projectCtx = useProjectContext();
-
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (loading) return;
@@ -115,7 +115,9 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
     projectWorkspaceUserCount === undefined
   )
     return null;
+
   console.log(data);
+  console.log(page, MAX_NUM_OF_PAGES, projectWorkspaceUserCount, count);
 
   return (
     <div className="flex flex-col mx-6">
@@ -139,6 +141,7 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
                   setWorkspaceUsersApartOfTheProject={
                     setWorkspaceUsersApartOfTheProject
                   }
+                  setCount={setCount}
                 />
               ) : null}
             </div>
@@ -201,6 +204,7 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
                                 setWorkspaceUsersApartOfTheProject={
                                   setWorkspaceUsersApartOfTheProject
                                 }
+                                setCount={setCount}
                               />
                             ) : null}
                           </td>
