@@ -8,23 +8,15 @@ import ROLES from "../../utils/role";
 import Modal from "../Modal/Modal";
 import workspaceOperations from "../../graphql/Workspace/operations";
 import Error from "../Error/Error";
-import { useRouter } from "next/router";
 import apolloClient from "../../lib/apolloClient";
 
 const DeleteUserFromWorkspace: FC<{ user: User }> = ({ user }) => {
-  //button is only visible if current user is ADMIN
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
-  if (!userCtx || !workspaceCtx || !workspaceUserCtx) return null;
-  if (userCtx.id !== workspaceUserCtx.userId) return null;
-  if (workspaceCtx.id !== workspaceUserCtx.workspaceId) return null;
-  if (workspaceUserCtx.role !== ROLES.ADMIN) return null;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState("");
-
-  const { push } = useRouter();
 
   const handleModalOpen = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -45,11 +37,10 @@ const DeleteUserFromWorkspace: FC<{ user: User }> = ({ user }) => {
     { userId: string; workspaceId: string }
   >(workspaceOperations.Mutation.DELETE_A_USER, {
     onError: (error, clientOptions) => {
-      console.log("DELETEUSERERROR", error.message);
       setError(error.message);
     },
     update: async (cache, { data }) => {
-      if (data?.deleteUserFromWorkspace.user.id === userCtx.id) {
+      if (data?.deleteUserFromWorkspace.user.id === userCtx?.id) {
         //only ADMINs in a workspace can see the admin panel and delete users
         //if current user has come this far, then they are most likely an ADMIN in the current workspace
         //workspaceUserCtx cannot to updated manually, so if current user is deleting theselves, then force them back to dashboard page. This will also update workspaceUsersCtx, userCx, and workspaceCtx
@@ -89,12 +80,14 @@ const DeleteUserFromWorkspace: FC<{ user: User }> = ({ user }) => {
     onCompleted: (data, clientOptions) => {
       setError("");
       setIsModalOpen(false);
-      console.log("DELETEUSERCOMPLETE", data);
     },
   });
 
   const handleDeleteSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    if (!userCtx || !workspaceCtx || !workspaceUserCtx) return;
     if (userCtx.id !== workspaceUserCtx.userId) return; //make sure user submitting is apart of the workspace
     if (workspaceCtx.id !== workspaceUserCtx.workspaceId) return;
     if (workspaceUserCtx.role !== ROLES.ADMIN) return; //make sure user submitting is an ADMIN in the workspace
@@ -104,11 +97,16 @@ const DeleteUserFromWorkspace: FC<{ user: User }> = ({ user }) => {
 
     setError("");
 
-    console.log(user.id, workspaceCtx.id);
     await deleteUser({
       variables: { userId: user.id, workspaceId: workspaceCtx.id },
     });
   };
+
+  //button is only visible if current user is ADMIN
+  if (!userCtx || !workspaceCtx || !workspaceUserCtx) return null;
+  if (userCtx.id !== workspaceUserCtx.userId) return null;
+  if (workspaceCtx.id !== workspaceUserCtx.workspaceId) return null;
+  if (workspaceUserCtx.role !== ROLES.ADMIN) return null;
 
   return (
     <>

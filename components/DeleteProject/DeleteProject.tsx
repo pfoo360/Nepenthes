@@ -29,7 +29,6 @@ const DeleteProject: FC = () => {
     { projectId: string; workspaceId: string }
   >(projectOperations.Mutation.DELETE_PROJECT, {
     onError: (error, clientOptions) => {
-      console.log("DELETE_PROJECT", error.message);
       setSubmitError(error.message);
     },
     update: (cache, { data }) => {
@@ -56,20 +55,8 @@ const DeleteProject: FC = () => {
           me: { ...oldCache.me, myProjects: updatedListOfCurrentUsersProjects },
         },
       });
-      console.log("DELETE_PROJECT", data);
-      console.log(updatedListOfCurrentUsersProjects);
-      console.log("OLDCACHE", oldCache);
-
-      const uc = cache.readQuery<{
-        me: { myProjects: Project[] };
-      }>({
-        query: userOperations.Query.GET_CURRENT_USERS_PROJECTS,
-        variables: { workspaceId: workspaceCtx.id },
-      });
-      console.log("UPDTED", uc);
     },
     onCompleted: (data, clientOptions) => {
-      console.log("DELETE_PROJECT", data.deleteProject.workspaceId);
       setSubmitError("");
       setSubmitSuccess("Successfully deleted project!");
       push(`/projects/${data.deleteProject.workspaceId}`);
@@ -99,7 +86,7 @@ const DeleteProject: FC = () => {
     if (!workspaceUserCtx?.workspaceId || !projectCtx?.id) return;
     setSubmitError("");
     setSubmitSuccess("");
-    console.log(userCtx, workspaceCtx, workspaceUserCtx, projectCtx);
+
     await deleteProject({
       variables: {
         workspaceId: workspaceUserCtx.workspaceId,

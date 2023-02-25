@@ -9,8 +9,6 @@ interface CommentProps {
 }
 
 const Comment: FC<CommentProps> = ({ ticketId, ticketComment }) => {
-  console.log("ID", ticketId);
-  console.log("COMMENT", ticketComment);
   const [comments, setComments] = useState(ticketComment);
 
   const scrollRef = useCallback((node: HTMLTableRowElement | null) => {

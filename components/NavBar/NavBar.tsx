@@ -63,19 +63,19 @@ const NavBar = () => {
             {workspaceUser?.role}
           </p>
           <Link
-            href={`/w/${workspace?.id}`}
+            href={workspace?.id ? `/w/${workspace.id}` : `/workspaces`}
             className="block text-gray-500 hover:text-indigo-500 mt-4 text-3xl px-4"
           >
             home
           </Link>
           <Link
-            href={`/projects/${workspace?.id}`}
+            href={workspace?.id ? `/projects/${workspace.id}` : `/workspaces`}
             className="block text-gray-500 hover:text-indigo-500 mt-4 text-3xl px-4"
           >
             projects
           </Link>
           <Link
-            href={`/tickets/${workspace?.id}`}
+            href={workspace?.id ? `/tickets/${workspace.id}` : `/workspaces`}
             className="block text-gray-500 hover:text-indigo-500 mt-4 text-3xl px-4"
           >
             tickets

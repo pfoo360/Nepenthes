@@ -6,15 +6,15 @@ import {
   useCallback,
   useEffect,
 } from "react";
-import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
+import { Project, Role, User } from "../../types/types";
 import useUserContext from "../../hooks/useUserContext";
 import useWorkspaceContext from "../../hooks/useWorkspaceContext";
+import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
 import ROLES from "../../utils/role";
 import Modal from "../Modal/Modal";
 import Error from "../Error/Error";
 import { useMutation } from "@apollo/client";
 import ProjectOperations from "../../graphql/Project/operations";
-import { Project, Role, User } from "../../types/types";
 import userOperations from "../../graphql/User/operations";
 
 const AddProject: FC<{
@@ -23,16 +23,6 @@ const AddProject: FC<{
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
-  //make sure all context are correct and align with each other
-  if (!userCtx || !workspaceCtx || !workspaceUserCtx) return null;
-  if (userCtx.id !== workspaceUserCtx.userId) return null;
-  if (workspaceCtx.id !== workspaceUserCtx.workspaceId) return null;
-  //make sure current user is ADMIN or MANAGER for current workspace
-  if (
-    workspaceUserCtx.role !== ROLES.ADMIN &&
-    workspaceUserCtx.role !== ROLES.MANAGER
-  )
-    return null;
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
@@ -142,7 +132,7 @@ const AddProject: FC<{
     },
     update: (cache, { data }) => {
       if (!data) return;
-      console.log("ADDPROJECTUPDATE", data.createProject);
+      if (!workspaceCtx?.id) return;
 
       const oldCache = cache.readQuery<{ me: { myProjects: Project[] } }>({
         query: userOperations.Query.GET_CURRENT_USERS_PROJECTS,
@@ -150,7 +140,6 @@ const AddProject: FC<{
       });
 
       if (!oldCache) return;
-      console.log("OLDCACHE", oldCache);
 
       cache.writeQuery({
         query: userOperations.Query.GET_CURRENT_USERS_PROJECTS,
@@ -165,7 +154,6 @@ const AddProject: FC<{
       });
     },
     onCompleted(data, clientOptions) {
-      console.log("ADDPROJECTCOMPLETE", data);
       setSubmitError("");
       setProjectName("");
       setProjectNameInitialFocus(false);
@@ -183,18 +171,15 @@ const AddProject: FC<{
     e: MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
+    if (isSubmitting) return;
 
     if (
+      !workspaceCtx?.id ||
       !projectName ||
-      !workspaceCtx.id ||
       projectName.length > 25 ||
       (projectDesc && projectDesc.length > 120)
     )
       return;
-
-    console.log(projectNameError, projectDescError);
-    console.log(projectName, projectDesc);
-    console.log(selectedWorkspaceUserIds);
 
     setSubmitError("");
 
@@ -217,6 +202,16 @@ const AddProject: FC<{
       });
     }
   };
+
+  if (!userCtx || !workspaceCtx || !workspaceUserCtx) return null;
+  if (workspaceUserCtx.userId !== userCtx.id) return null;
+  if (workspaceUserCtx.workspaceId !== workspaceCtx.id) return null;
+  //make sure current user is ADMIN or MANAGER for current workspace
+  if (
+    workspaceUserCtx.role !== ROLES.ADMIN &&
+    workspaceUserCtx.role !== ROLES.MANAGER
+  )
+    return null;
 
   return (
     <>

@@ -19,10 +19,8 @@ const MyWorkspace: FC = () => {
     //   pollInterval: 10000
     // }
   );
-  console.log("DATA", data);
-  console.log("ERROR", error);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className="text-gray-900">Loading...</p>;
 
   if (error) return <Error message="Looks like something went wrong..." />;
 

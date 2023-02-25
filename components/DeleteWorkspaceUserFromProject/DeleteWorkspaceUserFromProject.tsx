@@ -54,17 +54,6 @@ const DeleteWorkspaceUserFromProject: FC<
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
-  if (!userCtx || !workspaceCtx || !workspaceUserCtx || !projectCtx)
-    return null;
-  if (workspaceUserCtx.userId !== userCtx.id) return null;
-  if (workspaceUserCtx.workspaceId !== workspaceCtx.id) return null;
-  if (projectCtx.workspaceId !== workspaceCtx.id) return null;
-  if (
-    workspaceUserCtx.role !== ROLES.ADMIN &&
-    workspaceUserCtx.role !== ROLES.MANAGER
-  )
-    return null;
-
   const [
     deleteWorkspaceUserFromProject,
     { loading: isSubmitting, data, error },
@@ -78,14 +67,12 @@ const DeleteWorkspaceUserFromProject: FC<
     { workspaceId: string; projectId: string; projectWorkspaceUserId: string }
   >(projectOperations.Mutation.DELETE_WORKSPACEUSER_FROM_PROJECT, {
     onError: (error, clientOptions) => {
-      console.log("DELETEWORKSPACEUSERFROMPROJECT", error);
+      setSubmitError(error.message);
     },
     update: async (cache, { data }) => {
       if (!data) return;
 
       setWorkspaceUsersNotApartOfTheProject((prev) => {
-        console.log(prev);
-        console.log(data.deleteWorkspaceUserFromProject.workspaceUser);
         return [
           ...prev,
           {
@@ -97,8 +84,6 @@ const DeleteWorkspaceUserFromProject: FC<
       });
 
       setWorkspaceUsersApartOfTheProject((prev) => {
-        console.log("DATA", data);
-        console.log("PREV", prev);
         return prev.filter(
           (workspaceUser) =>
             workspaceUser.workspaceUser.id !==
@@ -139,7 +124,6 @@ const DeleteWorkspaceUserFromProject: FC<
       // });
     },
     onCompleted: (data, clientOptions) => {
-      console.log("DELETEWORKSPACEUSERFROMPROJECT", data);
       setSubmitError("");
       setIsModalOpen(false);
     },
@@ -164,9 +148,10 @@ const DeleteWorkspaceUserFromProject: FC<
   ) => {
     e.preventDefault();
     if (isSubmitting) return;
+    if (!projectCtx?.id || !workspaceCtx?.id) return;
 
     setSubmitError("");
-    console.log(projectWorkspaceUserId);
+
     await deleteWorkspaceUserFromProject({
       variables: {
         projectId: projectCtx.id,
@@ -175,6 +160,17 @@ const DeleteWorkspaceUserFromProject: FC<
       },
     });
   };
+
+  if (!userCtx || !workspaceCtx || !workspaceUserCtx || !projectCtx)
+    return null;
+  if (workspaceUserCtx.userId !== userCtx.id) return null;
+  if (workspaceUserCtx.workspaceId !== workspaceCtx.id) return null;
+  if (projectCtx.workspaceId !== workspaceCtx.id) return null;
+  if (
+    workspaceUserCtx.role !== ROLES.ADMIN &&
+    workspaceUserCtx.role !== ROLES.MANAGER
+  )
+    return null;
 
   return (
     <>

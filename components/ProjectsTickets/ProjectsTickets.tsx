@@ -34,16 +34,11 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
   const workspaceUserCtx = useWorkspaceUserContext();
   const projectCtx = useProjectContext();
 
-  const [page, setPage] = useState(projectTicketCount > 0 ? 1 : 0);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    console.log("USEEFFECT1", page, projectCtx?.id, workspaceCtx?.id);
     if (loading) return;
-    console.log("USEEFFECT2");
     if (!projectCtx?.id || !workspaceCtx?.id) return;
-    console.log("USEEFFECT3");
-    if (page < 1) return;
-    console.log("USEEFFECT4");
 
     getProjectsTickets({
       variables: {
@@ -76,8 +71,6 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
     { projectId: string; workspaceId: string; page: number }
   >(ticketOperations.Query.GET_PROJECTS_TICKETS);
 
-  console.log("DATAAAAAAAAAAAAAaaaa", data);
-
   const increment = () => {
     if (page >= MAX_NUM_OF_PAGES) return;
     setPage((page) => {
@@ -101,12 +94,8 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
     projectCtx.workspaceId !== workspaceUserCtx.workspaceId
   )
     return null;
-  console.log(
-    "================",
-    workspaceUsersApartOfTheProject.find(
-      ({ workspaceUser: { id, role, user } }) => id === workspaceUserCtx.id
-    )
-  );
+  console.log(data);
+
   return (
     <div className="flex flex-col mx-6">
       <div className="overflow-x-auto sm:-mx-6">
@@ -255,7 +244,9 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
                   disabled={loading || page === 0 || page === 1}
                   className="bg-indigo-300 px-2 py-1 rounded-sm text-slate-100 hover:bg-indigo-400 disabled:bg-indigo-100"
                 >{`<`}</button>
-                <div className="text-gray-900">{`${page}/${MAX_NUM_OF_PAGES}`}</div>
+                <p className="text-gray-900">{`${page}/${
+                  MAX_NUM_OF_PAGES !== 0 ? MAX_NUM_OF_PAGES : `1`
+                }`}</p>
                 <button
                   onClick={increment}
                   disabled={loading || page >= MAX_NUM_OF_PAGES}

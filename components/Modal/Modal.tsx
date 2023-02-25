@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { FC, ReactNode, MouseEvent, MouseEventHandler } from "react";
+import { FC, ReactNode, MouseEvent } from "react";
 
 interface ModalProps {
   open: boolean;

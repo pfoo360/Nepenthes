@@ -72,11 +72,9 @@ const AddWorkspaceUserToProject: FC<AddWorkspaceUserToProjectProps> = ({
       }
     >(projectOperations.Mutation.ADD_WORKSPACEUSER_TO_PROJECT, {
       onError: (error, clientOptions) => {
-        console.log("ADD_WORKSPACEUSER_TO_PROJECT", error.message);
         setSubmitError(error.message);
       },
       update: async (cache, { data }) => {
-        console.log("ADD_WORKSPACEUSER_TO_PROJECT", data);
         if (data?.addWorkspaceUserToProject.count === 0) return; //no rows were created in db
 
         //NOTE: prisma does NOT return the newly created entries when creating many entires
@@ -98,28 +96,11 @@ const AddWorkspaceUserToProject: FC<AddWorkspaceUserToProjectProps> = ({
         await apolloClient.resetStore();
       },
       onCompleted: (data, clientOptions) => {
-        console.log("ADD_WORKSPACEUSER_TO_PROJECT", data);
-
         setSelectedWorkspaceUserIds([]);
         setSubmitError("");
         setModalOpen(false);
       },
     });
-
-  if (!userCtx || !workspaceCtx || !workspaceUserCtx || !projectCtx)
-    return null;
-  if (workspaceUserCtx.userId !== userCtx.id) return null;
-  if (workspaceUserCtx.workspaceId !== workspaceCtx.id) return null;
-  if (
-    projectCtx.workspaceId !== workspaceCtx.id ||
-    projectCtx.workspaceId !== workspaceUserCtx.workspaceId
-  )
-    return null;
-  if (
-    workspaceUserCtx.role !== ROLES.ADMIN &&
-    workspaceUserCtx.role !== ROLES.MANAGER
-  )
-    return null;
 
   const handleModalOpen = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -147,11 +128,12 @@ const AddWorkspaceUserToProject: FC<AddWorkspaceUserToProjectProps> = ({
 
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
     if (!selectedWorkspaceUserIds.length) return;
+    if (!workspaceCtx?.id || !projectCtx?.id) return;
+
     setSubmitError("");
 
-    //console.log(workspaceUsersNotApartOfTheProject);
-    console.log(selectedWorkspaceUserIds);
     await addWorkspaceUserToProject({
       variables: {
         selectedWorkspaceUserIds,
@@ -160,6 +142,21 @@ const AddWorkspaceUserToProject: FC<AddWorkspaceUserToProjectProps> = ({
       },
     });
   };
+
+  if (!userCtx || !workspaceCtx || !workspaceUserCtx || !projectCtx)
+    return null;
+  if (workspaceUserCtx.userId !== userCtx.id) return null;
+  if (workspaceUserCtx.workspaceId !== workspaceCtx.id) return null;
+  if (
+    projectCtx.workspaceId !== workspaceCtx.id ||
+    projectCtx.workspaceId !== workspaceUserCtx.workspaceId
+  )
+    return null;
+  if (
+    workspaceUserCtx.role !== ROLES.ADMIN &&
+    workspaceUserCtx.role !== ROLES.MANAGER
+  )
+    return null;
 
   return (
     <>

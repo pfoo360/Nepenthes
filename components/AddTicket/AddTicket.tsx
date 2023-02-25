@@ -9,13 +9,13 @@ import {
 import { User, Role, Priority, Type, Status } from "../../types/types";
 import Modal from "../Modal/Modal";
 import Error from "../Error/Error";
+import ROLES from "../../utils/role";
 import PRIORITIES from "../../utils/priority";
 import TYPES from "../../utils/type";
 import useUserContext from "../../hooks/useUserContext";
 import useWorkspaceContext from "../../hooks/useWorkspaceContext";
 import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
 import useProjectContext from "../../hooks/useProjectContext";
-import ROLES from "../../utils/role";
 import ticketOperations from "../../graphql/Ticket/operations";
 import { useMutation } from "@apollo/client";
 import apolloClient from "../../lib/apolloClient";
@@ -96,7 +96,6 @@ const AddTicket: FC<AddTicketProps> = ({
     }
   >(ticketOperations.Mutation.CREATE_TICKET, {
     onError: (error, clientOptions) => {
-      console.log(error);
       setSubmitError(error.message);
     },
     update: async (cache, { data }) => {
@@ -159,7 +158,6 @@ const AddTicket: FC<AddTicketProps> = ({
       // console.log("OLDCACHE", oldCache);
     },
     onCompleted(data, clientOptions) {
-      console.log("ADDTICKETCOMPLETE", data);
       setTitle("");
       setTitleInitialFocus(false);
       setTitleError("");
@@ -176,6 +174,7 @@ const AddTicket: FC<AddTicketProps> = ({
       setType(TYPE_VALUES[0] as Type);
       setTypeInitialFocus(false);
       setTypeError("");
+      setSubmitError("");
       setModalOpen(false);
     },
   });
@@ -193,6 +192,7 @@ const AddTicket: FC<AddTicketProps> = ({
       typeError
     )
       return;
+
     await createTicket({
       variables: {
         title,
@@ -204,8 +204,6 @@ const AddTicket: FC<AddTicketProps> = ({
         type,
       },
     });
-    console.log(workspaceUserIds);
-    console.log(userCtx, workspaceCtx, workspaceUserCtx, projectCtx);
   };
 
   const handleModalOpen = (e: MouseEvent<HTMLButtonElement>) => {
@@ -235,6 +233,7 @@ const AddTicket: FC<AddTicketProps> = ({
     setType(TYPE_VALUES[0] as Type);
     setTypeInitialFocus(false);
     setTypeError("");
+    setSubmitError("");
     setModalOpen(false);
   };
 
@@ -298,7 +297,6 @@ const AddTicket: FC<AddTicketProps> = ({
 
   const handlePrioritySelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
-    console.log(e.target.value);
     setPriority(e.target.value as Priority);
   };
 
@@ -309,15 +307,13 @@ const AddTicket: FC<AddTicketProps> = ({
 
   useEffect(() => {
     setPriorityError("");
-    console.log(PRIORITY_VALUES.indexOf(priority) === -1);
-    console.log(PRIORITY_VALUES.indexOf(priority) < 0);
+
     if (PRIORITY_VALUES.indexOf(priority) < 0)
       setPriorityError("Invalid value");
   }, [priority]);
 
   const handleTypeSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
-    console.log(e.target.value);
     setType(e.target.value as Type);
   };
 
@@ -328,8 +324,7 @@ const AddTicket: FC<AddTicketProps> = ({
 
   useEffect(() => {
     setTypeError("");
-    console.log(TYPE_VALUES.indexOf(type) === -1);
-    console.log(TYPE_VALUES.indexOf(type) < 0);
+
     if (TYPE_VALUES.indexOf(type) < 0) setTypeError("Invalid value");
   }, [type]);
 

@@ -143,7 +143,6 @@ const EditTicket: FC<EditTicketProps> = ({
 
   const handlePrioritySelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
-    console.log(e.target.value);
     setPriority(e.target.value as Priority);
   };
 
@@ -154,15 +153,12 @@ const EditTicket: FC<EditTicketProps> = ({
 
   useEffect(() => {
     setPriorityError("");
-    console.log(PRIORITY_VALUES.indexOf(priority) === -1);
-    console.log(PRIORITY_VALUES.indexOf(priority) < 0);
     if (PRIORITY_VALUES.indexOf(priority) < 0)
       setPriorityError("Invalid value");
   }, [priority]);
 
   const handleTypeSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
-    console.log(e.target.value);
     setType(e.target.value as Type);
   };
 
@@ -173,14 +169,11 @@ const EditTicket: FC<EditTicketProps> = ({
 
   useEffect(() => {
     setTypeError("");
-    console.log(TYPE_VALUES.indexOf(type) === -1);
-    console.log(TYPE_VALUES.indexOf(type) < 0);
     if (TYPE_VALUES.indexOf(type) < 0) setTypeError("Invalid value");
   }, [type]);
 
   const handleStatusSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
-    console.log(e.target.value);
     setStatus(e.target.value as Status);
   };
 
@@ -191,8 +184,6 @@ const EditTicket: FC<EditTicketProps> = ({
 
   useEffect(() => {
     setStatusError("");
-    console.log(STATUS_VALUES.indexOf(status) === -1);
-    console.log(STATUS_VALUES.indexOf(status) < 0);
     if (STATUS_VALUES.indexOf(status) < 0) setStatusError("Invalid value");
   }, [status]);
 
@@ -220,11 +211,9 @@ const EditTicket: FC<EditTicketProps> = ({
     },
     update: async (cache, { data }) => {
       //if (!data) return;
-      console.log("EDIT_TICKET", data);
       await apolloClient.resetStore();
     },
     onCompleted: (data, clientOptions) => {
-      console.log("EDIT_TICKET", data);
       push(
         `/t/${data.updateTicket.project.workspaceId}/${data.updateTicket.project.id}/${data.updateTicket.id}`
       );
@@ -243,6 +232,7 @@ const EditTicket: FC<EditTicketProps> = ({
     )
       return;
     if (!workspaceUserCtx?.workspaceId) return;
+
     await updateTicket({
       variables: {
         title,
@@ -266,15 +256,6 @@ const EditTicket: FC<EditTicketProps> = ({
   if (projectCtx.workspaceId !== workspaceUserCtx.workspaceId) return null;
   if (ticket.project.id !== projectCtx.id) return null;
 
-  console.log(ticket.project.id);
-  console.log(projectCtx);
-  console.log(workspaceUsersAssignedToProject);
-  console.log(
-    Array.from(
-      ticket.ticketDeveloper,
-      ({ developer: { id, user, role } }) => id
-    )
-  );
   return (
     <div className="flex flex-col items-center">
       <div className="mx-4 my-4 w-11/12 border border-indigo-500 rounded-sm">

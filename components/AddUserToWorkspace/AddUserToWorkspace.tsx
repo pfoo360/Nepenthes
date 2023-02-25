@@ -13,13 +13,6 @@ const AddUserToWorkspace: FC = () => {
   const workspaceUser = useWorkspaceUserContext();
   const workspace = useWorkspaceContext();
   const user = useUserContext();
-  if (
-    !workspaceUser ||
-    workspaceUser.role !== ROLES.ADMIN ||
-    !workspace?.id ||
-    !user
-  )
-    return null;
 
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState("");
@@ -66,11 +59,10 @@ const AddUserToWorkspace: FC = () => {
   >(workspaceOperations.Mutation.ADD_USER_TO_WORKSPACE, {
     onError: (error, clientOptions) => {
       setError(error.message);
-      console.log("ONERROR", error.message);
     },
     update: (cache, { data }) => {
       if (!data) return;
-      console.log("UPDATE", data);
+      if (!workspaceUser?.workspaceId) return;
 
       //fetch the cached workspace's Users items with variable workspace ID equal to current workspace ID
       const oldCache = cache.readQuery<{
@@ -85,7 +77,6 @@ const AddUserToWorkspace: FC = () => {
       });
 
       if (!oldCache) return;
-      console.log("OC", oldCache);
 
       cache.writeQuery({
         query: workspaceOperations.Query.GET_WORKSPACES_USERS,
@@ -98,19 +89,6 @@ const AddUserToWorkspace: FC = () => {
           ],
         },
       });
-
-      const updatedCache = cache.readQuery<{
-        getWorkspacesUsers: Array<{
-          role: Role;
-          user: User & { __typename: "User" };
-          __typename: "WorkspaceUser";
-        }>;
-      }>({
-        query: workspaceOperations.Query.GET_WORKSPACES_USERS,
-        variables: { workspaceId: workspaceUser.workspaceId },
-      });
-
-      console.log("NC", updatedCache);
     },
     onCompleted: (data, clientOptions) => {
       //reset form to initial state ad close modal
@@ -127,13 +105,12 @@ const AddUserToWorkspace: FC = () => {
     e.preventDefault();
 
     //prevent submit if user is not apart of workspace
+    if (!user || !workspace || !workspaceUser) return;
     if (user.id !== workspaceUser.userId) return;
     if (workspace.id !== workspaceUser.workspaceId) return;
-
     if (workspaceUser.role !== ROLES.ADMIN) return; //prevent submit if current user is not ADMIN
 
     if (!username) return; //prevent submit if user did not enter a username
-
     if (
       role !== ROLES.ADMIN &&
       role !== ROLES.MANAGER &&
@@ -142,18 +119,16 @@ const AddUserToWorkspace: FC = () => {
       return; //prevent submit if user selected an invalid ROLE
 
     setError("");
-    console.log(
-      "ADDUSER",
-      workspaceUser.userId,
-      user.id,
-      workspace.id,
-      workspaceUser.workspaceId
-    );
-    console.log(username, role);
+
     await addUserToWorkspace({
       variables: { username, role: role as Role, workspaceId: workspace.id },
     });
   };
+
+  if (!user || !workspace || !workspaceUser) return null;
+  if (user.id !== workspaceUser.userId) return null;
+  if (workspace.id !== workspaceUser.workspaceId) return null;
+  if (workspaceUser.role !== ROLES.ADMIN) return null;
 
   return (
     <>

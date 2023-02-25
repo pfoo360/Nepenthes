@@ -14,11 +14,11 @@ interface TicketProps {
 }
 
 const Ticket: FC<TicketProps> = ({ ticket, managersAssignedToProject }) => {
-  console.log("TICKET", ticket);
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
   const projectCtx = useProjectContext();
+
   if (!ticket) return null;
   if (!userCtx || !workspaceCtx || !workspaceUserCtx || !projectCtx)
     return null;
@@ -26,24 +26,6 @@ const Ticket: FC<TicketProps> = ({ ticket, managersAssignedToProject }) => {
   if (workspaceUserCtx.workspaceId !== workspaceCtx.id) return null;
   if (projectCtx.workspaceId !== workspaceUserCtx.workspaceId) return null;
 
-  console.log("ADMIN?", workspaceUserCtx.role === ROLES.ADMIN);
-  console.log("IS MANAGER?", workspaceUserCtx.role === ROLES.MANAGER);
-  console.log(
-    "MANAGER ASSIGNED?",
-    managersAssignedToProject.find(
-      ({ workspaceUserId }) => workspaceUserCtx.id === workspaceUserId
-    )
-  );
-  console.log(
-    "SUBMITTER?",
-    workspaceUserCtx.id === ticket?.ticketSubmitter?.submitter?.id
-  );
-  console.log(
-    "DEVELOPER?",
-    ticket.ticketDeveloper.find(
-      ({ developer: { id, role, user } }) => id === workspaceUserCtx.id
-    )
-  );
   return (
     <div className="flex flex-col items-center">
       <div className="mx-4 my-4 w-11/12 border border-indigo-500 rounded-sm">

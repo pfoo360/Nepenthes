@@ -1,11 +1,10 @@
-import { FC, MouseEvent, ChangeEvent, useCallback, useState } from "react";
+import { FC, MouseEvent, useState } from "react";
 import Modal from "../Modal/Modal";
 import Error from "../Error/Error";
 import { useMutation } from "@apollo/client";
 import workspaceOperations from "../../graphql/Workspace/operations";
 import userOperations from "../../graphql/User/operations";
 import { Role } from "../../types/types";
-import ROLES from "../../utils/role";
 
 interface DeleteWorkspace {
   workspaceId: string;
@@ -16,8 +15,6 @@ const DeleteWorkspace: FC<DeleteWorkspace> = ({
   workspaceId,
   workspaceName,
 }) => {
-  if (!workspaceId) return null;
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
@@ -40,7 +37,6 @@ const DeleteWorkspace: FC<DeleteWorkspace> = ({
     { workspaceId: string }
   >(workspaceOperations.Mutation.DELETE_WORKSPACE, {
     onError: (error, clientOptions) => {
-      console.log(error);
       setSubmitError(error.message);
     },
     update: (cache, { data }) => {
@@ -71,24 +67,6 @@ const DeleteWorkspace: FC<DeleteWorkspace> = ({
           me: { ...oldCache.me, myWorkspaces: updatedArray },
         },
       });
-
-      const updatedCache = cache.readQuery<{
-        me: {
-          __typename: "Me";
-          myWorkspaces: {
-            role: Role;
-            workspace: { id: string; name: string; __typename: "Workspace" };
-            __typename: "MyWorkspace";
-          }[];
-        };
-      }>({
-        query: userOperations.Query.GET_CURRENT_USERS_WORKSPACES,
-      });
-
-      console.log("DELETEWORKSPACE DATA", data);
-      console.log("UPDATED ARRAY", updatedArray);
-      console.log("DELTEWORKSPACE OLD CACHE", oldCache);
-      console.log("UPDATED CACHE", updatedCache);
     },
     onCompleted: (data, clientOptions) => {
       setSubmitError("");
@@ -96,12 +74,14 @@ const DeleteWorkspace: FC<DeleteWorkspace> = ({
     },
   });
 
-  const handleNewNameInputSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log(workspaceId);
+    if (isSubmitting || !workspaceId) return;
     setSubmitError("");
     await deleteWorkspace({ variables: { workspaceId } });
   };
+
+  if (!workspaceId) return null;
 
   return (
     <>
@@ -125,7 +105,7 @@ const DeleteWorkspace: FC<DeleteWorkspace> = ({
             </button>
             <button
               type="submit"
-              onClick={handleNewNameInputSubmit}
+              onClick={handleSubmit}
               disabled={isSubmitting || !workspaceId}
               className={`flex-shrink-0 bg-rose-500 rounded-sm py-1 px-2 text-gray-50 text-xl hover:bg-rose-600 active:bg-rose-700 focus:outline-none focus:ring focus:ring-rose-300 disabled:bg-rose-400`}
             >

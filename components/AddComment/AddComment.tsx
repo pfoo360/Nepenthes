@@ -7,9 +7,9 @@ import {
   Dispatch,
   SetStateAction,
 } from "react";
+import { TicketComment, WorkspaceUser } from "../../types/types";
 import ticketOperations from "../../graphql/Ticket/operations";
 import { useMutation } from "@apollo/client";
-import { TicketComment, WorkspaceUser } from "../../types/types";
 import useUserContext from "../../hooks/useUserContext";
 import useWorkspaceContext from "../../hooks/useWorkspaceContext";
 import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
@@ -49,17 +49,13 @@ const AddComment: FC<AddCommentProps> = ({ ticketId, setComments }) => {
       ticketId: string;
     }
   >(ticketOperations.Mutation.CREATE_COMMENT, {
-    onError: (error, clientOptions) => {
-      console.log("ADD_COMMENT", error);
-    },
+    onError: (error, clientOptions) => {},
     update: (cache, { data }) => {
       if (!data) return;
-      console.log("ADD_COMMENT", data);
-      console.log("ADD_COMMENT", typeof data.createComment.comment.createdAt);
+
       setComments((prev) => [...prev, data.createComment]);
     },
     onCompleted: (data, clientOptions) => {
-      console.log("ADD_COMMENT", data);
       setComment("");
     },
   });
@@ -80,12 +76,11 @@ const AddComment: FC<AddCommentProps> = ({ ticketId, setComments }) => {
     if (commentError) return;
     if (isSubmitting) return;
     if (!workspaceUserCtx?.workspaceId || !projectCtx?.id || !ticketId) return;
-    console.log(comment);
-    console.log(ticketId);
+
     await createComment({
       variables: {
         comment,
-        workspaceId: workspaceUserCtx?.workspaceId,
+        workspaceId: workspaceUserCtx.workspaceId,
         projectId: projectCtx.id,
         ticketId,
       },

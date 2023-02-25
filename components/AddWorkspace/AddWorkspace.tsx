@@ -8,8 +8,6 @@ import userOperations from "../../graphql/User/operations";
 interface AddWorkSpaceProps {}
 
 const AddWorkspace: FC<AddWorkSpaceProps> = () => {
-  //if (!session) return null;
-
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [workspaceName, setWorkspaceName] = useState("");
 
@@ -73,9 +71,6 @@ const AddWorkspace: FC<AddWorkSpaceProps> = () => {
 
       if (!oldCache) return;
 
-      console.log("old", oldCache);
-      console.log("data", data);
-
       const newlyCreatedWorkspace = {
         role: data.createWorkspace.workspaceUser[0].role,
         workspace: {
@@ -85,7 +80,6 @@ const AddWorkspace: FC<AddWorkSpaceProps> = () => {
         },
         __typename: "MyWorkspace",
       };
-      console.log(newlyCreatedWorkspace);
 
       cache.writeQuery({
         query: userOperations.Query.GET_CURRENT_USERS_WORKSPACES,
@@ -97,19 +91,6 @@ const AddWorkspace: FC<AddWorkSpaceProps> = () => {
           },
         },
       });
-
-      const newCache = cache.readQuery<{
-        me: {
-          myWorkspace: {
-            role: Role;
-            workspace: { id: string; name: string };
-          }[];
-        };
-      }>({
-        query: userOperations.Query.GET_CURRENT_USERS_WORKSPACES,
-      });
-
-      console.log("new", newCache);
     },
     onCompleted: () => {
       setWorkspaceName("");

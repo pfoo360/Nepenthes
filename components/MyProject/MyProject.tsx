@@ -9,9 +9,9 @@ import Error from "../Error/Error";
 import Project from "../Project/Project";
 
 const MyProject = () => {
+  const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
-  const userCtx = useUserContext();
   if (!workspaceCtx || !workspaceUserCtx || !userCtx) return null;
   if (workspaceUserCtx.workspaceId !== workspaceCtx.id) return null;
   if (workspaceUserCtx.userId !== userCtx.id) return null;
@@ -26,7 +26,6 @@ const MyProject = () => {
     // }
   );
 
-  console.log("DATA", data);
   return (
     <div className="flex flex-col items-center justify-center">
       <h1 className="text-5xl text-gray-900 m-4 break-words">{`${userCtx.username}'s Projects`}</h1>
