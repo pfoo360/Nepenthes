@@ -9,9 +9,6 @@ import User from "../User/User";
 
 const WorkspacesUsers: FC = () => {
   const workspaceUser = useWorkspaceUserContext();
-  if (!workspaceUser || !workspaceUser.workspaceId) return null;
-
-  if (workspaceUser.role !== ROLES.ADMIN) return null;
 
   const {
     loading,
@@ -20,8 +17,11 @@ const WorkspacesUsers: FC = () => {
   } = useQuery<{
     getWorkspacesUsers: WorkspaceUser[];
   }>(workspaceOperations.Query.GET_WORKSPACES_USERS, {
-    variables: { workspaceId: workspaceUser.workspaceId },
+    variables: { workspaceId: workspaceUser?.workspaceId },
   });
+
+  if (!workspaceUser || !workspaceUser.workspaceId) return null;
+  if (workspaceUser.role !== ROLES.ADMIN) return null;
 
   if (loading)
     return (
@@ -38,8 +38,6 @@ const WorkspacesUsers: FC = () => {
         <p className="text-gray-900">Seems like there is nothing here...</p>
       </div>
     );
-
-  console.log(workspacesUsers.getWorkspacesUsers);
 
   return (
     <div className="bg-slate-50 w-full px-3 py-1 grid grid-cols-2 gap-2">

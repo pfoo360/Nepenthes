@@ -1,18 +1,17 @@
 import { FC, createContext, useState, useEffect } from "react";
-import { WorkspaceUserProviderValue } from "../types/types";
+import { WorkspaceUserContextValue } from "../types/types";
 
 export const WorkspaceUserContext = createContext<
-  WorkspaceUserProviderValue | undefined
+  WorkspaceUserContextValue | undefined
 >(undefined);
 
 const WorkspaceUserProvider: FC<{
   children: JSX.Element;
-  value: WorkspaceUserProviderValue | undefined;
+  value: WorkspaceUserContextValue | undefined;
 }> = ({ children, value }) => {
   const [workspaceUser, setWorkspaceUser] = useState(value);
 
   useEffect(() => {
-    console.log("WORKSPACEUSERPROVIDER", value);
     setWorkspaceUser(value);
   }, [value]);
 

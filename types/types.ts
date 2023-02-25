@@ -107,11 +107,16 @@ export interface CreateWorkspaceResponse {
   workspaceUser: WorkspaceUser[];
 }
 
-export interface WorkspaceUserProviderValue {
+export interface WorkspaceUserContextValue {
   id: string;
   workspaceId: string;
   userId: string;
   role: Role;
+}
+
+export interface WorkspaceContextValue {
+  id: string;
+  name: string;
 }
 
 export interface UpdateWorkspaceNameResponse {

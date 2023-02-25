@@ -52,7 +52,6 @@ const UpdateWorkspaceName: FC<UpdateWorkspaceNameProps> = ({
     { workspaceId: string; newName: string }
   >(workspaceOperations.Mutation.UPDATE_WORKSPACE_NAME, {
     onError: (error, clientOptions) => {
-      console.log("UPDATEWORKSPACENAMEERROR", error.message);
       setSubmitError(error.message);
     },
     update: (cache, { data }) => {
@@ -73,21 +72,17 @@ const UpdateWorkspaceName: FC<UpdateWorkspaceNameProps> = ({
 
       if (!oldCache) return;
 
-      const updatedMyWorkspace = {
-        role: ROLES.ADMIN,
-        workspace: {
-          id: data.updateWorkspaceName.id,
-          name: data.updateWorkspaceName.name,
-          __typename: "Workspace",
-        },
-        __typename: "MyWorkspace",
-      };
-
       const updatedArray = oldCache.me.myWorkspaces.map((myWorkspace) => {
         if (myWorkspace.workspace.id !== data.updateWorkspaceName.id)
           return myWorkspace;
         if (myWorkspace.workspace.id === data.updateWorkspaceName.id)
-          return updatedMyWorkspace;
+          return {
+            ...myWorkspace,
+            workspace: {
+              ...myWorkspace.workspace,
+              name: data.updateWorkspaceName.name,
+            },
+          };
       });
 
       cache.writeQuery({
@@ -100,17 +95,8 @@ const UpdateWorkspaceName: FC<UpdateWorkspaceNameProps> = ({
           },
         },
       });
-
-      const updatedCache = cache.readQuery({
-        query: userOperations.Query.GET_CURRENT_USERS_WORKSPACES,
-      });
-
-      console.log("OLDCACHE", oldCache);
-      console.log("UPDATEDCACHE", updatedCache);
     },
     onCompleted: (data, clientOptions) => {
-      console.log("UPDATEWORKSPACENAMECOMPLETE", data);
-      console.log("OLDNAME", oldWorkspaceName);
       setSubmitError("");
       setIsModalOpen(false);
     },
@@ -118,8 +104,8 @@ const UpdateWorkspaceName: FC<UpdateWorkspaceNameProps> = ({
 
   const handleNewNameInputSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
     if (!newName || newName.length > 25 || newName === oldWorkspaceName) return;
-    console.log(newName, workspaceId);
     await updateWorkspaceName({ variables: { workspaceId, newName } });
   };
 

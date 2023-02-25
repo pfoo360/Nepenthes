@@ -8,16 +8,16 @@ import ROLES from "../../utils/role";
 import Modal from "../Modal/Modal";
 import Error from "../Error/Error";
 import workspaceOperations from "../../graphql/Workspace/operations";
+import apolloClient from "../../lib/apolloClient";
+import { useRouter } from "next/router";
 
 const UpdateRole: FC<{ user: User; role: Role }> = ({ user, role }) => {
   //button is only visible if current user is ADMIN
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
-  if (!userCtx || !workspaceCtx || !workspaceUserCtx) return null;
-  if (userCtx.id !== workspaceUserCtx.userId) return null;
-  if (workspaceCtx.id !== workspaceUserCtx.workspaceId) return null;
-  if (workspaceUserCtx.role !== ROLES.ADMIN) return null;
+
+  const { push } = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newRole, setNewRole] = useState(role);
@@ -27,7 +27,6 @@ const UpdateRole: FC<{ user: User; role: Role }> = ({ user, role }) => {
 
   const handleModalOpen = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log(user.id, workspaceCtx.id);
     setIsModalOpen(true);
   };
 
@@ -52,71 +51,53 @@ const UpdateRole: FC<{ user: User; role: Role }> = ({ user, role }) => {
     { userId: string; role: Role; workspaceId: string }
   >(workspaceOperations.Mutation.UPDATE_A_USERS_ROLE, {
     onError: (error, clientOptions) => {
-      console.log("UPDATEROLEERROR", error.message);
       setError(error.message);
     },
     update: (cache, { data }) => {
-      if (!data) return;
+      // if (!data) return;
+      // if(!workspaceCtx) return
+      // const oldCache = cache.readQuery<{
+      //   getWorkspacesUsers: Array<{
+      //     role: Role;
+      //     user: User & { __typename: "User" };
+      //     __typename: "WorkspaceUser";
+      //   }>;
+      // }>({
+      //   query: workspaceOperations.Query.GET_WORKSPACES_USERS,
+      //   variables: { workspaceId: workspaceCtx.id },
+      // });
+      // if (!oldCache) return;
+      // const updatedArray = oldCache.getWorkspacesUsers.map((workspaceUser) => {
+      //   if (workspaceUser.user.id !== data.updateUserRole.user.id)
+      //     return workspaceUser;
+      //   if (workspaceUser.user.id === data.updateUserRole.user.id)
+      //     return data.updateUserRole;
+      // });
+      // cache.writeQuery({
+      //   query: workspaceOperations.Query.GET_WORKSPACES_USERS,
+      //   variables: { workspaceId: workspaceCtx.id },
+      //   data: { ...oldCache, getWorkspacesUsers: updatedArray },
+      // });
+    },
+    onCompleted: async (data, clientOptions) => {
+      setError("");
+      setIsModalOpen(false);
 
-      if (data?.updateUserRole.user.id === userCtx.id) {
+      if (data?.updateUserRole.user.id === userCtx?.id) {
         //only ADMINs in a workspace can update roles
         //if current user has come this far, then they are most likely an ADMIN in the current workspace
         //workspaceUserCtx cannot to updated manually, so if current user is updating their own ADMIN role to a non-ADMIN roles, then force a refresh of the page. This will update workspaceUsersCtx
-        location.reload();
+        await apolloClient.clearStore();
+        push("/workspaces");
+      } else {
+        await apolloClient.resetStore();
       }
-
-      console.log("UPDATEROLEUPDATE", data.updateUserRole.user.id);
-      const oldCache = cache.readQuery<{
-        getWorkspacesUsers: Array<{
-          role: Role;
-          user: User & { __typename: "User" };
-          __typename: "WorkspaceUser";
-        }>;
-      }>({
-        query: workspaceOperations.Query.GET_WORKSPACES_USERS,
-        variables: { workspaceId: workspaceCtx.id },
-      });
-
-      if (!oldCache) return;
-
-      const updatedArray = oldCache.getWorkspacesUsers.map((workspaceUser) => {
-        console.log(workspaceUser.user.id, data.updateUserRole.user.id);
-        if (workspaceUser.user.id !== data.updateUserRole.user.id)
-          return workspaceUser;
-        if (workspaceUser.user.id === data.updateUserRole.user.id)
-          return data.updateUserRole;
-      });
-
-      cache.writeQuery({
-        query: workspaceOperations.Query.GET_WORKSPACES_USERS,
-        variables: { workspaceId: workspaceCtx.id },
-        data: { ...oldCache, getWorkspacesUsers: updatedArray },
-      });
-
-      const updatedCache = cache.readQuery<{
-        getWorkspacesUsers: Array<{
-          role: Role;
-          user: User & { __typename: "User" };
-          __typename: "WorkspaceUser";
-        }>;
-      }>({
-        query: workspaceOperations.Query.GET_WORKSPACES_USERS,
-        variables: { workspaceId: workspaceCtx.id },
-      });
-
-      console.log("OC", oldCache);
-      console.log("UA", updatedArray);
-      console.log("UC", updatedCache);
-    },
-    onCompleted: (data, clientOptions) => {
-      setError("");
-      setIsModalOpen(false);
-      console.log("UPDATEROLEONCOMPLETED", data);
     },
   });
 
   const handleUpdateRoleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!userCtx || !workspaceCtx || !workspaceUserCtx) return;
     if (userCtx.id !== workspaceUserCtx.userId) return; //make sure user submitting is apart of the workspace
     if (workspaceCtx.id !== workspaceUserCtx.workspaceId) return;
     if (workspaceUserCtx.role !== ROLES.ADMIN) return; //make sure user is an ADMIN in the workspace
@@ -134,7 +115,6 @@ const UpdateRole: FC<{ user: User; role: Role }> = ({ user, role }) => {
 
     setError("");
 
-    console.log(user.id, workspaceCtx.id, newRole);
     await updateUserRole({
       variables: {
         userId: user.id,
@@ -143,6 +123,11 @@ const UpdateRole: FC<{ user: User; role: Role }> = ({ user, role }) => {
       },
     });
   };
+
+  if (!userCtx || !workspaceCtx || !workspaceUserCtx) return null;
+  if (userCtx.id !== workspaceUserCtx.userId) return null;
+  if (workspaceCtx.id !== workspaceUserCtx.workspaceId) return null;
+  if (workspaceUserCtx.role !== ROLES.ADMIN) return null;
 
   return (
     <>

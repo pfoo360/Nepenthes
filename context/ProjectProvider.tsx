@@ -3,14 +3,13 @@ import { Project } from "../types/types";
 
 export const ProjectContext = createContext<Project | undefined>(undefined);
 
-const ProjectProvider: FC<{ children: JSX.Element; value: Project }> = ({
-  children,
-  value,
-}) => {
+const ProjectProvider: FC<{
+  children: JSX.Element;
+  value: Project | undefined;
+}> = ({ children, value }) => {
   const [project, setProject] = useState(value);
 
   useEffect(() => {
-    console.log("PROJECTPROVIDER", value);
     setProject(value);
   }, [value]);
 

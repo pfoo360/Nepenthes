@@ -10,7 +10,6 @@ const UserProvider: FC<{ children: JSX.Element; value: User | undefined }> = ({
   const [user, setUser] = useState(value);
 
   useEffect(() => {
-    console.log("USERPROVIDER", value);
     setUser(value);
   }, [value]);
 

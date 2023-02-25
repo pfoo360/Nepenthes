@@ -5,17 +5,19 @@ import UserProvider from "../context/UserProvider";
 import WorkspaceProvider from "../context/WorkspaceProvider";
 import WorkspaceUserProvider from "../context/WorkspaceUserProvider";
 import ProjectProvider from "../context/ProjectProvider";
-import { Project, User, WorkspaceUserProviderValue } from "../types/types";
+import {
+  Project,
+  User,
+  WorkspaceUserContextValue,
+  WorkspaceContextValue,
+} from "../types/types";
 import apolloClient from "../lib/apolloClient";
 
 interface PageProps {
-  workspaceUser?: WorkspaceUserProviderValue;
+  workspaceUser?: WorkspaceUserContextValue;
   user?: User;
-  workspace?: {
-    id: string;
-    name: string;
-  };
-  project: Project;
+  workspace?: WorkspaceContextValue;
+  project?: Project;
   rest:
     | {
         [key: string]: any;
