@@ -6,11 +6,7 @@ import WorkspaceProvider from "../context/WorkspaceProvider";
 import WorkspaceUserProvider from "../context/WorkspaceUserProvider";
 import ProjectProvider from "../context/ProjectProvider";
 import { Project, User, WorkspaceUserProviderValue } from "../types/types";
-
-const client = new ApolloClient({
-  uri: "http://localhost:3000/api/graphql",
-  cache: new InMemoryCache(),
-});
+import apolloClient from "../lib/apolloClient";
 
 interface PageProps {
   workspaceUser?: WorkspaceUserProviderValue;
@@ -40,7 +36,7 @@ function MyApp({
   console.log("REST", rest);
   console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
   return (
-    <ApolloProvider client={client}>
+    <ApolloProvider client={apolloClient}>
       <UserProvider value={user}>
         <WorkspaceProvider value={workspace}>
           <WorkspaceUserProvider value={workspaceUser}>

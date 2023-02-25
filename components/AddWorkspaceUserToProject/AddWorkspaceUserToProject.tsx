@@ -1,4 +1,11 @@
-import { FC, useState, MouseEvent, ChangeEvent } from "react";
+import {
+  FC,
+  useState,
+  MouseEvent,
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { useMutation } from "@apollo/client";
 import projectOperations from "../../graphql/Project/operations";
 import useUserContext from "../../hooks/useUserContext";
@@ -9,6 +16,7 @@ import { User, Role } from "../../types/types";
 import Modal from "../Modal/Modal";
 import Error from "../Error/Error";
 import ROLES from "../../utils/role";
+import apolloClient from "../../lib/apolloClient";
 
 interface AddWorkspaceUserToProjectProps {
   workspaceUsersNotApartOfTheProject: Array<{
@@ -16,10 +24,32 @@ interface AddWorkspaceUserToProjectProps {
     user: User;
     role: Role;
   }>;
+  setWorkspaceUsersNotApartOfTheProject: Dispatch<
+    SetStateAction<
+      {
+        id: string;
+        user: User;
+        role: Role;
+      }[]
+    >
+  >;
+  setWorkspaceUsersApartOfTheProject: Dispatch<
+    SetStateAction<
+      {
+        workspaceUser: {
+          id: string;
+          user: User;
+          role: Role;
+        };
+      }[]
+    >
+  >;
 }
 
 const AddWorkspaceUserToProject: FC<AddWorkspaceUserToProjectProps> = ({
   workspaceUsersNotApartOfTheProject,
+  setWorkspaceUsersNotApartOfTheProject,
+  setWorkspaceUsersApartOfTheProject,
 }) => {
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
@@ -45,15 +75,34 @@ const AddWorkspaceUserToProject: FC<AddWorkspaceUserToProjectProps> = ({
         console.log("ADD_WORKSPACEUSER_TO_PROJECT", error.message);
         setSubmitError(error.message);
       },
-      update: (cache, { data }) => {
+      update: async (cache, { data }) => {
         console.log("ADD_WORKSPACEUSER_TO_PROJECT", data);
         if (data?.addWorkspaceUserToProject.count === 0) return; //no rows were created in db
 
         //NOTE: prisma does NOT return the newly created entries when creating many entires
-        location.reload();
+
+        setWorkspaceUsersNotApartOfTheProject((prev) =>
+          prev.filter((workspaceUser) => {
+            if (selectedWorkspaceUserIds.includes(workspaceUser.id)) {
+              setWorkspaceUsersApartOfTheProject((prev) => [
+                { workspaceUser },
+                ...prev,
+              ]);
+            }
+            if (!selectedWorkspaceUserIds.includes(workspaceUser.id)) {
+              return workspaceUser;
+            }
+          })
+        );
+
+        await apolloClient.resetStore();
       },
       onCompleted: (data, clientOptions) => {
         console.log("ADD_WORKSPACEUSER_TO_PROJECT", data);
+
+        setSelectedWorkspaceUserIds([]);
+        setSubmitError("");
+        setModalOpen(false);
       },
     });
 

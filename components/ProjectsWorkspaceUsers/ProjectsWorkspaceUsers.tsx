@@ -57,7 +57,6 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
   const MAX_NUM_OF_PAGES = Math.ceil(
     projectWorkspaceUserCount / USERS_PER_PAGE
   );
-
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
@@ -145,6 +144,12 @@ const ProjectsWorkspaceUsers: FC<ProjectsWorkspaceUsersProps> = ({
                 <AddWorkspaceUserToProject
                   workspaceUsersNotApartOfTheProject={
                     workspaceUsersNotApartOfTheProject
+                  }
+                  setWorkspaceUsersNotApartOfTheProject={
+                    setWorkspaceUsersNotApartOfTheProject
+                  }
+                  setWorkspaceUsersApartOfTheProject={
+                    setWorkspaceUsersApartOfTheProject
                   }
                 />
               ) : null}

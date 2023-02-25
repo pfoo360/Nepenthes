@@ -9,6 +9,7 @@ import { User, Role } from "../../types/types";
 import ROLES from "../../utils/role";
 import { useMutation } from "@apollo/client";
 import projectOperations from "../../graphql/Project/operations";
+import apolloClient from "../../lib/apolloClient";
 
 interface DeleteWorkspaceUserFromProjectProps {
   projectWorkspaceUserId: string;
@@ -79,38 +80,8 @@ const DeleteWorkspaceUserFromProject: FC<
     onError: (error, clientOptions) => {
       console.log("DELETEWORKSPACEUSERFROMPROJECT", error);
     },
-    update: (cache, { data }) => {
+    update: async (cache, { data }) => {
       if (!data) return;
-
-      const oldCache = cache.readQuery<{
-        getProjectsWorkspaceUsers: Array<{
-          id: string;
-          workspaceUser: { id: string; user: User; role: Role };
-        }>;
-      }>({
-        query: projectOperations.Query.GET_PROJECTS_WORKSPACEUSERS,
-        variables: {
-          projectId: projectCtx.id,
-          workspaceId: workspaceCtx.id,
-          page,
-        },
-      });
-      if (!oldCache) return;
-
-      const updatedArray = oldCache.getProjectsWorkspaceUsers.filter(
-        (projectWorkspaceUser) =>
-          projectWorkspaceUser.id !== data.deleteWorkspaceUserFromProject.id
-      );
-
-      cache.writeQuery({
-        query: projectOperations.Query.GET_PROJECTS_WORKSPACEUSERS,
-        variables: {
-          projectId: projectCtx.id,
-          workspaceId: workspaceCtx.id,
-          page,
-        },
-        data: { ...oldCache, getProjectsWorkspaceUsers: updatedArray },
-      });
 
       setWorkspaceUsersNotApartOfTheProject((prev) => {
         console.log(prev);
@@ -135,29 +106,42 @@ const DeleteWorkspaceUserFromProject: FC<
         );
       });
 
-      console.log("DELETEWORKSPACEUSERFROMPROJECT", data);
-      console.log("old", oldCache);
+      await apolloClient.resetStore();
 
-      const updatedCache = cache.readQuery<{
-        getProjectsWorkspaceUsers: Array<{
-          id: string;
-          workspaceUser: { id: string; user: User; role: Role };
-        }>;
-      }>({
-        query: projectOperations.Query.GET_PROJECTS_WORKSPACEUSERS,
-        variables: {
-          projectId: projectCtx.id,
-          workspaceId: workspaceCtx.id,
-          page,
-        },
-      });
-      console.log("updatedcahce", updatedCache);
+      // const oldCache = cache.readQuery<{
+      //   getProjectsWorkspaceUsers: Array<{
+      //     id: string;
+      //     workspaceUser: { id: string; user: User; role: Role };
+      //   }>;
+      // }>({
+      //   query: projectOperations.Query.GET_PROJECTS_WORKSPACEUSERS,
+      //   variables: {
+      //     projectId: projectCtx.id,
+      //     workspaceId: workspaceCtx.id,
+      //     page,
+      //   },
+      // });
+      // if (!oldCache) return;
+
+      // const updatedArray = oldCache.getProjectsWorkspaceUsers.filter(
+      //   (projectWorkspaceUser) =>
+      //     projectWorkspaceUser.id !== data.deleteWorkspaceUserFromProject.id
+      // );
+
+      // cache.writeQuery({
+      //   query: projectOperations.Query.GET_PROJECTS_WORKSPACEUSERS,
+      //   variables: {
+      //     projectId: projectCtx.id,
+      //     workspaceId: workspaceCtx.id,
+      //     page,
+      //   },
+      //   data: { ...oldCache, getProjectsWorkspaceUsers: updatedArray },
+      // });
     },
     onCompleted: (data, clientOptions) => {
       console.log("DELETEWORKSPACEUSERFROMPROJECT", data);
       setSubmitError("");
       setIsModalOpen(false);
-      location.reload();
     },
   });
 

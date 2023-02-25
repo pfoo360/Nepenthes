@@ -18,6 +18,7 @@ import useProjectContext from "../../hooks/useProjectContext";
 import ROLES from "../../utils/role";
 import ticketOperations from "../../graphql/Ticket/operations";
 import { useMutation } from "@apollo/client";
+import apolloClient from "../../lib/apolloClient";
 
 interface AddTicketProps {
   workspaceUsersApartOfTheProject: {
@@ -98,7 +99,9 @@ const AddTicket: FC<AddTicketProps> = ({
       console.log(error);
       setSubmitError(error.message);
     },
-    update: (cache, { data }) => {
+    update: async (cache, { data }) => {
+      await apolloClient.resetStore();
+
       // if (!data) return;
       // if (
       //   !projectCtx?.id ||
@@ -150,18 +153,10 @@ const AddTicket: FC<AddTicketProps> = ({
       //     ],
       //   },
       // });
-      // const newCache = cache.readQuery({
-      //   query: ticketOperations.Query.GET_PROJECTS_TICKETS,
-      //   variables: {
-      //     projectId: projectCtx.id,
-      //     workspaceId: workspaceCtx.id,
-      //     page,
-      //   },
-      // });
+
       // console.log("ADDTICKETUPDATE", data);
       // console.log(page);
       // console.log("OLDCACHE", oldCache);
-      // console.log("NEWCACHE", newCache);
     },
     onCompleted(data, clientOptions) {
       console.log("ADDTICKETCOMPLETE", data);
@@ -182,7 +177,6 @@ const AddTicket: FC<AddTicketProps> = ({
       setTypeInitialFocus(false);
       setTypeError("");
       setModalOpen(false);
-      location.reload();
     },
   });
 

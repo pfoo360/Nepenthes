@@ -1,8 +1,12 @@
 import { MouseEvent, FC } from "react";
 import { useMutation } from "@apollo/client";
 import authOperations from "../../graphql/Auth/operations";
+import { useRouter } from "next/router";
+import apolloClient from "../../lib/apolloClient";
 
 const SignOut: FC = () => {
+  const { push } = useRouter();
+
   const [signOut, { data, loading: isSubmitting, error }] = useMutation<{
     signOut: {
       successStatus: boolean;
@@ -13,9 +17,10 @@ const SignOut: FC = () => {
       console.log("SIGN_OUT_ERROR", error);
     },
     update: (cache, { data }) => {},
-    onCompleted: (data, clientOptions) => {
+    onCompleted: async (data, clientOptions) => {
       if (data.signOut.successStatus) {
-        location.reload();
+        await apolloClient.clearStore();
+        push("/signin");
       }
     },
   });

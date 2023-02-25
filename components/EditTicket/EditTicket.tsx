@@ -25,6 +25,8 @@ import STATUS from "../../utils/status";
 import Link from "next/link";
 import { useMutation } from "@apollo/client";
 import ticketOperations from "../../graphql/Ticket/operations";
+import apolloClient from "../../lib/apolloClient";
+import { useRouter } from "next/router";
 
 interface EditTicketProps {
   ticket: Ticket;
@@ -39,6 +41,8 @@ const EditTicket: FC<EditTicketProps> = ({
   ticket,
   workspaceUsersAssignedToProject,
 }) => {
+  const { push } = useRouter();
+
   const PRIORITY_VALUES = Object.values(PRIORITIES);
   const TYPE_VALUES = Object.values(TYPES);
   const STATUS_VALUES = Object.values(STATUS);
@@ -214,13 +218,16 @@ const EditTicket: FC<EditTicketProps> = ({
     onError: (error, clientOptions) => {
       console.log("EDIT_TICKET", error);
     },
-    update: (cache, { data }) => {
-      if (!data) return;
+    update: async (cache, { data }) => {
+      //if (!data) return;
       console.log("EDIT_TICKET", data);
+      await apolloClient.resetStore();
     },
     onCompleted: (data, clientOptions) => {
       console.log("EDIT_TICKET", data);
-      location.reload();
+      push(
+        `/t/${data.updateTicket.project.workspaceId}/${data.updateTicket.project.id}/${data.updateTicket.id}`
+      );
     },
   });
 

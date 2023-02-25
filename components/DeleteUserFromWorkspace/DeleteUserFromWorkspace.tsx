@@ -9,6 +9,7 @@ import Modal from "../Modal/Modal";
 import workspaceOperations from "../../graphql/Workspace/operations";
 import Error from "../Error/Error";
 import { useRouter } from "next/router";
+import apolloClient from "../../lib/apolloClient";
 
 const DeleteUserFromWorkspace: FC<{ user: User }> = ({ user }) => {
   //button is only visible if current user is ADMIN
@@ -47,63 +48,48 @@ const DeleteUserFromWorkspace: FC<{ user: User }> = ({ user }) => {
       console.log("DELETEUSERERROR", error.message);
       setError(error.message);
     },
-    update: (cache, { data }) => {
-      if (!data) return;
-
-      if (data.deleteUserFromWorkspace.user.id === userCtx.id) {
+    update: async (cache, { data }) => {
+      if (data?.deleteUserFromWorkspace.user.id === userCtx.id) {
         //only ADMINs in a workspace can see the admin panel and delete users
         //if current user has come this far, then they are most likely an ADMIN in the current workspace
         //workspaceUserCtx cannot to updated manually, so if current user is deleting theselves, then force them back to dashboard page. This will also update workspaceUsersCtx, userCx, and workspaceCtx
-        //push("/workspaces");
         location.reload();
       }
 
-      const oldCache = cache.readQuery<{
-        getWorkspacesUsers: Array<{
-          role: Role;
-          user: User & { __typename: "User" };
-          __typename: "WorkspaceUser";
-        }>;
-      }>({
-        query: workspaceOperations.Query.GET_WORKSPACES_USERS,
-        variables: { workspaceId: workspaceCtx.id },
-      });
+      // const oldCache = cache.readQuery<{
+      //   getWorkspacesUsers: Array<{
+      //     role: Role;
+      //     user: User & { __typename: "User" };
+      //     __typename: "WorkspaceUser";
+      //   }>;
+      // }>({
+      //   query: workspaceOperations.Query.GET_WORKSPACES_USERS,
+      //   variables: { workspaceId: workspaceCtx.id },
+      // });
 
-      if (!oldCache) return;
+      // if (!oldCache) return;
 
-      const updatedArray = oldCache.getWorkspacesUsers.filter(
-        (workspaceUser) => {
-          if (workspaceUser.user.id !== data.deleteUserFromWorkspace.user.id)
-            return workspaceUser;
-        }
-      );
+      // const updatedArray = oldCache.getWorkspacesUsers.filter(
+      //   (workspaceUser) => {
+      //     if (workspaceUser.user.id !== data.deleteUserFromWorkspace.user.id)
+      //       return workspaceUser;
+      //   }
+      // );
 
-      cache.writeQuery({
-        query: workspaceOperations.Query.GET_WORKSPACES_USERS,
-        variables: { workspaceId: workspaceCtx.id },
-        data: { ...oldCache, getWorkspacesUsers: updatedArray },
-      });
+      // cache.writeQuery({
+      //   query: workspaceOperations.Query.GET_WORKSPACES_USERS,
+      //   variables: { workspaceId: workspaceCtx.id },
+      //   data: { ...oldCache, getWorkspacesUsers: updatedArray },
+      // });
+      // console.log("OC", oldCache);
+      // console.log("UA", updatedArray);
 
-      const updatedCache = cache.readQuery<{
-        getWorkspacesUsers: Array<{
-          role: Role;
-          user: User & { __typename: "User" };
-          __typename: "WorkspaceUser";
-        }>;
-      }>({
-        query: workspaceOperations.Query.GET_WORKSPACES_USERS,
-        variables: { workspaceId: workspaceCtx.id },
-      });
-
-      console.log("OC", oldCache);
-      console.log("UA", updatedArray);
-      console.log("UC", updatedCache);
+      await apolloClient.resetStore();
     },
     onCompleted: (data, clientOptions) => {
       setError("");
       setIsModalOpen(false);
       console.log("DELETEUSERCOMPLETE", data);
-      location.reload();
     },
   });
 
