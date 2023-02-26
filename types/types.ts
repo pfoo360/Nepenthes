@@ -101,10 +101,9 @@ export interface SignInResponse {
   user: User;
 }
 
-export interface CreateWorkspaceResponse {
-  id: string;
-  name: string;
-  workspaceUser: WorkspaceUser[];
+export interface SignOutResponse {
+  successStatus: Boolean;
+  message: String;
 }
 
 export interface WorkspaceUserContextValue {
@@ -117,16 +116,4 @@ export interface WorkspaceUserContextValue {
 export interface WorkspaceContextValue {
   id: string;
   name: string;
-}
-
-export interface UpdateWorkspaceNameResponse {
-  id: string;
-  name: string;
-  workspaceUser: WorkspaceUser[];
-}
-
-export interface DeleteWorkspaceResponse {
-  id: string;
-  name: string;
-  workspaceUser: WorkspaceUser[];
 }

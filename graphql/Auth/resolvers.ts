@@ -1,5 +1,9 @@
 import { GraphQLError } from "graphql";
-import { GraphQLContext, SignInResponse } from "../../types/types";
+import {
+  GraphQLContext,
+  SignInResponse,
+  SignOutResponse,
+} from "../../types/types";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { serialize } from "cookie";
@@ -72,7 +76,7 @@ const resolvers = {
       _parent: any,
       _args: any,
       { req, res, user, session, prisma }: GraphQLContext
-    ) => {
+    ): Promise<SignOutResponse> => {
       //if no session string, there is nothing to delete
       if (!session)
         throw new GraphQLError("Already signed out.", {
@@ -83,7 +87,6 @@ const resolvers = {
       const deletedSession = await prisma.session.delete({
         where: { sessionToken: session },
       });
-      console.log(deletedSession);
 
       //expire cookie
       const cookie = serialize(NEPENTHES_SESSION, session, {

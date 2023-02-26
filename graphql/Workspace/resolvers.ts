@@ -1,11 +1,9 @@
 import { GraphQLError } from "graphql";
 import {
   GraphQLContext,
-  CreateWorkspaceResponse,
   WorkspaceUser,
   Role,
-  UpdateWorkspaceNameResponse,
-  DeleteWorkspaceResponse,
+  Workspace,
 } from "./../../types/types";
 import ROLES from "../../utils/role";
 
@@ -16,7 +14,6 @@ const resolvers = {
       { workspaceId }: { workspaceId: string },
       { req, res, prisma, session, user }: GraphQLContext
     ): Promise<WorkspaceUser[]> => {
-      console.log("GETWORKSPACEUSERS", workspaceId);
       if (!workspaceId)
         throw new GraphQLError("Workspace ID is required.", {
           extensions: { code: "INVALID INPUT(S)" },
@@ -56,12 +53,11 @@ const resolvers = {
       _parent: any,
       { workspaceName }: { workspaceName: string },
       { req, res, prisma, session, user }: GraphQLContext
-    ): Promise<CreateWorkspaceResponse> => {
+    ): Promise<Workspace & { workspaceUser: WorkspaceUser[] }> => {
       if (!session || !user)
         throw new GraphQLError("Unauthorized.", {
           extensions: { code: "UNAUTHORIZED" },
         });
-      console.log(workspaceName, session, user, req.cookies);
 
       if (!workspaceName)
         throw new GraphQLError("Name is required.", {
@@ -93,9 +89,6 @@ const resolvers = {
           },
         },
       });
-
-      console.log(workspace);
-      //check to see if workspace has been created, throw error if not
 
       return workspace;
     },
@@ -160,11 +153,6 @@ const resolvers = {
       });
 
       return newlyCreatedWorkspaceUser;
-      return {
-        id: "12323",
-        user: { id: "123", username: "test", email: "fdsafd" },
-        role: "ADMIN",
-      };
     },
     updateUserRole: async (
       _parent: any,
@@ -220,7 +208,6 @@ const resolvers = {
         const numberOfAdmins = await prisma.workspaceUser.count({
           where: { AND: { workspaceId, role: ROLES.ADMIN } },
         });
-        console.log(`NUMBEROFADMINS FOR ${workspaceId}`, numberOfAdmins);
         if (numberOfAdmins <= 1)
           throw new GraphQLError("Workspace requires at least ONE(1) ADMIN", {
             extensions: { code: "UNAUTHORIZED" },
@@ -282,7 +269,6 @@ const resolvers = {
         const numberOfAdmins = await prisma.workspaceUser.count({
           where: { AND: { workspaceId, role: ROLES.ADMIN } },
         });
-        console.log(`NUMBEROFADMINS FOR ${workspaceId}`, numberOfAdmins);
         if (numberOfAdmins <= 1)
           throw new GraphQLError("Workspace requires at least ONE(1) ADMIN", {
             extensions: { code: "UNAUTHORIZED" },
@@ -304,7 +290,7 @@ const resolvers = {
       _parent: any,
       { workspaceId, newName }: { workspaceId: string; newName: string },
       { req, res, user, session, prisma }: GraphQLContext
-    ): Promise<UpdateWorkspaceNameResponse> => {
+    ): Promise<Workspace & { workspaceUser: WorkspaceUser[] }> => {
       //check auth
       if (!session || !user)
         throw new GraphQLError("Unauthorized.", {
@@ -349,14 +335,13 @@ const resolvers = {
         },
       });
 
-      console.log("UPDATENAME", updatedWorkspace, newName, workspaceUser);
       return updatedWorkspace;
     },
     deleteWorkspace: async (
       _parent: any,
       { workspaceId }: { workspaceId: string },
       { req, res, session, user, prisma }: GraphQLContext
-    ): Promise<DeleteWorkspaceResponse> => {
+    ): Promise<Workspace & { workspaceUser: WorkspaceUser[] }> => {
       //check auth
       if (!session || !user)
         throw new GraphQLError("Unauthorized.", {
@@ -394,7 +379,6 @@ const resolvers = {
           },
         },
       });
-      console.log("DELETED WKSPC", deletedWorkspace);
       return deletedWorkspace;
     },
   },
