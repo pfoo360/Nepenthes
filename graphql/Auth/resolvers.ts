@@ -17,7 +17,6 @@ const resolvers = {
           extensions: { code: "SESSION_EXIST" },
         });
 
-      console.log("auth", req.cookies);
       //check if username and password were sent
       if (!username || !password)
         throw new GraphQLError("Username and password are required.", {

@@ -127,7 +127,6 @@ const AddProject: FC<{
     }
   >(ProjectOperations.Mutation.CREATE_PROJECT, {
     onError: (error, clientOptions) => {
-      console.log(error);
       setSubmitError(error.message);
     },
     update: (cache, { data }) => {

@@ -10,22 +10,16 @@ const resolvers = {
       args: {},
       { prisma, session, user }: GraphQLContext
     ) => {
-      // const s = "sdfsdfsdf";
-      // const u = { id: "sdafsdfsd", username: "test", email: "test@test.com" };
-
       if (!session || !user)
         throw new GraphQLError("Unauthorized.", {
           extensions: { code: "UNAUTHORIZED" },
         });
 
-      console.log(session, user);
-      console.log("me", parent, args);
       return user;
     },
   },
   Me: {
     myAccount: (parent: User, args: {}, context: GraphQLContext) => {
-      console.log("parent", parent);
       return parent;
     },
     myWorkspaces: async (
@@ -33,7 +27,6 @@ const resolvers = {
       args: {},
       { prisma }: GraphQLContext
     ) => {
-      console.log("workspace", parent.id, args);
       const myWorkspace = await prisma.workspaceUser.findMany({
         where: { userId: parent.id },
         select: {
@@ -53,7 +46,6 @@ const resolvers = {
           role: true,
         },
       });
-      console.log("MYWORKSPACE", myWorkspace);
 
       return myWorkspace;
     },
@@ -62,7 +54,6 @@ const resolvers = {
       { workspaceId }: { workspaceId: string },
       { req, res, session, user, prisma }: GraphQLContext
     ) => {
-      console.log(parent, workspaceId);
       //check if the user is apart of the workspace
       const workspaceUser = await prisma.workspaceUser.findUnique({
         where: { workspaceId_userId: { userId: parent.id, workspaceId } },
@@ -77,7 +68,6 @@ const resolvers = {
         const projects = await prisma.project.findMany({
           where: { workspaceId },
         });
-        console.log(workspaceUser.role, projects);
         return projects;
       }
       //if user is a MANAGER or DEVELOPER in the workspace, return the projects they are apart of
@@ -92,7 +82,6 @@ const resolvers = {
             },
           },
         });
-        console.log(workspaceUser.role, projects);
         return projects;
       }
     },
@@ -105,10 +94,14 @@ const resolvers = {
         email,
         password,
       }: { username: string; email: string; password: string },
-      { req, res, prisma }: GraphQLContext
+      { req, res, session: s, user: u, prisma }: GraphQLContext
     ): Promise<CreateUserResponse> => {
-      //todo: try/catch, xsf header check, check to make sure no session exists(canot create new act if alrdy logged in)
-      console.log(username, email, password);
+      //check auth: if session or user exists, cannot create account
+      if (s || u)
+        throw new GraphQLError("Unauthorized.", {
+          extensions: { code: "UNAUTHORIZED" },
+        });
+
       //check username, email, password are valid
       if (
         !/^[a-zA-Z0-9_-]{6,12}$/i.test(username) ||
@@ -126,7 +119,6 @@ const resolvers = {
         prisma.user.findFirst({ where: { email } }),
       ]);
 
-      console.log(usernameCheck, emailCheck);
       //if taken, throw error
       if (
         usernameCheck.status === "rejected" ||
@@ -150,11 +142,9 @@ const resolvers = {
 
       //if not taken, hash pw and save details to db
       const hashedPwd = await bcrypt.hash(password, 10);
-      console.log(hashedPwd);
       const user = await prisma.user.create({
         data: { username, email, password: hashedPwd },
       });
-      console.log(user);
 
       return {
         successStatus: true,

@@ -17,7 +17,6 @@ const getServerSessionAndUser = async (
     email: string;
   };
   sessionToken: string;
-  //expires: Date;
 } | null> => {
   try {
     if (!req?.cookies) return null;
@@ -37,10 +36,7 @@ const getServerSessionAndUser = async (
       return null;
     }
 
-    console.log(sessionAndUser);
-
     if (sessionAndUser.expires <= new Date()) {
-      console.log("expired");
       await prisma.session.delete({
         where: { sessionToken: sessionAndUser.sessionToken },
       });
