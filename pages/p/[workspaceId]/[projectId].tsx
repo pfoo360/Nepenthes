@@ -12,8 +12,8 @@ import useUserContext from "../../../hooks/useUserContext";
 import useWorkspaceContext from "../../../hooks/useWorkspaceContext";
 import useWorkspaceUserContext from "../../../hooks/useWorkspaceUserContext";
 import useProjectContext from "../../../hooks/useProjectContext";
+import Head from "next/head";
 
-//todo:upoon del wsu from proj, set wsaotp
 interface ProjectDetailsProps {
   projectWorkspaceUserCount: number;
   listOfWorkspaceUsersNotApartOfTheProject: Array<{
@@ -27,17 +27,12 @@ interface ProjectDetailsProps {
   projectTicketCount: number;
 }
 
-const ProjectDetails: FC<ProjectDetailsProps> = ({
+const ProjectDetails: NextPage<ProjectDetailsProps> = ({
   projectWorkspaceUserCount,
   listOfWorkspaceUsersNotApartOfTheProject,
   listOfWorkspaceUsersApartOfTheProject,
   projectTicketCount,
 }) => {
-  console.log(
-    "listOfWorkspaceUsersNotApartOfTheProject",
-    listOfWorkspaceUsersNotApartOfTheProject
-  );
-
   const [
     workspaceUsersNotApartOfTheProject,
     setWorkspaceUsersNotApartOfTheProject,
@@ -58,6 +53,10 @@ const ProjectDetails: FC<ProjectDetailsProps> = ({
 
   return (
     <>
+      <Head>
+        <title>Project</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <NavBar />
       <div className="mx-6 mt-2 mb-1 text-gray-900 text-lg">
         <h1 className="font-semibold text-gray-500 text-sm">Project Name</h1>
@@ -96,7 +95,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
   query,
 }) => {
-  console.log("PARAMS", params);
   //check if workspaceId and projectId exists in user request
   if (
     !params?.workspaceId ||
@@ -142,7 +140,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   //below this point we know: user and session exists, workspace exists, user is apart of the workspace, project exists, project is apart of the workspace
 
-  console.log("ROLE", workspaceUser.role);
   //a workspace's ADMIN can view any project in their workspace
   //non-ADMINs can only view a project IF they are apart of the project
   //IF a project is apart of the workspace AND the user is apart of the workspace AND the user is an ADMIN in the workspace, they have unconditional access to the project
@@ -156,7 +153,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         },
       },
     });
-    console.log("projectWorkspaceUser", projectWorkspaceUser);
     if (!projectWorkspaceUser)
       return { redirect: { destination: "/workspaces", permanent: false } };
   }
@@ -181,27 +177,12 @@ export const getServerSideProps: GetServerSideProps = async ({
       }),
     ]);
 
-  // console.log(user, sessionToken);
-  // console.log(workspaceId, projectId);
-  // console.log(project);
-  // console.log(workspace);
-  // console.log(workspaceUser);
-  // console.log(project);
-
-  console.log(
-    "0000000000000000000000000",
-    listOfWorkspaceUsersApartOfTheProject
-  );
-
   //used in next db query to find the workspace users that are NOT apart of the project
   const listOfWorkspaceUserIdsThatBelongToUsersThatAreAlreadyApartOfTheProject =
     Array.from(listOfWorkspaceUsersApartOfTheProject, (x) => ({
       id: x.workspaceUser.id,
     }));
 
-  console.log(
-    listOfWorkspaceUserIdsThatBelongToUsersThatAreAlreadyApartOfTheProject
-  );
   const listOfWorkspaceUsersNotApartOfTheProject =
     await prisma.workspaceUser.findMany({
       where: {
@@ -215,19 +196,9 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     });
 
-  console.log("************", listOfWorkspaceUsersNotApartOfTheProject);
-  console.log("************", project);
-
-  //todo: find all remaining workspaceUsers that do not exist in current projectWorkspaceUsers
-  //find all projectWorkspaceUsers for table, create button to add new workspaceUsers to project, update cache for table, update list of remaining workspaceUseres by filtering out who was added?, create button to delete workspaceUsers from project
-  //delete project, update project name? and desc?
-
   const projectTicketCount = await prisma.ticket.count({
     where: { projectId },
   });
-
-  console.log("TICKET COUNT", projectTicketCount);
-  //workspaceUser.role = "DEVELOPER";
 
   return {
     props: {

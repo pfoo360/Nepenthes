@@ -6,6 +6,7 @@ import NavBar from "../../../../components/NavBar/NavBar";
 import { default as TicketComponent } from "../../../../components/Ticket/Ticket";
 import Comment from "../../../../components/Comment/Comment";
 import { Ticket, Role, TicketComment } from "../../../../types/types";
+import Head from "next/head";
 
 interface TicketDetailsProps {
   ticket_stringify: string;
@@ -18,9 +19,12 @@ const TicketDetails: NextPage<TicketDetailsProps> = ({
 }) => {
   const ticket: Ticket & { ticketComment: Array<TicketComment> } =
     JSON.parse(ticket_stringify);
-  console.log("TICKET", ticket);
   return (
     <>
+      <Head>
+        <title>{`Ticket Detail | ${ticket.title}`}</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <NavBar />
       <TicketComponent
         ticket={ticket}
@@ -50,7 +54,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   )
     return { redirect: { destination: "/workspaces", permanent: false } };
   const { workspaceId, projectId, ticketId } = params;
-  console.log("PARAMS", params);
 
   //check if session and user exists
   const sessionAndUser = await getServerSessionAndUser(req, res);
@@ -58,7 +61,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     return { redirect: { destination: "/signin", permanent: false } };
   }
   const { sessionToken, user } = sessionAndUser;
-  console.log("SAU", sessionAndUser);
 
   //check if workspace id provided by client exists
   const workspace = await prisma.workspace.findUnique({
@@ -66,7 +68,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     select: { id: true, name: true },
   });
   if (!workspace) return { notFound: true };
-  console.log("WORKSPACE", workspace);
 
   //check if user is apart of the workspace
   const workspaceUser = await prisma.workspaceUser.findUnique({
@@ -76,7 +77,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
   if (!workspaceUser)
     return { redirect: { destination: "/workspaces", permanent: false } };
-  console.log("WORKSPACEUSER", workspaceUser);
 
   //check if project id provided by client exists in db AND if project belongs to the workspace the user is apart of
   const project = await prisma.project.findUnique({
@@ -86,7 +86,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (!project) return { notFound: true };
   if (project.workspaceId !== workspaceUser.workspaceId)
     return { redirect: { destination: "/workspaces", permanent: false } };
-  console.log("PROJECT", project);
 
   //a workspace's ADMIN can view any project in the workspace
   //a workspace's non-ADMINs can only view a project IF they are assigned to the project
@@ -100,7 +99,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         },
       },
     });
-    console.log("projectWorkspaceUser", projectWorkspaceUser);
     if (!projectWorkspaceUser)
       return { redirect: { destination: "/workspaces", permanent: false } };
   }
@@ -173,7 +171,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     },
   });
-  console.log("TICKET", ticket);
   if (!ticket) return { notFound: true };
   if (ticket.project.id !== project.id)
     return { redirect: { destination: "/workspaces", permanent: false } };
@@ -182,7 +179,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   //below this we know: user is an ADMIN of workspace OR user is a MANAGER/DEVELOPER of workspace AND assigned to project
 
   //ADMINs can see ticket details of a project unconditionally
-  //MANAGERs can see ticket details of projects if they are assigned to project
+  //MANAGERs can see ticket details of projects if they are assigned to project (we already checked whether a user is assigned to project above)
   //everyone else can see ticket details if they are listed on the ticket
   if (
     workspaceUser.role !== ROLES.ADMIN &&
@@ -209,7 +206,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       workspaceUserId: true,
     },
   });
-  console.log("managersAssignedToProject", managersAssignedToProject);
 
   return {
     props: {

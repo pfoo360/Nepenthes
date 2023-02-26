@@ -1,22 +1,24 @@
 import type { GetServerSideProps, NextPage } from "next";
 import prisma from "../../lib/prisma";
 import getServerSessionAndUser from "../../utils/getServerSessionAndUser";
-import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
-import useUserContext from "../../hooks/useUserContext";
-import useWorkspaceContext from "../../hooks/useWorkspaceContext";
 import NavBar from "../../components/NavBar/NavBar";
 import AddProject from "../../components/AddProject/AddProject";
 import MyProject from "../../components/MyProject/MyProject";
 import ROLES from "../../utils/role";
 import { Role, User } from "../../types/types";
+import Head from "next/head";
 
-interface ProjectProps {
+interface ProjectsProps {
   workspacesUsers: Array<{ id: string; user: User; role: Role }>;
 }
 
-const Project: NextPage<ProjectProps> = ({ workspacesUsers }) => {
+const Projects: NextPage<ProjectsProps> = ({ workspacesUsers }) => {
   return (
     <>
+      <Head>
+        <title>Projects</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <NavBar />
       <AddProject workspacesUsers={workspacesUsers} />
       <MyProject />
@@ -24,7 +26,7 @@ const Project: NextPage<ProjectProps> = ({ workspacesUsers }) => {
   );
 };
 
-export default Project;
+export default Projects;
 
 export const getServerSideProps: GetServerSideProps = async ({
   req,
@@ -38,7 +40,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     return { redirect: { destination: "/signin", permanent: false } };
   }
   const { user, sessionToken } = sessionAndUser;
-  console.log("PROJECT QUERY AND PARAMS", params, query);
 
   //check if workspace id provided by client exists in db
   if (!params?.workspaceId || typeof params.workspaceId !== "string")
@@ -74,9 +75,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     });
   }
-
-  console.log(workspacesUsers);
-  //console.log(user, sessionToken, workspace, workspaceUser);
 
   return { props: { user, workspace, workspaceUser, workspacesUsers } };
 };

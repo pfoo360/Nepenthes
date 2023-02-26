@@ -6,10 +6,15 @@ import ROLES from "../../utils/role";
 import NavBar from "../../components/NavBar/NavBar";
 import AddUserToWorkspace from "../../components/AddUserToWorkspace/AddUserToWorkspace";
 import WorkspacesUsers from "../../components/WorkspacesUsers/WorkspacesUsers";
+import Head from "next/head";
 
 const Admin: NextPage = () => {
   return (
     <>
+      <Head>
+        <title>Admin Panel</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <NavBar />
       <AddUserToWorkspace />
       <WorkspacesUsers />
@@ -49,8 +54,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
   if (!workspaceUser || workspaceUser.role !== ROLES.ADMIN)
     return { redirect: { destination: "/workspaces", permanent: false } };
-
-  console.log("ADMIN GSSP", user, sessionToken, workspace, workspaceUser);
 
   return { props: { user, workspace, workspaceUser } };
 };

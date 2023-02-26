@@ -9,11 +9,14 @@ import Modal from "../Modal/Modal";
 import workspaceOperations from "../../graphql/Workspace/operations";
 import Error from "../Error/Error";
 import apolloClient from "../../lib/apolloClient";
+import { useRouter } from "next/router";
 
 const DeleteUserFromWorkspace: FC<{ user: User }> = ({ user }) => {
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
   const workspaceUserCtx = useWorkspaceUserContext();
+
+  const { push } = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState("");
@@ -39,14 +42,7 @@ const DeleteUserFromWorkspace: FC<{ user: User }> = ({ user }) => {
     onError: (error, clientOptions) => {
       setError(error.message);
     },
-    update: async (cache, { data }) => {
-      if (data?.deleteUserFromWorkspace.user.id === userCtx?.id) {
-        //only ADMINs in a workspace can see the admin panel and delete users
-        //if current user has come this far, then they are most likely an ADMIN in the current workspace
-        //workspaceUserCtx cannot to updated manually, so if current user is deleting theselves, then force them back to dashboard page. This will also update workspaceUsersCtx, userCx, and workspaceCtx
-        location.reload();
-      }
-
+    update: (cache, { data }) => {
       // const oldCache = cache.readQuery<{
       //   getWorkspacesUsers: Array<{
       //     role: Role;
@@ -57,16 +53,13 @@ const DeleteUserFromWorkspace: FC<{ user: User }> = ({ user }) => {
       //   query: workspaceOperations.Query.GET_WORKSPACES_USERS,
       //   variables: { workspaceId: workspaceCtx.id },
       // });
-
       // if (!oldCache) return;
-
       // const updatedArray = oldCache.getWorkspacesUsers.filter(
       //   (workspaceUser) => {
       //     if (workspaceUser.user.id !== data.deleteUserFromWorkspace.user.id)
       //       return workspaceUser;
       //   }
       // );
-
       // cache.writeQuery({
       //   query: workspaceOperations.Query.GET_WORKSPACES_USERS,
       //   variables: { workspaceId: workspaceCtx.id },
@@ -74,12 +67,20 @@ const DeleteUserFromWorkspace: FC<{ user: User }> = ({ user }) => {
       // });
       // console.log("OC", oldCache);
       // console.log("UA", updatedArray);
-
-      await apolloClient.resetStore();
     },
-    onCompleted: (data, clientOptions) => {
+    onCompleted: async (data, clientOptions) => {
       setError("");
       setIsModalOpen(false);
+
+      if (data?.deleteUserFromWorkspace.user.id === userCtx?.id) {
+        //only ADMINs in a workspace can see the admin panel and delete users
+        //if current user has come this far, then they are most likely an ADMIN in the current workspace
+        //workspaceUserCtx cannot to updated manually, so if current user is deleting theselves, then force them back to dashboard page. This will also update workspaceUsersCtx, userCx, and workspaceCtx
+        await apolloClient.clearStore();
+        push("/workspaces");
+      } else {
+        await apolloClient.resetStore();
+      }
     },
   });
 

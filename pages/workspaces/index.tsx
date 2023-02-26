@@ -7,7 +7,7 @@ import AddWorkspace from "../../components/AddWorkspace/AddWorkspace";
 import MyWorkspace from "../../components/MyWorkspace/MyWorkspace";
 import SignOut from "../../components/SignOut/SignOut";
 
-const Dash: NextPage = (a) => {
+const Dashboard: NextPage = (a) => {
   return (
     <>
       <Head>
@@ -25,13 +25,10 @@ const Dash: NextPage = (a) => {
   );
 };
 
-export default Dash;
+export default Dashboard;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  console.log("gssp before", req.cookies);
   const sessionAndUser = await getServerSessionAndUser(req, res);
-  // console.log("gssp after", req.cookies);
-  // console.log("user", sessionAndUser);
 
   if (!sessionAndUser) {
     return { redirect: { destination: "/signin", permanent: false } };

@@ -86,7 +86,7 @@ const UpdateRole: FC<{ user: User; role: Role }> = ({ user, role }) => {
       if (data?.updateUserRole.user.id === userCtx?.id) {
         //only ADMINs in a workspace can update roles
         //if current user has come this far, then they are most likely an ADMIN in the current workspace
-        //workspaceUserCtx cannot to updated manually, so if current user is updating their own ADMIN role to a non-ADMIN roles, then force a refresh of the page. This will update workspaceUsersCtx
+        //workspaceUserCtx cannot be updated manually, so if current user is updating their own ADMIN role to a non-ADMIN roles, then force them to "/workspaces". This will clear out workspaceUsersCtx
         await apolloClient.clearStore();
         push("/workspaces");
       } else {

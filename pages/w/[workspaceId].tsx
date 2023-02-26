@@ -11,6 +11,7 @@ import TYPE from "../../utils/type";
 import PRIORITY from "../../utils/priority";
 import { PieChartData, Priority, Status, Type } from "../../types/types";
 import Chart from "../../components/Chart/Chart";
+import Head from "next/head";
 
 interface TicketBreakdownProps {
   STATUS_DATA: PieChartData;
@@ -32,6 +33,10 @@ const TicketBreakdown: NextPage<TicketBreakdownProps> = ({
 
   return (
     <>
+      <Head>
+        <title>Workspace</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <NavBar />
       <main className="lg:flex lg:flex-row lg:justify-center lg:items-center">
         <section className="flex flex-col justify-center items-center lg:flex-row lg:mx-10 lg:justify-between lg:max-w-[1920px]">
@@ -77,8 +82,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (!workspaceUser)
     return { redirect: { destination: "/workspaces", permanent: false } };
 
-  //console.log(user, sessionToken, workspace, workspaceUser);
-
   //STATUS
   //index 0 = OPEN
   //index 1 = CLOSED
@@ -107,7 +110,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     ],
   };
-  console.log(STATUS_VALUES, STATUS_COUNT, STATUS_DATA);
 
   //TYPE
   //index 0 = BUG
@@ -152,7 +154,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     ],
   };
-  console.log(TYPE_VALUES, TYPE_COUNT, TYPE_DATA);
 
   //PRIORITY
   //index 0 = LOW
@@ -191,7 +192,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       },
     ],
   };
-  console.log(PRIORITY_VALUES, PRIORITY_COUNT, PRIORITY_DATA);
 
   return {
     props: {

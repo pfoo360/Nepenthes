@@ -10,7 +10,7 @@ import ROLES from "../../utils/role";
 import { useMutation } from "@apollo/client";
 import projectOperations from "../../graphql/Project/operations";
 import apolloClient from "../../lib/apolloClient";
-
+import { useRouter } from "next/router";
 interface DeleteWorkspaceUserFromProjectProps {
   projectWorkspaceUserId: string;
   workspaceUser: { id: string; user: User; role: Role };
@@ -53,6 +53,8 @@ const DeleteWorkspaceUserFromProject: FC<
   const workspaceUserCtx = useWorkspaceUserContext();
   const projectCtx = useProjectContext();
 
+  const { push } = useRouter();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
@@ -73,6 +75,17 @@ const DeleteWorkspaceUserFromProject: FC<
     },
     update: async (cache, { data }) => {
       if (!data) return;
+
+      //MANAGERS can only view project details of projects they are assigned to
+      //if current user unassigns themselves from the project AND current user is a MANAGER of the workspace, kick them out of the project
+      if (
+        workspaceUserCtx?.role !== ROLES.ADMIN &&
+        data.deleteWorkspaceUserFromProject.workspaceUser.id ===
+          workspaceUserCtx?.id
+      ) {
+        await apolloClient.clearStore();
+        return push("/workspaces");
+      }
 
       setCount((prev) => prev - 1);
 

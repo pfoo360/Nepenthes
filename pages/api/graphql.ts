@@ -12,9 +12,7 @@ const server = new ApolloServer<GraphQLContext>({
 
 export default startServerAndCreateNextHandler(server, {
   context: async (req, res) => {
-    console.log("gql cookies before", req.cookies);
     const sessionAndUser = await getServerSessionAndUser(req, res);
-    console.log("gql cookies after", req.cookies);
 
     if (!sessionAndUser) return { req, res, prisma, session: null, user: null };
 

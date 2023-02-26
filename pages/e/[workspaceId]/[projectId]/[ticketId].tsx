@@ -5,6 +5,7 @@ import ROLES from "../../../../utils/role";
 import NavBar from "../../../../components/NavBar/NavBar";
 import EditTicket from "../../../../components/EditTicket/EditTicket";
 import { Ticket, WorkspaceUser } from "../../../../types/types";
+import Head from "next/head";
 
 interface TicketEditPageProps {
   ticket_stringify: string;
@@ -23,6 +24,10 @@ const TicketEditPage: NextPage<TicketEditPageProps> = ({
 
   return (
     <>
+      <Head>
+        <title>{`Edit Ticket | ${ticket.title}`}</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <NavBar />
       <EditTicket
         ticket={ticket}
@@ -50,7 +55,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   )
     return { redirect: { destination: "/workspaces", permanent: false } };
   const { workspaceId, projectId, ticketId } = params;
-  console.log("PARAMS", params);
 
   //check if session and user exists
   const sessionAndUser = await getServerSessionAndUser(req, res);
@@ -58,7 +62,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     return { redirect: { destination: "/signin", permanent: false } };
   }
   const { sessionToken, user } = sessionAndUser;
-  console.log("SAU", sessionAndUser);
 
   //check if workspace id provided by client exists
   const workspace = await prisma.workspace.findUnique({
@@ -66,7 +69,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     select: { id: true, name: true },
   });
   if (!workspace) return { notFound: true };
-  console.log("WORKSPACE", workspace);
 
   //check if user is apart of the workspace
   const workspaceUser = await prisma.workspaceUser.findUnique({
@@ -76,7 +78,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
   if (!workspaceUser)
     return { redirect: { destination: "/workspaces", permanent: false } };
-  console.log("WORKSPACEUSER", workspaceUser);
 
   //check if project id provided by client exists in db AND if project belongs to the workspace the user is apart of
   const project = await prisma.project.findUnique({
@@ -86,7 +87,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (!project) return { notFound: true };
   if (project.workspaceId !== workspaceUser.workspaceId)
     return { redirect: { destination: "/workspaces", permanent: false } };
-  console.log("PROJECT", project);
 
   //a workspace's ADMIN can view any project in the workspace
   //a workspace's non-ADMINs can only view a project IF they are assigned to the project
@@ -100,7 +100,6 @@ export const getServerSideProps: GetServerSideProps = async ({
         },
       },
     });
-    console.log("projectWorkspaceUser", projectWorkspaceUser);
     if (!projectWorkspaceUser)
       return { redirect: { destination: "/workspaces", permanent: false } };
   }
@@ -153,7 +152,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       updatedAt: true,
     },
   });
-  console.log("TICKET", ticket);
   if (!ticket) return { notFound: true };
   if (ticket.project.id !== project.id)
     return { redirect: { destination: "/workspaces", permanent: false } };

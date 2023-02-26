@@ -31,12 +31,6 @@ function MyApp({
   Component,
   pageProps: { workspaceUser, user, workspace, project, ...rest },
 }: AppProps<PageProps>) {
-  console.log("------------------------------");
-  console.log("WORKSPACEUSER", workspaceUser);
-  console.log("USER", user);
-  console.log("WORKSPACE", workspace);
-  console.log("REST", rest);
-  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
   return (
     <ApolloProvider client={apolloClient}>
       <UserProvider value={user}>

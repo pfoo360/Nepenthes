@@ -10,6 +10,7 @@ import useWorkspaceUserContext from "../../hooks/useWorkspaceUserContext";
 import Link from "next/link";
 import { Ticket } from "../../types/types";
 import moment from "moment";
+import Head from "next/head";
 
 interface AllWorkspaceUsersTicketsProps {
   tickets_stringify: string;
@@ -29,9 +30,12 @@ const AllWorkspaceUsersTickets: NextPage<AllWorkspaceUsersTicketsProps> = ({
   if (workspaceUserCtx.userId !== userCtx.id) return null;
   if (workspaceUserCtx.workspaceId !== workspaceCtx.id) return null;
 
-  console.log("TICKETS", tickets);
   return (
     <>
+      <Head>
+        <title>Tickets</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <NavBar />
       <div className="flex flex-col items-center bg-gray-50">
         <div className="mx-4 my-4 w-11/12 border border-indigo-500 rounded-sm bg-gray-50">
@@ -200,7 +204,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     return { redirect: { destination: "/signin", permanent: false } };
   }
   const { user, sessionToken } = sessionAndUser;
-  console.log("PROJECT QUERY AND PARAMS", params, query);
 
   //check if workspace id provided by client exists in db
   if (!params?.workspaceId || typeof params.workspaceId !== "string")
@@ -220,8 +223,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   });
   if (!workspaceUser)
     return { redirect: { destination: "/workspaces", permanent: false } };
-
-  console.log(sessionToken, user, workspace, workspaceUser);
 
   let tickets;
   //ADMINs of a workspace will see all tickets in the workspace
@@ -375,7 +376,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       orderBy: { createdAt: "desc" },
     });
   }
-  console.log(tickets);
   return {
     props: {
       user,

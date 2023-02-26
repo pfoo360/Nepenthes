@@ -96,9 +96,6 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
   )
     return null;
 
-  console.log(data);
-  console.log(page, MAX_NUM_OF_PAGES, projectTicketCount);
-
   return (
     <div className="flex flex-col mx-6">
       <div className="overflow-x-auto sm:-mx-6">
