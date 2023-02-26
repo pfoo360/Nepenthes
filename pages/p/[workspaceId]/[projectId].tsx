@@ -6,7 +6,7 @@ import ProjectsWorkspaceUsers from "../../../components/ProjectsWorkspaceUsers/P
 import DeleteProject from "../../../components/DeleteProject/DeleteProject";
 import NavBar from "../../../components/NavBar/NavBar";
 import ProjectsTickets from "../../../components/ProjectsTickets/ProjectsTickets";
-import { FC, useState } from "react";
+import { useState } from "react";
 import { Role, User } from "../../../types/types";
 import useUserContext from "../../../hooks/useUserContext";
 import useWorkspaceContext from "../../../hooks/useWorkspaceContext";

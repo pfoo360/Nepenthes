@@ -197,6 +197,8 @@ const AddTicket: FC<AddTicketProps> = ({
     )
       return;
 
+    setSubmitError("");
+
     await createTicket({
       variables: {
         title,

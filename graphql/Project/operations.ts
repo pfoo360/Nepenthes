@@ -1,4 +1,3 @@
-import { User } from "./../../types/types";
 import { gql } from "@apollo/client";
 
 const operations = {

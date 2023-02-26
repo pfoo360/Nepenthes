@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { GraphQLContext, CreateUserResponse, User } from "../../types/types";
+import { GraphQLContext, Project, WorkspaceUser } from "../../types/types";
 import ROLES from "../../utils/role";
 import USERS_PER_PAGE from "../../utils/usersPerPage";
 
@@ -37,7 +37,6 @@ const resolvers = {
           extensions: { code: "UNAUTHORIZED" },
         });
 
-      console.log("PAGE", page);
       //if the user making the request is an ADMIN in the workspace, just make sure the project the user is requesting is a project that belongs to the workspace. If project belongs to the workspace, return all the users apart of the project
       //ADMINs in a workspace do not need to be apart of the project to view the users that are apart of the project
       if (workspaceUser.role === ROLES.ADMIN) {
@@ -53,7 +52,6 @@ const resolvers = {
           throw new GraphQLError("Unauthorized.", {
             extensions: { code: "UNAUTHORIZED" },
           });
-        console.log(project);
 
         const projectsWorkspaceUsers =
           await prisma.projectWorkspaceUser.findMany({
@@ -71,14 +69,11 @@ const resolvers = {
               },
             },
           });
-        console.log(project.id, workspaceId);
-        console.log("PROMISE", projectsWorkspaceUsers);
 
         return projectsWorkspaceUsers;
       }
 
       //if the user making the request is NOT an ADMIN in the workspace, make sure the project the user is requesting is a project that belongs to the workspace AND that the user is assigned to the project. If project belongs to the workspace AND the user is assigned to the project, return all the users apart of the project
-      //ADMINs in a workspace do not need to be apart of the project to view the users that are apart of the project
       if (workspaceUser.role !== ROLES.ADMIN) {
         //[0] checks if project exists AND is apart of the workspace
         //[1] checks if the user is apart of the project
@@ -107,9 +102,6 @@ const resolvers = {
             extensions: { code: "UNAUTHORIZED" },
           });
 
-        console.log(isProjectExistsAndApartOfWorkspace);
-        console.log(isUserAssignedToProject);
-
         const projectsWorkspaceUsers =
           await prisma.projectWorkspaceUser.findMany({
             where: { projectId },
@@ -126,9 +118,6 @@ const resolvers = {
               },
             },
           });
-
-        console.log(workspaceUser.role, workspaceId);
-        console.log("PROMISE", projectsWorkspaceUsers);
 
         return projectsWorkspaceUsers;
       }
@@ -149,7 +138,7 @@ const resolvers = {
         selectedWorkspaceUserIds: string[];
       },
       { req, res, prisma, session, user }: GraphQLContext
-    ) => {
+    ): Promise<Project> => {
       //check auth
       if (!session || !user)
         throw new GraphQLError("Unauthorized.", {
@@ -182,16 +171,6 @@ const resolvers = {
           extensions: { code: "UNAUTHORIZED" },
         });
 
-      console.log(
-        "CREATEPROJECT",
-        projectName,
-        typeof projectDescription,
-        projectDescription,
-        workspaceUser,
-        workspaceId,
-        selectedWorkspaceUserIds
-      );
-
       //projectsWorkspaceUsers are the users that are apart of the project
       const projectsWorkspaceUsers = [
         ...Array.from(selectedWorkspaceUserIds, (workspaceUserId) => ({
@@ -199,7 +178,7 @@ const resolvers = {
         })),
         { workspaceUserId: workspaceUser.id },
       ];
-      console.log(projectsWorkspaceUsers);
+
       const project = await prisma.project.create({
         data: {
           name: projectName,
@@ -211,7 +190,6 @@ const resolvers = {
         },
       });
 
-      console.log(project);
       return project;
     },
     addWorkspaceUserToProject: async (
@@ -226,7 +204,7 @@ const resolvers = {
         projectId: string;
       },
       { req, res, prisma, session, user }: GraphQLContext
-    ) => {
+    ): Promise<{ count: number }> => {
       //check auth
       if (!session || !user)
         throw new GraphQLError("Unauthorized.", {
@@ -254,8 +232,6 @@ const resolvers = {
           extensions: { code: "UNAUTHORIZED" },
         });
 
-      console.log("%%%%%%%%%%", workspaceUser);
-
       //see if project belongs to the workspace the user is apart of
       const project = await prisma.project.findUnique({
         where: { id: projectId },
@@ -266,7 +242,6 @@ const resolvers = {
         });
 
       //below this point, the project is apart of the workspace and the user is apart of the workspace
-      console.log(project);
 
       //ADMINs of a workspace can assign a workspaceUser to any project, even projects the ADMIN is NOT apart of
       //MANAGERS can only assign users to a project that the MANAGER is also apart of
@@ -292,15 +267,12 @@ const resolvers = {
         projectId,
         workspaceUserId,
       }));
-      console.log(array);
 
       //NOTE: prisma does NOT return newly created entries when createMany
       const count = await prisma.projectWorkspaceUser.createMany({
         data: array,
         skipDuplicates: true,
       });
-
-      console.log(count);
 
       return count;
     },
@@ -316,7 +288,7 @@ const resolvers = {
         projectWorkspaceUserId: string;
       },
       { req, res, prisma, session, user }: GraphQLContext
-    ) => {
+    ): Promise<{ id: string; workspaceUser: WorkspaceUser }> => {
       //check auth
       if (!session || !user)
         throw new GraphQLError("Unauthorized.", {
@@ -373,7 +345,6 @@ const resolvers = {
       }
 
       //below this point we know there is a user is apart of a workspace, the project belongs to the same workspace, user is an ADMIN or a (MANAGER that is assigned to the project)
-      console.log(project);
 
       const deletedProjectWorkspaceUser =
         await prisma.projectWorkspaceUser.delete({
@@ -390,7 +361,7 @@ const resolvers = {
           },
         });
 
-      const deletedTickedDevelopers = await prisma.ticketDeveloper.deleteMany({
+      const deletedTicketDevelopers = await prisma.ticketDeveloper.deleteMany({
         where: {
           AND: {
             ticket: { projectId: project.id },
@@ -398,7 +369,7 @@ const resolvers = {
           },
         },
       });
-      //workspaceUser.role = "DEVELOPER";
+
       // const a = await prisma.ticketDeveloper.findMany({
       //   where: {
       //     AND: {
@@ -427,11 +398,7 @@ const resolvers = {
       //     },
       //   },
       // });
-      // console.log("aAAAAAAAAAaa", a);
-
-      console.log(projectId, workspaceId, projectWorkspaceUserId);
-      console.log("DPWU", deletedProjectWorkspaceUser.workspaceUser.id);
-      console.log("DTD", deletedTickedDevelopers);
+      // console.log(a);
 
       return deletedProjectWorkspaceUser;
     },
@@ -439,7 +406,7 @@ const resolvers = {
       _parent: any,
       { workspaceId, projectId }: { workspaceId: string; projectId: string },
       { req, res, prisma, user, session }: GraphQLContext
-    ) => {
+    ): Promise<Project> => {
       //check auth
       if (!session || !user)
         throw new GraphQLError("Unauthorized.", {
@@ -467,7 +434,6 @@ const resolvers = {
           extensions: { code: "UNAUTHORIZED" },
         });
 
-      console.log("DELETEPROJECT", workspaceUser);
       //MANAGERS are only allowed to delete projects that have been assigned to them or projects they created
       //ADMINS are allowed to delete any project as long as the project is apart of the workspace
       if (workspaceUser.role === ROLES.MANAGER) {
@@ -480,7 +446,6 @@ const resolvers = {
               },
             },
           });
-        console.log("isManagerApartOfTheProject", isManagerApartOfTheProject);
         //if cannot find MANAGER in project then they are unauthorized to continue with deletion
         if (!isManagerApartOfTheProject)
           throw new GraphQLError("Unauthorized.", {
@@ -502,11 +467,13 @@ const resolvers = {
           extensions: { code: "UNAUTHORIZED" },
         });
 
+      const deletedTicketSubmitter = await prisma.ticketSubmitter.deleteMany({
+        where: { ticket: { projectId: project.id } },
+      });
       const deletedProject = await prisma.project.delete({
         where: { id: projectId },
       });
-      console.log("DELETEPROJECT", deletedProject);
-      console.log("DELETEPROJECT", project);
+
       return deletedProject;
     },
   },

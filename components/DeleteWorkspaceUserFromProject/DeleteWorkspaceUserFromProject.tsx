@@ -84,7 +84,11 @@ const DeleteWorkspaceUserFromProject: FC<
           workspaceUserCtx?.id
       ) {
         await apolloClient.clearStore();
-        return push("/workspaces");
+        return push(
+          workspaceUserCtx.workspaceId
+            ? `/projects/${workspaceUserCtx.workspaceId}`
+            : `/workspaces`
+        );
       }
 
       setCount((prev) => prev - 1);

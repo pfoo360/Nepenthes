@@ -108,8 +108,6 @@ const resolvers = {
           orderBy: { createdAt: "desc" },
         });
 
-        console.log(project, workspaceUser, projectsTickets);
-
         return projectsTickets;
       }
 
@@ -191,13 +189,6 @@ const resolvers = {
           },
           orderBy: { createdAt: "desc" },
         });
-
-        console.log(
-          isProjectExistsAndApartOfWorkspace,
-          isUserAssignedToProject,
-          workspaceUser,
-          projectsTickets
-        );
 
         return projectsTickets;
       }
@@ -291,7 +282,6 @@ const resolvers = {
             },
           });
 
-        console.log(isManagerAssignedToProject);
         if (!isManagerAssignedToProject)
           throw new GraphQLError("Unauthorized.", {
             extensions: { code: "UNAUTHORIZED" },
@@ -358,19 +348,6 @@ const resolvers = {
         },
       });
 
-      console.log(
-        !title,
-        title.length > 20,
-        description.length > 120,
-        !projectId,
-        !workspaceId,
-        workspaceUserIds.length <= 0,
-        !PRIORITIES[priority],
-        !TYPES[type]
-      );
-      console.log(workspaceUser);
-      console.log(project);
-      console.log(ticket);
       return ticket;
     },
     updateTicket: async (
@@ -407,18 +384,7 @@ const resolvers = {
         throw new GraphQLError("Unauthorized.", {
           extensions: { code: "UNAUTHORIZED" },
         });
-      console.log(
-        "ARGS",
-        title,
-        description,
-        workspaceUserIds,
-        priority,
-        type,
-        status,
-        projectId,
-        workspaceId,
-        ticketId
-      );
+
       //check if args exist
       if (
         !title ||
@@ -446,9 +412,6 @@ const resolvers = {
           extensions: { code: "UNAUTHORIZED" },
         });
 
-      //workspaceUser.role = "MANAGER";
-      console.log("WORKSPACEUSER", workspaceUser);
-
       //check if project is apart of the same workspace the user is apart of
       const project = await prisma.project.findUnique({
         where: {
@@ -458,7 +421,6 @@ const resolvers = {
           },
         },
       });
-      console.log("PROJECT", project);
       if (!project)
         throw new GraphQLError("Unauthorized.", {
           extensions: { code: "UNAUTHORIZED" },
@@ -472,7 +434,6 @@ const resolvers = {
         throw new GraphQLError("Unauthorized.", {
           extensions: { code: "UNAUTHORIZED" },
         });
-      console.log("TICKET", ticket);
 
       //if user is MANAGER or DEVELOPER in the workspace, check if user is assigned to project
       if (workspaceUser.role !== ROLES.ADMIN) {
@@ -486,7 +447,6 @@ const resolvers = {
             },
           });
 
-        console.log("ASSIGNED_TO_PROJECT", isAssignedToProject);
         if (!isAssignedToProject)
           throw new GraphQLError("Unauthorized.", {
             extensions: { code: "UNAUTHORIZED" },
@@ -497,7 +457,6 @@ const resolvers = {
       //user is assigned to the workspace, project is owned by the same workspace, ticket is apart of project
       //user is: (an ADMIN in the workspace) OR (user is a MANAGER/DEVELOPER in the workspace + assigned to project)
 
-      //workspaceUser.role = "DEVELOPER";
       if (workspaceUser.role === ROLES.DEVELOPER) {
         const isDeveloperAssignedToTicket =
           await prisma.ticketDeveloper.findUnique({
@@ -508,7 +467,6 @@ const resolvers = {
               },
             },
           });
-        console.log("IS_DEV_ASS_TO_PROJ", isDeveloperAssignedToTicket);
         if (!isDeveloperAssignedToTicket)
           throw new GraphQLError("Unauthorized.", {
             extensions: { code: "UNAUTHORIZED" },
@@ -562,7 +520,6 @@ const resolvers = {
             updatedAt: true,
           },
         });
-        console.log(updatedTicket);
 
         return updatedTicket;
       }
@@ -689,7 +646,6 @@ const resolvers = {
           },
         },
       });
-      console.log("PROJECT", project);
       if (!project)
         throw new GraphQLError("Unauthorized.", {
           extensions: { code: "UNAUTHORIZED" },
@@ -703,11 +659,9 @@ const resolvers = {
         throw new GraphQLError("Unauthorized.", {
           extensions: { code: "UNAUTHORIZED" },
         });
-      console.log("TICKET", ticket);
 
       //if user is MANAGER or DEVELOPER in the workspace, check if user is assigned to project
       //if user is a DEVELOPER in the workspace, check if user is listed on the ticket
-      //workspaceUser.role = "DEVELOPER";
       if (workspaceUser.role !== ROLES.ADMIN) {
         const isAssignedToProject =
           await prisma.projectWorkspaceUser.findUnique({
@@ -719,13 +673,11 @@ const resolvers = {
             },
           });
 
-        console.log("ASSIGNED_TO_PROJECT", isAssignedToProject);
         if (!isAssignedToProject)
           throw new GraphQLError("Unauthorized.", {
             extensions: { code: "UNAUTHORIZED" },
           });
 
-        //workspaceUser.role = "DEVELOPER";
         if (workspaceUser.role === ROLES.DEVELOPER) {
           const isDeveloperAssignedToTicket =
             await prisma.ticketDeveloper.findUnique({
@@ -736,7 +688,6 @@ const resolvers = {
                 },
               },
             });
-          console.log("IS_DEV_ASS_TO_PROJ", isDeveloperAssignedToTicket);
           if (!isDeveloperAssignedToTicket)
             throw new GraphQLError("Unauthorized.", {
               extensions: { code: "UNAUTHORIZED" },

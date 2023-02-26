@@ -12,6 +12,7 @@ import apolloClient from "../../lib/apolloClient";
 import { useRouter } from "next/router";
 
 const UpdateRole: FC<{ user: User; role: Role }> = ({ user, role }) => {
+  const ROLE_VALUES = Object.values(ROLES);
   //button is only visible if current user is ADMIN
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
@@ -104,12 +105,7 @@ const UpdateRole: FC<{ user: User; role: Role }> = ({ user, role }) => {
 
     //make sure args are valid
     if (!user.id || !workspaceCtx.id) return;
-    if (
-      newRole !== ROLES.ADMIN &&
-      newRole !== ROLES.MANAGER &&
-      newRole !== ROLES.DEVELOPER
-    )
-      return;
+    if (ROLE_VALUES.indexOf(newRole) === -1) return;
 
     if (newRole === originalRole) return;
 

@@ -170,13 +170,8 @@ const resolvers = {
         });
 
       //check if user args all exist
-      if (
-        !userId ||
-        !workspaceId ||
-        (role !== ROLES.ADMIN &&
-          role !== ROLES.MANAGER &&
-          role !== ROLES.DEVELOPER)
-      )
+      const ROLE_VALUES = Object.values(ROLES);
+      if (!userId || !workspaceId || ROLE_VALUES.indexOf(role) === -1)
         throw new GraphQLError("Missing arguments.", {
           extensions: { code: "INVALID INPUT(S)" },
         });
