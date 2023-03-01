@@ -17,12 +17,12 @@ export default Index;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const sessionAndUser = await getServerSessionAndUser(req, res);
-  console.log(sessionAndUser);
-  if (!sessionAndUser) {
-    return { redirect: { destination: "/signin", permanent: false } };
-  }
 
-  if (sessionAndUser.sessionToken) {
+  // if (!sessionAndUser) {
+  //   return { redirect: { destination: "/signin", permanent: false } };
+  // }
+
+  if (sessionAndUser?.sessionToken) {
     return { redirect: { destination: "/workspaces", permanent: false } };
   }
 
