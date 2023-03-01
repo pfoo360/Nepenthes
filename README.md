@@ -205,10 +205,9 @@ Additionally, as a DEVELOPER in a workspace, they can only change the OPEN/CLOSE
 - [Add seconds to Date in JS](https://futurestud.io/tutorials/add-seconds-to-a-date-in-node-js-and-javascript)
 - [GraphQL server scaffolding](https://github.com/betaflag/graphql-server-scaffolding)
 - [Get selected value from dropdown](https://stackoverflow.com/questions/29108779/how-to-get-selected-value-of-a-dropdown-menu-in-reactjs)
-- [Retrieving value from multi option <select> in React](https://stackoverflow.com/questions/28624763/retrieving-value-from-select-with-multiple-option-in-react)
+- [Retrieving value from multi option select element in React](https://stackoverflow.com/questions/28624763/retrieving-value-from-select-with-multiple-option-in-react)
 - [Make element take 2 columns](https://stackoverflow.com/questions/53199146/make-element-take-two-columns)
 - [Add property to interface in TS](https://stackoverflow.com/questions/48241211/add-property-to-interface-typescript)
-
 - [Read/write data to cache in Apollo Client](https://www.apollographql.com/docs/react/caching/cache-interaction/)
 - [Reset Apollo Client cache](https://www.apollographql.com/docs/react/caching/advanced-topics/#resetting-the-cache)
 - [Rules of Hooks](https://stackoverflow.com/questions/72455157/react-has-detected-a-change-in-the-order-of-hooks)
