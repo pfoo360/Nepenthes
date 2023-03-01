@@ -1,10 +1,16 @@
 import type { GetServerSideProps, NextPage } from "next";
 import getServerSessionAndUser from "../utils/getServerSessionAndUser";
-import Link from "next/link";
 import Head from "next/head";
 
 const Index: NextPage = () => {
-  return <></>;
+  return (
+    <>
+      <Head>
+        <title>Welcome</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+    </>
+  );
 };
 
 export default Index;
