@@ -30,7 +30,13 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(projectTicketCount);
 
-  const MAX_NUM_OF_PAGES = Math.ceil(count / TICKETS_PER_PAGE);
+  const [maxNumOfPages, setMaxNumOfPages] = useState(
+    Math.ceil(count / TICKETS_PER_PAGE)
+  );
+
+  useEffect(() => {
+    setMaxNumOfPages(Math.ceil(count / TICKETS_PER_PAGE));
+  }, [count, TICKETS_PER_PAGE]);
 
   const userCtx = useUserContext();
   const workspaceCtx = useWorkspaceContext();
@@ -73,7 +79,7 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
   >(ticketOperations.Query.GET_PROJECTS_TICKETS);
 
   const increment = () => {
-    if (page >= MAX_NUM_OF_PAGES) return;
+    if (page >= maxNumOfPages) return;
     setPage((page) => {
       return page + 1;
     });
@@ -243,11 +249,11 @@ const ProjectsTickets: FC<ProjectsTicketsProps> = ({
                   className="bg-indigo-300 px-2 py-1 rounded-sm text-slate-100 hover:bg-indigo-400 disabled:bg-indigo-100"
                 >{`<`}</button>
                 <p className="text-gray-900">{`${page}/${
-                  MAX_NUM_OF_PAGES !== 0 ? MAX_NUM_OF_PAGES : `1`
+                  maxNumOfPages !== 0 ? maxNumOfPages : `1`
                 }`}</p>
                 <button
                   onClick={increment}
-                  disabled={loading || page >= MAX_NUM_OF_PAGES}
+                  disabled={loading || page >= maxNumOfPages}
                   className="bg-indigo-300 px-2 py-1 rounded-sm text-slate-100 hover:bg-indigo-400 disabled:bg-indigo-100"
                 >{`>`}</button>
               </div>
