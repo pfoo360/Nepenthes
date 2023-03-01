@@ -13,7 +13,7 @@ Nepenthes, named after a genus of carnivorous plants, is a work-management app d
 Click the button below to view the app
 <br/>
 <br/>
-[<img src="https://raw.githubusercontent.com/pfoo360/Filebase/main/screenshots/lnk.png" width="163px" />](https://nepenthes.vercel.app/)
+[<img src="https://raw.githubusercontent.com/pfoo360/Nepenthes/main/screenshots/logo.png" width="163px" />](https://nepenthes.vercel.app/)
 
 # Features
 
