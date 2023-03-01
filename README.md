@@ -200,32 +200,19 @@ Additionally, as a DEVELOPER in a workspace, they can only change the OPEN/CLOSE
 
 # References
 
-- [Set cookie server-side in NextJS](https://reacthustle.com/blog/next-js-set-cookie-server-side)<br/>
+- [Set cookie server-side in NextJS](https://reacthustle.com/blog/next-js-set-cookie-server-side)
+- [Set cookie server-side in NextJS: SO Question](https://stackoverflow.com/questions/71546988/is-it-possible-to-set-a-server-side-cookie-in-next-js)
+- [Add seconds to Date in JS](https://futurestud.io/tutorials/add-seconds-to-a-date-in-node-js-and-javascript)
+- [GraphQL server scaffolding](https://github.com/betaflag/graphql-server-scaffolding)
+- [Get selected value from dropdown](https://stackoverflow.com/questions/29108779/how-to-get-selected-value-of-a-dropdown-menu-in-reactjs)
+- [Retrieving value from multi option <select> in React](https://stackoverflow.com/questions/28624763/retrieving-value-from-select-with-multiple-option-in-react)
+- [Make element take 2 columns](https://stackoverflow.com/questions/53199146/make-element-take-two-columns)
+- [Add property to interface in TS](https://stackoverflow.com/questions/48241211/add-property-to-interface-typescript)
 
-- [Set cookie server-side in NextJS: SO Question](https://stackoverflow.com/questions/71546988/is-it-possible-to-set-a-server-side-cookie-in-next-js)<br/>
-
-- [Add seconds to Date in JS](https://futurestud.io/tutorials/add-seconds-to-a-date-in-node-js-and-javascript)<br/>
-
-- [GraphQL server scaffolding](https://github.com/betaflag/graphql-server-scaffolding)<br/>
-
-- [Get selected value from dropdown](https://stackoverflow.com/questions/29108779/how-to-get-selected-value-of-a-dropdown-menu-in-reactjs)<br/>
-
-- [Retrieving value from multi option <select> in React](https://stackoverflow.com/questions/28624763/retrieving-value-from-select-with-multiple-option-in-react)<br/>
-
-- [Make element take 2 columns](https://stackoverflow.com/questions/53199146/make-element-take-two-columns)<br/>
-
-- [Add property to interface in TS](https://stackoverflow.com/questions/48241211/add-property-to-interface-typescript)<br/>
-
-- [Read/write data to cache in Apollo Client](https://www.apollographql.com/docs/react/caching/cache-interaction/)<br/>
-
-- [Reset Apollo Client cache](https://www.apollographql.com/docs/react/caching/advanced-topics/#resetting-the-cache)<br/>
-
-- [Rules of Hooks](https://stackoverflow.com/questions/72455157/react-has-detected-a-change-in-the-order-of-hooks)<br/>
-
-- [Date type in GraphQL](https://stackoverflow.com/questions/49693928/date-and-json-in-type-definition-for-graphqls)<br/>
-
-- [Custom scalars in GraphQL/Apollo aka Date types](https://www.apollographql.com/docs/apollo-server/schema/custom-scalars/)<br/>
-
-- [Recreating related records in DB on Prisma update](https://github.com/prisma/prisma/discussions/8519)<br/>
-
-- [Get current URL/domain from Vercel](https://github.com/vercel/next.js/discussions/16429)<br/>
+- [Read/write data to cache in Apollo Client](https://www.apollographql.com/docs/react/caching/cache-interaction/)
+- [Reset Apollo Client cache](https://www.apollographql.com/docs/react/caching/advanced-topics/#resetting-the-cache)
+- [Rules of Hooks](https://stackoverflow.com/questions/72455157/react-has-detected-a-change-in-the-order-of-hooks)
+- [Date type in GraphQL](https://stackoverflow.com/questions/49693928/date-and-json-in-type-definition-for-graphqls)
+- [Custom scalars in GraphQL/Apollo aka Date types](https://www.apollographql.com/docs/apollo-server/schema/custom-scalars/)
+- [Recreating related records in DB on Prisma update](https://github.com/prisma/prisma/discussions/8519)
+- [Get current URL/domain from Vercel](https://github.com/vercel/next.js/discussions/16429)
