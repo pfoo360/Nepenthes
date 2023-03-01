@@ -120,12 +120,13 @@ Here we are creating 2 projects: "not_fb" has all users apart of the workspace a
 <br/>
 <br/>
 
-Clicking on the "not_fb" project link will bring us to the 'project details' page. Here, we can see all tickets that are fall under the project as well as who is assigned to the project. ADMINs and MANAGERs have the privilege of assigning users (that we have added to the workspace) to projects and creating tickets in a project. A caveat, however, is that ADMINS have unconditional 'add' privileges but MANAGERs only have 'add' privilege on projects that they are assigned to (ie MANAGERs cannot add tickets/users to a project if they are NOT assigned to the project already). <br/>
+Clicking on the "not_fb" project link will bring us to the 'project details' page. Here, we can see all tickets that fall under the project as well as who is assigned to the project. ADMINs and MANAGERs have the privilege of assigning users (that we have added to the workspace) to projects and creating tickets in a project. A caveat, however, is that ADMINS have unconditional 'add' privileges but MANAGERs only have 'add' privileges on projects that they are assigned to (ie MANAGERs cannot add tickets/users to a project if they are NOT assigned to the project already). <br/>
 ![project_detail_screen](/screenshots/17.png)
 <br/>
 <br/>
 
-If you remember, when we created the "not_ig" project, we only added 2 users from the workspace to the project. If we wanted to add more users to a project after we have already created a project we can! Heading over to "not_ig" for a quick second, when the click on the 'Add' button next to 'Team' you will see the remaining users that are apart of the workspace. Select the desired user(s) you want to assign to the project. <br/>
+If you remember, when we created the "not_ig" project, we only added 2 users from the workspace to the project. If we wanted to add more users to a project after we have already created a project we can! Heading over to "not_ig" for a quick second, when the click on the 'Add' button next to 'Team' you will see the remaining unadded users that are apart of the workspace. Select the desired user(s) you want to assign to the project. <br/>
+Here, we add the previously unadded 'test_dev2' to the "not_ig" project.<br/>
 ![add_another_user_to_team](/screenshots/31.png)
 ![add_another_user_to_team](/screenshots/32.png)
 ![add_another_user_to_team](/screenshots/33.png)
@@ -155,7 +156,7 @@ Scrolling down, we have a section for comments. The same restrictions on who can
 <br/>
 
 Scrolling back up, you will notice a 'edit ticket' link. Again, same restrictions on who can see details/comment on tickets apply to who can edit a ticket. Of also note, DEVELOPERs are only allowed to change the STATUS of a ticket. On successful edit we will be taken back to the 'ticket details' page.<br/>
-In this instance, we changed the name of the ticket from 'feature #2" to 'feature #2 edit,' added a description and assigned 'test_mngr1' to the ticket
+In this instance, we changed the name of the ticket from 'feature #2" to 'feature #2 edit,' added a description and assigned and additional user, 'test_mngr1,' to the ticket.
 ![edit_ticket](/screenshots/23.png)
 ![edit_ticket](/screenshots/24.png)
 ![edit_ticket](/screenshots/25.png)
@@ -163,7 +164,7 @@ In this instance, we changed the name of the ticket from 'feature #2" to 'featur
 <br/>
 <br/>
 
-Now, we can navigate to the 'tickets' link. If you are an ADMIN in a workspace, you will see ALL tickets in the workspace here. If you are a MANAGER in a workspace, you will see only tickets of projects you are assigned to. If you are a DEVELOPER in a workspace, you will only see tickets that lists you as a 'Developer.'
+Now, we can navigate to the 'tickets' link. If you are an ADMIN in a workspace, you will see ALL tickets in the workspace here. If you are a MANAGER in a workspace, you will only see tickets from assigned projects. If you are a DEVELOPER in a workspace, you will only see tickets where you are listed as a 'Developer.'
 ![edit_ticket](/screenshots/28.png)
 ![edit_ticket](/screenshots/29.png)
 <br/>
@@ -199,18 +200,18 @@ Additionally, as a DEVELOPER in a workspace, they can only change the OPEN/CLOSE
 
 # References
 
-- [Set cookie server-side in NextJS](https://reacthustle.com/blog/next-js-set-cookie-server-side)
-- [Set cookie server-side in NextJS: SO Question](https://stackoverflow.com/questions/71546988/is-it-possible-to-set-a-server-side-cookie-in-next-js)
-- [Add seconds to Date in JS](https://futurestud.io/tutorials/add-seconds-to-a-date-in-node-js-and-javascript)
-- [GraphQL server scaffolding](https://github.com/betaflag/graphql-server-scaffolding)
-- [Get selected value from dropdown](https://stackoverflow.com/questions/29108779/how-to-get-selected-value-of-a-dropdown-menu-in-reactjs)
-- [Retrieving value from multi option <select> in React](https://stackoverflow.com/questions/28624763/retrieving-value-from-select-with-multiple-option-in-react)
-- [Make element take 2 columns](https://stackoverflow.com/questions/53199146/make-element-take-two-columns)
-- [Add property to interface in TS](https://stackoverflow.com/questions/48241211/add-property-to-interface-typescript)
-- [Read/write data to cache in Apollo Client](https://www.apollographql.com/docs/react/caching/cache-interaction/)
-- [Reset Apollo Client cache](https://www.apollographql.com/docs/react/caching/advanced-topics/#resetting-the-cache)
-- [Rules of Hooks](https://stackoverflow.com/questions/72455157/react-has-detected-a-change-in-the-order-of-hooks)
-- [Date type in GraphQL](https://stackoverflow.com/questions/49693928/date-and-json-in-type-definition-for-graphqls)
-- [Custom scalars in GraphQL/Apollo aka Date types](https://www.apollographql.com/docs/apollo-server/schema/custom-scalars/)
-- [Recreating related records in DB on Prisma update](https://github.com/prisma/prisma/discussions/8519)
-- [Get current URL/domain from Vercel](https://github.com/vercel/next.js/discussions/16429)
+- [Set cookie server-side in NextJS](https://reacthustle.com/blog/next-js-set-cookie-server-side)<br/>
+- [Set cookie server-side in NextJS: SO Question](https://stackoverflow.com/questions/71546988/is-it-possible-to-set-a-server-side-cookie-in-next-js)<br/>
+- [Add seconds to Date in JS](https://futurestud.io/tutorials/add-seconds-to-a-date-in-node-js-and-javascript)<br/>
+- [GraphQL server scaffolding](https://github.com/betaflag/graphql-server-scaffolding)<br/>
+- [Get selected value from dropdown](https://stackoverflow.com/questions/29108779/how-to-get-selected-value-of-a-dropdown-menu-in-reactjs)<br/>
+- [Retrieving value from multi option <select> in React](https://stackoverflow.com/questions/28624763/retrieving-value-from-select-with-multiple-option-in-react)<br/>
+- [Make element take 2 columns](https://stackoverflow.com/questions/53199146/make-element-take-two-columns)<br/>
+- [Add property to interface in TS](https://stackoverflow.com/questions/48241211/add-property-to-interface-typescript)<br/>
+- [Read/write data to cache in Apollo Client](https://www.apollographql.com/docs/react/caching/cache-interaction/)<br/>
+- [Reset Apollo Client cache](https://www.apollographql.com/docs/react/caching/advanced-topics/#resetting-the-cache)<br/>
+- [Rules of Hooks](https://stackoverflow.com/questions/72455157/react-has-detected-a-change-in-the-order-of-hooks)<br/>
+- [Date type in GraphQL](https://stackoverflow.com/questions/49693928/date-and-json-in-type-definition-for-graphqls)<br/>
+- [Custom scalars in GraphQL/Apollo aka Date types](https://www.apollographql.com/docs/apollo-server/schema/custom-scalars/)<br/>
+- [Recreating related records in DB on Prisma update](https://github.com/prisma/prisma/discussions/8519)<br/>
+- [Get current URL/domain from Vercel](https://github.com/vercel/next.js/discussions/16429)<br/>
