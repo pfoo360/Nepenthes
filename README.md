@@ -1,4 +1,4 @@
-# Nepenthes
+# Nepenthes [Ticketing system app]
 
 ![banner](/screenshots/david-clode-KrL1KJSdZMI-unsplash.jpg)
 
@@ -6,7 +6,7 @@
 
 I was inspired to create this project after watching [this video](https://www.youtube.com/watch?v=vG824vBdYY8). I also wanted to learn about and implement GraphQL so this project serves as an excuse to try out that piece of technology too.
 
-Nepenthes, named after a genus of carnivorous plants, is a work-management app designed to help organize the development of software.
+Nepenthes, named after a genus of carnivorous plants, is a work-management app designed to help organize the development of software via a ticketing system.
 
 [Click here for a walkthrough.](#walkthrough)
 
